@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+
+"""Transpose module views.
+
+For license and copyright information please see the LICENSE document (the
+"License") included with this software package. This file may not be used
+in any manner except in compliance with the License unless required by
+applicable law or agreed to in writing, software distributed under the
+License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied.
+
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+
+
+from flask import abort
+from flask import json
+from flask import jsonify
+from flask import request
+from flask import make_response
+
+from . import module
+from . import utilities
+
+
+@module.route('/v1/convert', methods=['OPTIONS'])
+def convert_options():
+    return jsonify(**{
+        'meta': {
+            'status': 200
+        }
+    })
+
+
+@module.route('/v1/convert', methods=['POST'])
+def convert_post(*args, **kwargs):
+
+    data = json.loads(request.data)
+    source = None
+    config = None
+
+    if 'source' in data and data['source']:
+        source = data['source']
+    else:
+        abort(make_response(jsonify(message="A source is required"), 400))
+
+    if 'config' in data and data['config']:
+        config = data['config']
+    else:
+        abort(make_response(jsonify(message="A configuration is required"), 400))
+
+
+    return jsonify(**utilities.convert_data(source, config)), 200
