@@ -67,21 +67,26 @@ def import_csv(source):
 
 def import_excel(source):
 
-    try:
-        workbook = load_workbook(filename=source)
-        sheet = workbook.active
-    except InvalidFileException as error:
-        error_response = str(error)
-        abort(make_response(jsonify(message=error_response), 400))
+	try:
+		workbook = load_workbook(filename=source)
+		sheet = workbook.active
+		return workbook
+		
+	except InvalidFileException as error:
+		error_response = str(error)
+		abort(make_response(jsonify(message=error_response), 400))
+		return None
+	
 
 def import_json(config):
 
-    try:
-        data = json.load(open(config))
-        print(data)
-    except FileNotFoundError as error:
-        error_response = str(error)
-        abort(make_response(jsonify(message=error_response), 400))
+	try:
+		data = json.load(open(config))
+		return data
+	except FileNotFoundError as error:
+		error_response = str(error)
+		abort(make_response(jsonify(message=error_response), 400))
+		return None
 
 
     #  with open(filepath) as json_file:
@@ -94,111 +99,231 @@ def import_json(config):
     #             with open(filepath) as json_file:
     #                     data = json.load(json_file)
     
+def get_data_from_excel_cell(workbook, sheet,cell):
 
+	_sheet_reference = sheet
+	_cell_reference = cell
+
+	sheet = workbook[_sheet_reference]
+	_cell = sheet[_cell_reference]
+
+	return _cell.value
+
+def get_observations(workbook,sheet,model):
+	result = []
+	
+
+	for item in model:
+
+		start = item['start']
+		end = item['end']
+		for i in range(start,end):
+
+			# TODO abstract the results 0 and 1
+			# TODO abstract the params
+
+			result.append({
+						"phenomenonTime": get_data_from_excel_cell(workbook, sheet, "%s%s" % (item['phenomenonTime'],i)),
+						"result": [
+							get_data_from_excel_cell(workbook, sheet, "%s%s" % (item['result'][0],i)), 
+							get_data_from_excel_cell(workbook, sheet, "%s%s" % (item['result'][1],i))
+						],
+						"parameters":{
+							"measured_by": get_data_from_excel_cell(workbook, sheet, "%s%s" % (item['parameters']['measured_by'],i)),
+							"pump": "F%s" % get_data_from_excel_cell(workbook, sheet, "%s%s" % (item['parameters']['pump'],i)),
+							"comments":"G%s" % get_data_from_excel_cell(workbook, sheet, "%s%s" % (item['parameters']['comments'],i))
+						}
+					})
+
+	return result
 
 def convert_data(source, config):
 
-    """ IMPORT EXECL FILE """
-    import_excel(source)
+	""" IMPORT EXECL FILE """
+	workbook = import_excel(source)
+	if workbook:
+		sheet = workbook.active
+	else:
+		abort(make_response(jsonify(message='Could not import excel file'), 400))
 
-    """ IMPORT EXECL FILE """
-    import_json(config)
+
+	""" IMPORT JSON CONFIG FILE """
+	config = import_json(config)
+
+	if config:
+		pass
+	else: 
+		abort(make_response(jsonify(message='Could not import config file'), 400))
 
 
-    result = {
-	"name": "Piezometer - Deep",
-	"description": "",
-	"properties": {
-		"aquifer": "Artesian",
-		"total_depth": "529",
-		"well_number": "none",
-		"public_land_survey_system":"20.25.12.442"
-	},
-	"Locations": [
-		{
-			"name": "Piezometer - Deep",
-			"description": "",
-			"encodingType": "application/vnd.geo+json",
-			"location": {
-				"type": "Point",
-				"coordinates": [32.583920, 104.430730]
+	""" START CONVERSION PROCESS """
+
+	""" THING AND PROPERTIES """
+
+	result_name = None
+	result_description = None
+	restult_properties = {}
+
+	for field in config['Thing']['fields']:
+
+		if field['type']== 'single':
+
+			if field['mapped_to']== 'name':
+				result_name = get_data_from_excel_cell(workbook, \
+							field['sheet'], \
+							field['value'])
+
+			if field['mapped_to']== 'properties':
+				restult_properties = get_data_from_excel_cell(workbook, \
+							field['sheet'], \
+							field['value'])
+
+			if field['mapped_to']== 'description':
+				result_description = get_data_from_excel_cell(workbook, \
+							field['sheet'], \
+							field['value'])
+
+		if field['type']== 'many':
+			if field['mapped_to']== 'properties':
+				for val in field['value']:
+					for key, value in val.items():
+						key_result = get_data_from_excel_cell(workbook, \
+							field['sheet'], \
+							key)
+						value_result = get_data_from_excel_cell(workbook, \
+							field['sheet'], \
+							value)
+						restult_properties[key_result] = value_result
+
+	""" LOCATIONS """
+	locations = []
+
+	for location in config['Locations']:
+		for field in location['fields']:
+			location_name = None
+			location_description = None
+			location_coordinates = []
+			if field['type']== 'single':
+
+				if field['mapped_to']== 'name':
+					location_name = get_data_from_excel_cell(workbook, \
+								field['sheet'], \
+								field['value'])
+
+				if field['mapped_to']== 'description':
+					location_description = get_data_from_excel_cell(workbook, \
+								field['sheet'], \
+								field['value'])
+
+			if field['type']== 'many':
+				if field['mapped_to']== 'location':
+					for val in field['value']:
+						location_coordinates.append(get_data_from_excel_cell(workbook, \
+								field['sheet'], \
+								val))
+					locations.append({
+						"name": location_name,
+						"description": location_description,
+						"encodingType": "application/vnd.geo+json",
+						"location": {
+							"type": "Point",
+							"coordinates": location_coordinates
+							}
+					})
+						
+	""" MULTI DATA STREAMS """
+	multi_data_streams = []
+	for _data_stream in config['MultiDatastreams']:
+		for field in _data_stream['fields']:
+
+			if field['type']== 'single':
+				pass
+
+			if field['type']== 'many':
+
+				""" MULTI DATA STREAMS -- UNIT OF MEASUREMENTS """
+				if field['mapped_to']== 'unitOfMeasurements':
+					unit_of_measurements =[]
+
+					for val in field['value']:
+						_results_units = []
+						for key, value in val.items():
+							_results_units.append({key:value})
+						unit_of_measurements.append(_results_units)
+
+				""" MULTI DATA STREAMS -- SENSOR """
+				if field['mapped_to']== 'Sensor':
+					sensor = {}
+					for val in field['value']:
+						for key, value in val.items():
+							sensor[key] = value
+
+				""" MULTI DATA STREAMS -- OBSERVED PROPERTY """
+				if field['mapped_to']== 'ObservedProperties':
+					observed_properties = []
+					for val in field['value']:
+						observed_properties.append({
+							'name':get_data_from_excel_cell(workbook, field['sheet'], val['name']),
+							'definition':val['definition'],
+							'description':val['description'],
+						})	
+
+				""" MULTI DATA STREAMS -- OBSERVED PROPERTY """
+				if field['mapped_to']== 'Observations':
+					observed_properties = get_observations(workbook, field['sheet'], field['value'])
+
+	result = {
+		"name": result_name,
+		"description": result_description,
+		"properties": restult_properties,
+		"Locations": locations,
+		"MultiDatastreams": [
+			{
+				"name": "Params",
+				"description": "",
+				"observationType": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation",
+				"multiObservationDataTypes": [
+					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
+				],
+				"unitOfMeasurements": unit_of_measurements,
+				"Sensor": sensor,
+				"ObservedProperties": observed_properties,
+				"Observations": [
+					{
+						"phenomenonTime": "2006-08-29T18:13:00Z",
+						"result": [49.08, 3274.9],
+						"parameters":{
+							"measured_by": "ANEC-HRC",
+							"pump": "NONE",
+							"comments":"Depth from steel tape"
+						}
+					},
+					{
+						"phenomenonTime": "2006-09-18T09:04:00Z",
+						"result": [45.13, 3278.9],
+						"parameters":{
+							"measured_by": "ANEC-HRC",
+							"pump": "NONE",
+							"comments":""
+						}
+					},
+					{
+						"phenomenonTime": "2006-10-23T11:04:00Z",
+						"result": [49.08, 3274.9],
+						"parameters":{
+							"measured_by": "ANEC-HRC",
+							"pump": "NONE",
+							"comments":""
+						}
+					}
+				]
 			}
-		}
-	],
-	"MultiDatastreams": [
-		{
-			"name": "Params",
-			"description": "",
-			"observationType": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation",
-			"multiObservationDataTypes": [
-				"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
-				"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
-			],
-			"unitOfMeasurements": [
-				{
-					"name": "ft",
-					"symbol": "ft",
-					"definition": "ucum:ft_i"
-				},
-				{
-					"name": "ft",
-					"symbol": "ft",
-					"definition": "ucum:ft_i"
-				}
-			],
-			"Sensor": {
-				"name": "Steel Tape",
-				"description": "Measured by a human with a steel tape",
-				"encodingType": "text",
-				"metadata": ""
-			},
-			"ObservedProperties": [
-				{
-					"name": "Depth to Water",
-					"definition": "",
-					"description": "feet below ground surface"
-				},
-				{
-					"name": "Groundwater Elevation",
-					"definition": "",
-					"description": "feet mean sea level"
-				}
-			],
-			"Observations": [
-				{
-					"phenomenonTime": "2006-08-29T18:13:00Z",
-					"result": [49.08, 3274.9],
-					"parameters":{
-						"measured_by": "ANEC-HRC",
-						"pump": "NONE",
-						"comments":"Depth from steel tape"
-					}
-				},
-				{
-					"phenomenonTime": "2006-09-18T09:04:00Z",
-					"result": [45.13, 3278.9],
-					"parameters":{
-						"measured_by": "ANEC-HRC",
-						"pump": "NONE",
-						"comments":""
-					}
-				},
-				{
-					"phenomenonTime": "2006-10-23T11:04:00Z",
-					"result": [49.08, 3274.9],
-					"parameters":{
-						"measured_by": "ANEC-HRC",
-						"pump": "NONE",
-						"comments":""
-					}
-				}
-			]
-		}
-	]
-}
+		]
+	}
 
 
-    return result
+	return result
 
 
 
