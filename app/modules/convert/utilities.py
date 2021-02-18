@@ -21,6 +21,11 @@ from flask import jsonify
 
 import urllib3
 import csv
+import pytz
+import datetime
+
+from datetime import datetime
+from datetime import timezone
 
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
@@ -109,6 +114,14 @@ def get_data_from_excel_cell(workbook, sheet,cell):
 
 	return _cell.value
 
+def convert_date(date):
+	result = None
+
+	if date:
+		result = date
+
+	return result.isoformat()
+
 def get_observations(workbook,sheet,model):
 	result = []
 	
@@ -121,9 +134,10 @@ def get_observations(workbook,sheet,model):
 
 			# TODO abstract the results 0 and 1
 			# TODO abstract the params
-
+			_date = convert_date(get_data_from_excel_cell(workbook, sheet, "%s%s" % (item['phenomenonTime'],i)))
 			result.append({
-						"phenomenonTime": get_data_from_excel_cell(workbook, sheet, "%s%s" % (item['phenomenonTime'],i)),
+						
+						"phenomenonTime": _date,
 						"result": [
 							get_data_from_excel_cell(workbook, sheet, "%s%s" % (item['result'][0],i)), 
 							get_data_from_excel_cell(workbook, sheet, "%s%s" % (item['result'][1],i))
@@ -134,6 +148,7 @@ def get_observations(workbook,sheet,model):
 							"comments":"G%s" % get_data_from_excel_cell(workbook, sheet, "%s%s" % (item['parameters']['comments'],i))
 						}
 					})
+			break
 
 	return result
 
@@ -158,10 +173,13 @@ def convert_data(source, config):
 
 	""" START CONVERSION PROCESS """
 
+	thing_id = "SAGER6792"
+	location_id = "SAGER6792"
+
 	""" THING AND PROPERTIES """
 
-	result_name = None
-	result_description = None
+	result_name = ""
+	result_description = ""
 	restult_properties = {}
 
 	for field in config['Thing']['fields']:
@@ -200,8 +218,8 @@ def convert_data(source, config):
 
 	for location in config['Locations']:
 		for field in location['fields']:
-			location_name = None
-			location_description = None
+			location_name = ""
+			location_description = ""
 			location_coordinates = []
 			if field['type']== 'single':
 
@@ -225,6 +243,7 @@ def convert_data(source, config):
 						"name": location_name,
 						"description": location_description,
 						"encodingType": "application/vnd.geo+json",
+						"@iot.id": location_id,
 						"location": {
 							"type": "Point",
 							"coordinates": location_coordinates
@@ -233,6 +252,7 @@ def convert_data(source, config):
 						
 	""" MULTI DATA STREAMS """
 	multi_data_streams = []
+	observations = []
 	for _data_stream in config['MultiDatastreams']:
 		for field in _data_stream['fields']:
 
@@ -246,9 +266,9 @@ def convert_data(source, config):
 					unit_of_measurements =[]
 
 					for val in field['value']:
-						_results_units = []
+						_results_units = {}
 						for key, value in val.items():
-							_results_units.append({key:value})
+							_results_units[key]=value
 						unit_of_measurements.append(_results_units)
 
 				""" MULTI DATA STREAMS -- SENSOR """
@@ -260,23 +280,26 @@ def convert_data(source, config):
 
 				""" MULTI DATA STREAMS -- OBSERVED PROPERTY """
 				if field['mapped_to']== 'ObservedProperties':
-					observed_properties = []
+					observations = []
 					for val in field['value']:
-						observed_properties.append({
+						observations.append({
 							'name':get_data_from_excel_cell(workbook, field['sheet'], val['name']),
 							'definition':val['definition'],
 							'description':val['description'],
-						})	
+						})
 
 				""" MULTI DATA STREAMS -- OBSERVED PROPERTY """
 				if field['mapped_to']== 'Observations':
-					observed_properties = get_observations(workbook, field['sheet'], field['value'])
+					observations = get_observations(workbook, field['sheet'], field['value'])
+
+	
 
 	result = {
 		"name": result_name,
 		"description": result_description,
 		"properties": restult_properties,
 		"Locations": locations,
+		"@iot.id": thing_id,
 		"MultiDatastreams": [
 			{
 				"name": "Params",
@@ -288,36 +311,19 @@ def convert_data(source, config):
 				],
 				"unitOfMeasurements": unit_of_measurements,
 				"Sensor": sensor,
-				"ObservedProperties": observed_properties,
-				"Observations": [
+				"ObservedProperties": [
 					{
-						"phenomenonTime": "2006-08-29T18:13:00Z",
-						"result": [49.08, 3274.9],
-						"parameters":{
-							"measured_by": "ANEC-HRC",
-							"pump": "NONE",
-							"comments":"Depth from steel tape"
-						}
+						"name": "Depth to Water",
+						"definition": "",
+						"description": "feet below ground surface"
 					},
 					{
-						"phenomenonTime": "2006-09-18T09:04:00Z",
-						"result": [45.13, 3278.9],
-						"parameters":{
-							"measured_by": "ANEC-HRC",
-							"pump": "NONE",
-							"comments":""
-						}
-					},
-					{
-						"phenomenonTime": "2006-10-23T11:04:00Z",
-						"result": [49.08, 3274.9],
-						"parameters":{
-							"measured_by": "ANEC-HRC",
-							"pump": "NONE",
-							"comments":""
-						}
+						"name": "Groundwater Elevation",
+						"definition": "",
+						"description": "feet mean sea level"
 					}
-				]
+				],
+				"Observations": observations,
 			}
 		]
 	}
