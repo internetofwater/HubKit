@@ -19,6 +19,7 @@ from flask import json
 from flask import jsonify
 from flask import request
 from flask import make_response
+from flask import render_template
 
 from . import module
 from . import utilities
@@ -52,3 +53,9 @@ def convert_post(*args, **kwargs):
 
 
     return jsonify(**utilities.convert_data(source, config)), 200
+
+
+@module.route('/v1/form', methods=['GET'])
+def form_get(*args, **kwargs):
+
+    return render_template("index.html")
