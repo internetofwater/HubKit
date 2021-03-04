@@ -75,7 +75,7 @@ def import_csv(source, min_count, max_count):
 def convert_data_from_csv(source,config):
 
 	min_count = 0
-	max_count = 15
+	max_count = 900
 
 	_csv = import_csv(source, min_count, max_count)
 
@@ -85,16 +85,22 @@ def convert_data_from_csv(source,config):
 
 		""" START CONVERSION PROCESS """
 
-		thing_id = "SAGER8019"
-		location_id = "SAGER8019"
-		data_stream_id = "SAGER8019"
+		thing_id = "SAGER8019" # "NAME"
+		location_id = "SAGER8019" # "NAME"
+		data_stream_id = "SAGER8019" # "THING NAME + Observerd Property"
+
+
+# 7/30 "MACKENZIE RIVER ABOVE ARCTIC RED RIVER Ammonia 7557"
+# 7/30 "MACKENZIE RIVER ABOVE ARCTIC RED RIVER Ammonia 7570"
+
+# 8/30 "MACKENZIE RIVER ABOVE ARCTIC RED RIVER Ammonia 7557"
+# 8/30 "MACKENZIE RIVER ABOVE ARCTIC RED RIVER Ammonia 7570"
 		data_stream_name = ""
 
 		""" RESULT VALUE DEFINITIONS """
 		result_name = ""
 		result_description = ""
 		restult_properties = {}
-		multi_data_streams = []
 		observations = {}
 		observed_properties = {}
 		sensor = {}
@@ -125,23 +131,6 @@ def convert_data_from_csv(source,config):
 								restult_properties[key]= get_data_from_csv_row(_csv,key,row)
 							else:
 								restult_properties[key]= ""
-
-
-			# TODO ARE THERE ANY PROPERTIES TO MAP?
-			# if field['type']== 'many':
-			# 	if field['mapped_to']== 'properties':
-			# 		for val in field['value']:
-			# 			for key, value in val.items():
-			# 				key_result = get_data_from_excel_cell(workbook, \
-			# 					field['sheet'], \
-			# 					key)
-			# 				value_result = get_data_from_excel_cell(workbook, \
-			# 					field['sheet'], \
-			# 					value)
-			# 				restult_properties[key_result] = value_result
-
-		# """ LOCATIONS """
-
 
 		for location in config['Locations']:
 			location_coordinates = []
