@@ -37,6 +37,8 @@ export class SetupformComponent implements OnInit {
 
   create_config():void{
     console.log("I was pressed");
+    this.apiService.getFields()
+    .subscribe(fields => this.fields = fields);
   }
 
 }
