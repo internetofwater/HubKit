@@ -55,7 +55,34 @@ def convert_post(*args, **kwargs):
     return jsonify(**utilities.convert_data(source, config)), 200
 
 
-@module.route('/v1/form', methods=['GET'])
-def form_get(*args, **kwargs):
+@module.route('/v1/config', methods=['OPTIONS'])
+def config_options():
+    return jsonify(**{
+        'meta': {
+            'status': 200
+        }
+    })
 
-    return render_template("index.html")
+
+@module.route('/v1/config', methods=['POST'])
+def config_post(*args, **kwargs):
+
+    if request.content_type is None:
+        abort(make_response(jsonify(message="Must be in JSON format"), 400))
+
+
+    if request.content_type is not None and request.content_type == 'application/json' or 'application/json' in request.content_type:
+        data = json.loads(request.data)
+        return jsonify(**utilities.create_config()), 200
+    else:
+        abort(make_response(jsonify(message="Must be in JSON format"), 400))
+        
+        
+   
+        
+
+
+# @module.route('/v1/form', methods=['GET'])
+# def form_get(*args, **kwargs):
+
+#     return render_template("index.html")

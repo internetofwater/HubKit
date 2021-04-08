@@ -35,4 +35,8 @@ export class SetupformComponent implements OnInit {
     // .subscribe(fields => this.fields = fields);
   }
 
+  create_config():void{
+    console.log("I was pressed");
+  }
+
 }

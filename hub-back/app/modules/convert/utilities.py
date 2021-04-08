@@ -673,4 +673,17 @@ def convert_data(source, config):
 	return result
 
 
+def create_config():
+
+	result = {
+		"data":
+			{
+				"source":"1B-example.xls",
+				"type":"excel"	
+			}
+	}
+
+	return result
+
+
 
