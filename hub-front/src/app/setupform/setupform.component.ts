@@ -3,6 +3,7 @@ import { Field } from '../interfaces/field';
 import {SETTINGS_FIELDS } from  '../mock/mock-settings-fields';
 import {FIELDS } from  '../mock/mock-fields';
 import { ApiService } from '../services/api.service';
+import { TRANSFORM_CONFIG_SETTINGS } from '../mock/mock-transform_config';
 
 
 @Component({
@@ -20,6 +21,7 @@ export class SetupformComponent implements OnInit {
   // };
 
   setting_fields = SETTINGS_FIELDS;
+  transform_config = TRANSFORM_CONFIG_SETTINGS;
   fields = FIELDS;
   test = "";
 
@@ -37,8 +39,8 @@ export class SetupformComponent implements OnInit {
 
   create_config():void{
     console.log("I was pressed");
-    this.apiService.create_config()
-    .subscribe(fields => this.fields = fields);
+    this.apiService.create_config(this.transform_config)
+    .subscribe(transform_config => this.transform_config = transform_config);
   }
 
 }

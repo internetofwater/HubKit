@@ -7,6 +7,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { FIELDS } from '../mock/mock-fields';
 import { Field } from '../interfaces/field';
+import { TransformConfig } from '../interfaces/transformconfig';
 
 
 @Injectable({
@@ -24,11 +25,11 @@ export class ApiService {
     private http: HttpClient
   ) { }
 
-  create_config(): Observable<any> {
-    return this.http.post<any>(this.apiUrl,'{"data":{"name":"value"}}' , this.httpOptions )
+  create_config(transform_config: TransformConfig): Observable<TransformConfig> {
+    return this.http.post<TransformConfig>(this.apiUrl,transform_config , this.httpOptions )
     .pipe(
       tap(_ => this.log('fetched heroes')),
-      catchError(this.handleError<any>('create_config', '{data:thing}' ))
+      catchError(this.handleError<TransformConfig>('create_config', transform_config ))
     );
   }
 
