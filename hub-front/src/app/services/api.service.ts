@@ -14,7 +14,7 @@ import { Field } from '../interfaces/field';
 })
 export class ApiService {
 
-  private apiUrl = 'http://localhost:5000';  // URL to web api
+  private apiUrl = 'http://localhost:5000/v1/config';  // URL to web api
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -24,11 +24,11 @@ export class ApiService {
     private http: HttpClient
   ) { }
 
-  getFields(): Observable<Field[]> {
-    return this.http.get<Field[]>(this.apiUrl)
+  create_config(): Observable<any> {
+    return this.http.post<any>(this.apiUrl,'{"data":{"name":"value"}}' , this.httpOptions )
     .pipe(
       tap(_ => this.log('fetched heroes')),
-      catchError(this.handleError<Field[]>('getHeroes', []))
+      catchError(this.handleError<any>('create_config', '{data:thing}' ))
     );
   }
 

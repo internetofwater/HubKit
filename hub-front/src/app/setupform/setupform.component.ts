@@ -30,14 +30,14 @@ export class SetupformComponent implements OnInit {
   }
 
   getFields(): void {
-    this.apiService.getFields()
+    // this.apiService.getFields()
     // .subscribe(test => this.test = test);
     // .subscribe(fields => this.fields = fields);
   }
 
   create_config():void{
     console.log("I was pressed");
-    this.apiService.getFields()
+    this.apiService.create_config()
     .subscribe(fields => this.fields = fields);
   }
 
