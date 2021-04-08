@@ -6,32 +6,38 @@
         <fieldset class="form-fieldset" >
             <div class="row">
                 <div class="col-xs-12">
-                    <div *ngFor="let field of setting_fields"  class="form-group">
-                        <label  class="form-label">{{field.label}}</label>
+                    <div *ngFor="let item of setting_fields"  class="form-group">
 
-                        <input class="form-control" [(ngModel)]="field.datavalue" placeholder="{{field.placeholder}}">
+                        <div class="single-space" *ngIf="item.field.component.name==='textfield'">
+                            <!-- TEXTFIELD -->
+                            <label  class="form-label" for="{{item.field.field_name}}">{{item.field.field_label}}</label>
+                            <input class="form-control" [(ngModel)]="item.datavalue" placeholder="{{item.field.field_placeholder}}" id="{{item.field.field_name}}">
+                        </div>
                     
-                            <label  class="form-label">{{field.label}}</label>
+                        <div class="single-space" *ngIf="item.field.component.name=='select'">
+                            <!-- SELECT -->
+                            <label  class="form-label" for="{{item.field.field_name}}">{{item.field.field_label}}</label>
                             <div class="container--selection">
-                              <!-- <label for="default-selector">Default Selector</label> -->
-                              <select class="filter--control" id="default-selector">
+                                <!-- <label for="default-selector">Default Selector</label> -->
+                                <select class="filter--control" id="{{item.field.field_name}}">
                                 <option>
-                                  Andre Dawson
+                                    Andre Dawson
                                 </option>
                                 <option>
-                                  Ryne Sandberg
+                                    Ryne Sandberg
                                 </option>
                                 <option>
-                                  Shawon Dusnston
+                                    Shawon Dusnston
                                 </option>
                                 <option>
-                                  Mark Grace
+                                    Mark Grace
                                 </option>
                                 <option>
-                                  Rick Sutcliffe
+                                    Rick Sutcliffe
                                 </option>
-                              </select>
+                                </select>
                             </div>
+                        </div>
                     </div>
                     
                 </div>
