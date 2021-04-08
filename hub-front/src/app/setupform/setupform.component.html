@@ -1,0 +1,83 @@
+
+<article class="form">
+    <div class="double-top" name="data_wizard">
+        <h2 class="big heavy caps">Settings</h2>    
+        <hr />
+        <fieldset class="form-fieldset" >
+            <div class="row">
+                <div class="col-xs-12">
+                    <div *ngFor="let field of setting_fields"  class="form-group">
+                        <label  class="form-label">{{field.label}}</label>
+
+                        <input class="form-control" [(ngModel)]="field.datavalue" placeholder="{{field.placeholder}}">
+                    
+                            <label  class="form-label">{{field.label}}</label>
+                            <div class="container--selection">
+                              <!-- <label for="default-selector">Default Selector</label> -->
+                              <select class="filter--control" id="default-selector">
+                                <option>
+                                  Andre Dawson
+                                </option>
+                                <option>
+                                  Ryne Sandberg
+                                </option>
+                                <option>
+                                  Shawon Dusnston
+                                </option>
+                                <option>
+                                  Mark Grace
+                                </option>
+                                <option>
+                                  Rick Sutcliffe
+                                </option>
+                              </select>
+                            </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </fieldset>
+        <div>
+            <button type="button" class="button button-primaryAction">Create Config</button>
+        </div>
+        <!-- END SETTINGS -->
+        <h2 class="big heavy caps">Thing</h2>    
+    <hr />
+        <!-- <fieldset class="form-fieldset" >
+            <div class="row">
+                <div class="col-xs-12">
+                    <div *ngFor="let field of fields"  class="form-group">
+                        <label  class="form-label">{{field.label}}</label>
+                        <input class="form-control" [(ngModel)]="field.datavalue" placeholder="{{field.placeholder}}">
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <h2 class="big heavy caps">Location</h2>    
+        <hr />
+        <fieldset class="form-fieldset" >
+            <div class="row">
+                <div class="col-xs-12">
+                    <div *ngFor="let field of fields"  class="form-group">
+                        <label  class="form-label">{{field.label}}</label>
+                        <input class="form-control" [(ngModel)]="field.datavalue" placeholder="{{field.placeholder}}">
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <h2 class="big heavy caps">Data Stream</h2>    
+        <hr />
+        <fieldset class="form-fieldset" >
+            <div class="row">
+                <div class="col-xs-12">
+                    <div *ngFor="let field of fields"  class="form-group">
+                        <label  class="form-label">{{field.label}}</label>
+                        <input class="form-control" [(ngModel)]="field.datavalue" placeholder="{{field.placeholder}}">
+                    </div>
+                </div>
+            </div>
+        </fieldset> -->
+    </div>
+
+
+</article>

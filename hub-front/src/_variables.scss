@@ -1,0 +1,135 @@
+//
+// _variables.scss
+//
+// @description
+//    The variables stylesheet helps us define styles that can be used over and
+//    over again throughout the entire site. It helps us define items that occur
+//    multiple times throughout the site, just once, that way we aren't
+//    repeating ourselves.
+//
+// @overview
+//    This stylesheet is written in SASS(1) and compiles all of the styles
+//    we use throughout the site.
+//
+// @see (1) http://sass-lang.com/documentation/file.SASS_REFERENCE.html
+//
+
+
+//
+// Baseline Widths
+//
+$body-width-xs: 16em; // 256px
+$body-width-sm: 24em; // 384px
+$body-width-md: 32em; // 512px
+$body-width-lg: 64em; // 1024px
+$body-width-xl: 96em; // 1536px
+$body-width-xxl: 128em; // 2048px
+
+
+//
+// Margins & Padding
+//
+$baseline-margin:1.5em;
+
+//
+// Colors
+//
+
+// SYSTEM FEEDBACK & NOTIFICATION COLORS
+$color--success-light:rgb(99, 212, 149);
+$color--success-base:rgb(4, 186, 73);
+$color--success-dark:rgb(3, 150, 67);
+
+$color--processing-light:rgb(251, 219, 121);
+$color--processing-base:rgb(249, 186, 40);
+$color--processing-dark:rgb(199, 157, 32);
+
+$color--warning-light:rgb(251, 179, 121);
+$color--warning-base:rgb(249, 133, 40);
+$color--warning-dark:rgb(199, 107, 32);
+
+$color--error-light:rgb(239, 100, 100);
+$color--error-base:rgb(230, 6, 6);
+$color--error-dark:rgb(179, 5, 5);
+
+$color--info-light:rgb(149, 168, 189);
+$color--info-base:rgb(108, 122, 137);
+$color--info-dark:rgb(68, 77, 87);
+
+// BASE TEXT
+$color--text-base:rgb(1, 50, 67);
+
+// BLACK
+$color--black-lightest:rgb(140,140,140);
+$color--black-light:rgb(112, 112, 112);
+$color--black-base:rgb(64, 64, 64);
+$color--black-dark:rgb(16, 16, 16);
+$color--black-pure:rgb(0, 0, 0);
+
+
+// GRAY
+$color--gray-lightest:rgb(255, 255, 255);
+$color--gray-light:rgb(246,246,246);
+$color--gray-base:rgb(232, 232, 232);
+$color--gray-dark:rgb(217, 217, 217);
+$color--gray-darkest:rgb(189, 189, 189);
+
+// WHITE
+$color--white-pure:rgb(255, 255, 255);
+$color--white-base:rgb(255, 255, 255);
+$color--white-dark:rgb(240, 240, 240);
+
+// BRANDING COLORS
+$color--branding-blue-gray-light:rgb(144,171,206);
+$color--branding-blue-gray-base:rgb(77,120,176);
+$color--branding-blue-gray-dark:rgb(55,85,124);
+$color--branding-blue-gray-darkest:rgb(39,60,89);
+
+$color--branding-blue-light:rgb(121,158,251);
+$color--branding-blue-base:rgb(40,99,249);
+$color--branding-blue-dark:rgb(32,79,199);
+
+$color--branding-blue-green-light:rgb(97,222,231);
+$color--branding-blue-green-base:rgb(0,202,217);
+$color--branding-blue-green-dark:rgb(0,155,167);
+
+$color--branding-green-light:rgb(97,172,129);
+$color--branding-green-base:rgb(0,122,51);
+$color--branding-green-dark:rgb(0,71,30);
+
+$color--branding-purple-light:rgb(158,111,188);
+$color--branding-purple-base:rgb(100,24,148);
+$color--branding-purple-dark:rgb(66,16,97);
+
+$color--branding-yellow-light:rgb(254,232,97);
+$color--branding-yellow-base:rgb(254,219,0);
+$color--branding-yellow-dark:rgb(204,177,0);
+
+//
+// Mixins
+//
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+     -moz-border-radius: $radius;
+      -ms-border-radius: $radius;
+          border-radius: $radius;
+}
+
+@mixin box-shadow($values) {
+  -webkit-box-shadow: $values;
+     -moz-box-shadow: $values;
+      -ms-box-shadow: $values;
+          box-shadow: $values;
+}
+
+@mixin arrow-down($size, $color) {
+  border-left: $size solid transparent;
+  border-right: $size solid transparent;
+  border-top: $size solid $color;
+}
+
+
+//
+// Grid Layout
+//
+$grid-container-margins: 0;

@@ -1,0 +1,164 @@
+//
+// _global.scss
+//
+// @description
+//    v3.0.3 | MIT License | github.com/necolas/normalize.css
+//
+// @overview
+//    This stylesheet is written in SASS(1) and compiles all of the styles
+//    we use throughout the site.
+//
+// @see (1) http://sass-lang.com/documentation/file.SASS_REFERENCE.html
+//
+
+
+
+//
+// Default Body Styles and Page-Specific Body Overrides
+//
+* {
+  box-sizing: border-box;
+}
+
+body {
+    background-color: $color--white-pure;
+
+    box-sizing: border-box;
+
+    font-family: $font-sans;
+    font-size: 100%;
+
+    margin: 0 auto;
+    padding: 0;
+
+    height: auto;
+    width: 100vw;
+
+
+    &.anonymous {
+
+      .site-content {
+        width: 100vw;
+      }
+
+    }
+
+}
+
+
+//
+// System Header
+//
+header.siteHeader {
+  margin: 0;
+  padding: 2rem 0;
+}
+
+//
+// System Content
+//
+main.system-container {
+  background-color: rgb(248,248,248);
+  padding-bottom: 8rem;
+
+  .system-sidebar {
+    border-right: 1px solid rgb(216,216,216);
+
+    &.system-sidebar-hidden {
+      display: none;
+    }
+  }
+
+  .system-content {
+    padding: 4rem 0 0 2rem;
+  }
+
+  .system-metadata {
+  }
+
+}
+
+
+//
+// System Footer
+//
+.siteFooter {
+  background-color: $color--text-base;
+  color: $color--white-pure;
+  margin: 0;
+  padding: 5rem 0 2rem;
+
+  h3 {
+    color: rgba($color--white-pure, 0.85);
+    font-family: $font-sans;
+    font-size: 0.9125rem;
+    font-weight: 500;
+    margin: 0 0 1rem;
+  }
+
+  address,
+  p,
+  li {
+    color: $color--white-pure;
+    font-family: $font-sans;
+    font-size: 0.875rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 1.5;
+
+    &.siteFooter--mission {
+      color: $color--branding-blue-green-light;
+      font-size: 1.25rem;
+      line-height: 1.5;
+      margin-top: 2rem;
+    }
+
+    &.siteFooter--copyright {
+      font-size: 0.625rem;
+    }
+
+    a,
+    a:active,
+    a:focus,
+    a:link,
+    a:visited {
+      color: $color--white-pure;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .siteFooter--copyright {
+    margin-top: 1.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba($color--white-pure, 0.1);
+
+    p,
+    li {
+      color: rgba($color--white-pure, 0.375);
+      font-size: 0.6875rem;
+
+      a,
+      a:active,
+      a:focus,
+      a:link,
+      a:visited {
+        color: rgba($color--white-pure, 0.375);
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  .siteFooter--owner {
+    margin-top: -0.25rem;
+    opacity: 0.5;
+  }
+
+}

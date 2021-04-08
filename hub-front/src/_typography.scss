@@ -1,0 +1,219 @@
+//
+// _typography.scss
+//
+// @description
+//    v3.0.3 | MIT License | github.com/necolas/normalize.css
+//
+// @overview
+//    This stylesheet is written in SASS(1) and compiles all of the styles
+//    we use throughout the site.
+//
+// @see (1) http://sass-lang.com/documentation/file.SASS_REFERENCE.html
+//
+
+
+//
+// Basic Typographic Settings
+//
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-size: 1rem;
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+    line-height: 1.85rem;
+    color:$color--text-base;
+}
+
+h1 {
+    font-size: 2.25rem;
+    line-height: 2.75rem;
+}
+h2 {
+    font-size: 2rem;
+    line-height: 2.5rem;
+}
+h3 {
+    font-size: 1.625rem;
+    line-height: 2.125rem;
+}
+h4 {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+}
+p {
+    font-size: 1rem;
+    font-weight: normal;
+    line-height: 1.5rem;
+    &.inline {
+      display: inline-block;
+    }
+    color:$color--text-base;
+
+    &.large{
+      font-size: 1.25rem;
+      line-height: 2.25rem;
+    }
+}
+
+ul, ol {
+    text-align: left;
+    li {
+        font-size: 1rem;
+        font-weight: normal;
+        text-align: left;
+    }
+}
+
+a,
+a:active,
+a:hover,
+a:link,
+a:visited {
+    color: $color--branding-blue-base;
+    color: #01A9E1;
+    text-decoration: underline;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+small, .small{
+  font-size:.75rem !important;
+  color:$color--text-base;
+  line-height: .75rem;
+}
+strong{
+  font-weight: 700;
+  color:$color--text-base;
+}
+
+.align-left {
+  text-align: left;
+}
+
+.align-center {
+  text-align: center;
+}
+
+.align-right {
+  text-align: right;
+}
+.caps{
+  text-transform: uppercase;
+}
+.center{
+  text-align: center;
+}
+.double-space{
+  margin-bottom: 2rem;
+}
+.single-space{
+  margin-bottom: 1rem;
+}
+.double-top{
+  margin-top: 2rem;
+}
+.hero{
+  font-size:4rem;
+  line-height: 4.5rem;
+}
+.largest{
+  font-size:3.375rem;
+  line-height: 3.875rem;
+}
+.large{
+  font-size:2.8125rem;
+  line-height: 3.5rem;
+}
+
+.bigger{
+  font-size:1.75rem;
+  line-height: 2rem;
+}
+.big{
+  font-size:1.25rem;
+  line-height: 1.8125rem;
+}
+.light{
+  font-weight: 300;
+}
+.medium{
+  font-weight: 500;
+}
+.no-margin{
+  margin: 0 !important;
+}
+.no-margin-left{
+  margin-left: 0 !important;
+}
+.no-margin-right{
+  margin-right: 0 !important;
+}
+.no-margin-top{
+  margin-top: 0 !important;
+}
+.no-margin-bottom{
+  margin-bottom: 0 !important;
+}
+.margin-right{
+  margin-right:1rem;
+}
+.margin-left{
+  margin-left:1rem;
+}
+.margin-top{
+  margin-top:1rem;
+}
+.margin-bottom{
+  margin-bottom:1rem;
+}
+.margin{
+  margin:1rem;
+}
+.margin-half{
+  margin:.5rem;
+}
+.no-padding{
+  padding: 0 !important;
+}
+.no-padding-top{
+  padding-top: 0 !important;
+}
+.no-padding-bottom{
+  padding-bottom: 0 !important;
+}
+.padding-half{
+  padding: .5rem;
+}.padding{
+  padding: 1rem;
+}
+.padding-left{
+  padding-left: 1rem;
+}
+.padding-right{
+  padding-right: 1rem;
+}
+.padding-top{
+  padding-top: 1rem;
+}
+.padding-bottom{
+  padding-bottom: 1rem;
+}
+.heavy{
+  font-weight: 700;
+}
+.reversed--container{
+  background-color: $color--black-base;
+  h1,h2,h3,h4,p,ul,li,ol,small,strong{
+    color:$color--white-base;
+  }
+}
+.uppercase{
+  text-transform: uppercase;
+}
