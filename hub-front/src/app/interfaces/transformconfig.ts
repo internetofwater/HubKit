@@ -1,5 +1,5 @@
 export interface TransformConfig {
-    settings:TransformConfigSetting | string;
+    [key: string]: any
 }
 
 

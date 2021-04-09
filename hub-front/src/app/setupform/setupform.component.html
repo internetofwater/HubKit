@@ -24,13 +24,13 @@
                             <div class="container--selection single-space">               
                                 <select class="form-control" id="{{item.field.field_name}}"
                                         required="item.field.is_required"
-                                        selected 
-                                        [(ngModel)]="transform_config[item.field.model.toString()][item.field.param.toString()]" name="{{item.field.field_name}}"
+                                        selected
+                                        [(ngModel)]="transform_config[item.field.model][item.field.param]" name="{{item.field.field_name}}"
                                         #{{item.field.field_name}}="ngModel">
                                 <option *ngFor="let val of item.field.component.options.values" [value]="val">{{val}}</option>
                                 </select>                               
                             </div>
-                            <div [hidden]="item.datavalue.length > 0" class="single--top alert error">
+                            <div [hidden]="transform_config[item.field.model][item.field.param].length > 0" class="single--top alert error">
                                 {{item.field.field_label}} is required
                             </div>
                         </div>

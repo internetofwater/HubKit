@@ -679,7 +679,7 @@ def create_config():
 		"settings":
 			{
 				"source":"1B-example.xls",
-				"type":"excel"	
+				"type":"Excel"	
 			}
 	}
 
