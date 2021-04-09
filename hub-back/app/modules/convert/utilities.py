@@ -673,17 +673,11 @@ def convert_data(source, config):
 	return result
 
 
-def create_config():
+def create_config(config):
 
-	result = {
-		"settings":
-			{
-				"source":"1B-example.xls",
-				"type":"Excel"	
-			}
-	}
+	result = {}
 
-	return result
+	return config
 
 
 

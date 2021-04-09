@@ -77,7 +77,7 @@ def config_post(*args, **kwargs):
              abort(make_response(jsonify(message="Must be in JSON format"), 400))
         print(data)
        
-        return jsonify(**utilities.create_config()), 200
+        return jsonify(**utilities.create_config(data)), 200
 
 
     abort(make_response(jsonify(message="Must be in JSON format"), 400))
