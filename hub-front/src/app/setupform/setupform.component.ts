@@ -29,6 +29,33 @@ export class SetupformComponent implements OnInit {
   fields = FIELDS;
   test = "";
 
+  groups = [
+    {
+      "group_name": "Settings",
+      "group_order": 1,
+      "visibility": true,
+      "layout": {
+          "columns": 1
+      }
+    },
+    {
+      "group_name": "Things",
+      "group_order": 2,
+      "visibility": true,
+      "layout": {
+          "columns": 1
+      }
+    },
+    {
+      "group_name": "Location",
+      "group_order": 3,
+      "visibility": true,
+      "layout": {
+          "columns": 1
+      }
+    },
+  ]
+
   constructor(private apiService: ApiService) { 
     this.transform_config = TRANSFORM_CONFIG_SETTINGS;
 
