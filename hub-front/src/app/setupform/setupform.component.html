@@ -8,14 +8,10 @@
                 <div class="col-xs-12">
                     <div *ngFor="let item of setting_fields"  class="form-group">
 
+                        <!-- TEXTFIELD -->
                         <div class="single-space" *ngIf="item.field.component.name==='textfield'">
-                            <!-- TEXTFIELD -->
                             <label  class="form-label" for="{{item.field.field_name}}">{{item.field.field_label}}</label>
                             <input class="form-control" [(ngModel)]="item.datavalue" placeholder="{{item.field.field_placeholder}}" id="{{item.field.field_name}}">
-                        </div>
-
-                        <div ngFor="var val of item.field.component.options.values">
-                            
                         </div>
                     
                         <div class="single-space" *ngIf="item.field.component.name=='select'">
@@ -34,6 +30,15 @@
                                 {{item.field.field_label}} is required
                             </div>
                         </div>
+
+                        <!-- FILE UPLOAD -->
+                        <div class="single-space" *ngIf="item.field.component.name==='file_upload'">
+                            <label  class="form-label" for="{{item.field.field_name}}">{{item.field.field_label}}</label>
+                            <input type="file" class="form-control" [(ngModel)]="item.datavalue" placeholder="{{item.field.field_placeholder}}" id="{{item.field.field_name}}">
+                        </div>
+
+
+
                     </div>
                     
                 </div>

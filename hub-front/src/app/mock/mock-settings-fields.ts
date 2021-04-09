@@ -69,7 +69,7 @@ export const SETTINGS_FIELDS: Field[] = [
       "is_required": true,
       "is_listed": false,
       "component":{
-      "name": "textfield",
+      "name": "file_upload",
       "group":"",
       "options": {
         },
