@@ -676,7 +676,7 @@ def convert_data(source, config):
 def create_config():
 
 	result = {
-		"data":
+		"settings":
 			{
 				"source":"1B-example.xls",
 				"type":"excel"	

@@ -5,6 +5,8 @@ export const SETTINGS_FIELDS: Field[] = [
   { id: 11, 
     datavalue:'', 
     field:{
+      "model" : "settings",
+      "param" : "type",
       "field_name": "data_source",
       "field_label": "Data Source",
       "field_help": "",

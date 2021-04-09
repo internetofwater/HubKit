@@ -1,6 +1,8 @@
 import { FieldComponent } from "./fieldcomponent";
 
 export interface FieldModel {
+    model:string;
+    param:string;
     field_name: string;
     field_label: string;
     field_help: string;

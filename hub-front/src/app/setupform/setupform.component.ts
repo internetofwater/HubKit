@@ -20,16 +20,27 @@ export class SetupformComponent implements OnInit {
   //   placeholder: ''
   // };
 
+  answer = {
+    data_source:""
+  } 
+
   setting_fields = SETTINGS_FIELDS;
-  transform_config = TRANSFORM_CONFIG_SETTINGS;
+  transform_config;
   fields = FIELDS;
   test = "";
 
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService) { 
+    this.transform_config = TRANSFORM_CONFIG_SETTINGS;
+
+
+  }
 
   ngOnInit(): void {
     this.getFields()
   }
+
+
+
 
   getFields(): void {
     // this.apiService.getFields()
@@ -38,6 +49,16 @@ export class SetupformComponent implements OnInit {
   }
 
   create_config():void{
+
+    
+
+    // this.transform_config.settings.type = 'DUDE' 
+
+    // PREPARE DATA TO BE SENT
+
+    //
+
+
     console.log("I was pressed");
     this.apiService.create_config(this.transform_config)
     .subscribe(transform_config => this.transform_config = transform_config);
