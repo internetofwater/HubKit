@@ -43,7 +43,7 @@ export const SETTINGS_FIELDS: Field[] = [
       "is_required": true,
       "is_listed": false,
       "component":{
-      "name": "select",
+      "name": "textfield",
       "group":"Settings",
       "options": {
           "values": [

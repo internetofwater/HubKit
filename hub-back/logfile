@@ -1,0 +1,2 @@
+postgres: could not access the server configuration file "/var/lib/postgresql/12/main/postgresql.conf": No such file or directory
+postgres: could not access the server configuration file "/var/lib/postgresql/12/main/postgresql.conf": No such file or directory

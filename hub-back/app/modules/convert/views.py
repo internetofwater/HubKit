@@ -83,12 +83,7 @@ def config_post(*args, **kwargs):
     abort(make_response(jsonify(message="Must be in JSON format"), 400))
 
         
-        
-   
-        
+@module.route('/v1/form', methods=['GET'])
+def form_get(*args, **kwargs):
 
-
-# @module.route('/v1/form', methods=['GET'])
-# def form_get(*args, **kwargs):
-
-#     return render_template("index.html")
+    return render_template("index.html")

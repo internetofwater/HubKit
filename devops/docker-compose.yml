@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+
+    webapp:
+        container_name: webapp
+        image: webapp:dev
+        build:
+            context: ../hub-front
+            dockerfile: ../hub-front/Dockerfile
+        volumes:
+            - '../hub-front:/app'
+            - '../hub-front/app/node_modules'
+        ports:
+            - '4200:4200'
+
+    api:
+        container_name: api
+        image: python:dev
+        build:
+            context: ../hub-back
+            dockerfile: ../hub-back/Dockerfile
+        volumes:
+            - '../hub-back:/app'
+        ports:
+            - '5000:5000'
