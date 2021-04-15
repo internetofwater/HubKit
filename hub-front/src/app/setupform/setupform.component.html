@@ -19,9 +19,9 @@
                                     <label  class="form-label" for="{{item.field.field_name}}">{{item.field.field_label}}</label>
                                     <input class="form-control" [(ngModel)]="item.datavalue" placeholder="{{item.field.field_placeholder}}" id="{{item.field.field_name}}">
                                 </div>
-                            
+
+                                <!-- SELECT -->                            
                                 <div class="single-space" *ngIf="item.field.component.name=='select'">
-                                    <!-- SELECT -->
                                     <label  class="form-label" for="{{item.field.field_name}}">{{item.field.field_label}}</label>
                                     <div class="container--selection single-space">               
                                         <select class="form-control" id="{{item.field.field_name}}"
@@ -36,6 +36,38 @@
                                         {{item.field.field_label}} is required
                                     </div>
                                 </div>
+
+                                <!-- SELECT OPTIONS -->                            
+                                <div class="single-space" *ngIf="item.field.component.name=='select_options'">
+
+                                    <div class="row">
+                                        <div class="col-xs-6">
+                                            <label  class="form-label" for="{{item.field.field_name}}">{{item.field.field_label}}</label>
+                                            <div class="container--selection single-space">               
+                                                <select class="form-control" id="{{item.field.field_name}}"
+                                                        required="item.field.is_required"
+                                                        selected
+                                                        [(ngModel)]="transform_config[item.field.model][item.field.param]" name="{{item.field.field_name}}"
+                                                        #{{item.field.field_name}}="ngModel">
+                                                <option *ngFor="let val of item.field.component.options.values" [value]="val">{{val}}</option>
+                                                </select>                               
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-xs-6">
+                                            <label  class="form-label" for="{{item.field.field_name}}">Value</label>
+                                            <input class="form-control" [(ngModel)]="item.datavalue" placeholder="{{item.field.field_placeholder}}" id="{{item.field.field_name}}">
+                                        </div>
+
+                                    </div>
+                                    
+                                    <div [hidden]="transform_config[item.field.model][item.field.param].length > 0" class="single--top alert error">
+                                        {{item.field.field_label}} is required
+                                    </div>
+                                </div>
+
+                                
         
                                 <!-- FILE UPLOAD -->
                                 <div class="single-space" *ngIf="item.field.component.name==='file_upload'">
