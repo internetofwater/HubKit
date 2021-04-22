@@ -10,7 +10,7 @@ cd devops && docker-compose up
 
 When you're all done.
 
-docker rm webapp python
+docker rm webapp api
 
 
 # Run Docker Via Command Line

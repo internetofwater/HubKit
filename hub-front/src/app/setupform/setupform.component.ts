@@ -4,6 +4,7 @@ import {SETTINGS_FIELDS } from  '../mock/mock-settings-fields';
 import {FIELDS } from  '../mock/mock-fields';
 import { ApiService } from '../services/api.service';
 import { TRANSFORM_CONFIG_SETTINGS } from '../mock/mock-transform_config';
+import {HttpClient, HttpEvent, HttpErrorResponse, HttpEventType} from '@angular/common/http';
 
 
 @Component({
@@ -20,6 +21,8 @@ export class SetupformComponent implements OnInit {
   //   placeholder: ''
   // };
 
+  
+
   answer = {
     data_source:""
   } 
@@ -28,6 +31,7 @@ export class SetupformComponent implements OnInit {
   transform_config;
   fields = FIELDS;
   test = "";
+  file_contents= {};
 
   groups = [
     {
@@ -56,11 +60,31 @@ export class SetupformComponent implements OnInit {
     },
   ]
 
-  constructor(private apiService: ApiService) { 
+  fileName = '';
+
+  constructor(private apiService: ApiService, private http: HttpClient) { 
     this.transform_config = TRANSFORM_CONFIG_SETTINGS;
-
-
   }
+
+  onFileSelected(event: any) {
+
+    const file:File = event.target.files[0];
+
+    if (file) {
+
+        this.fileName = file.name;
+
+        const formData = new FormData();
+
+        formData.append("excel", file);
+
+        const upload$ = this.http.post("http://localhost:5000/v1/upload-file", formData);
+
+        upload$.subscribe(file_contents => this.file_contents = file_contents);
+
+        debugger
+    }
+}
 
   ngOnInit(): void {
     this.getFields()

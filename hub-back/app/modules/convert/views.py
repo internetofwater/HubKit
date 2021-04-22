@@ -20,9 +20,14 @@ from flask import jsonify
 from flask import request
 from flask import make_response
 from flask import render_template
+from flask import current_app
 
 from . import module
 from . import utilities
+
+import os.path
+
+from uuid import uuid4
 
 
 @module.route('/v1/convert', methods=['OPTIONS'])
@@ -33,6 +38,54 @@ def convert_options():
         }
     })
 
+
+@module.route('/v1/upload-file', methods=['POST'])
+def file_upload_post(*args, **kwargs):
+
+    # data = json.loads(request)
+
+    
+
+    _file = request.files['excel']
+
+
+    # Save Excel File
+
+    basepath = current_app.config['MEDIA_BASE_PATH'] + 'files/'
+    directory = current_app.config['MEDIA_DIRECTORY'] + 'files/'
+
+    """
+    Prepare the file for processing
+    """
+    extension = os.path.splitext(_file.filename)[1]
+    secure_filename = uuid4().hex + extension
+
+    filepath = os.path.join(directory, secure_filename)
+    fileurl = os.path.join(basepath, secure_filename)
+
+    try:
+        # logger.debug('[MEDIA utilities:upload_file] Saving file source information to server')
+        _file.save(filepath)
+    except:
+        # logger.debug('[MEDIA utilities:upload_file] Exception raised while saving file source information to server')
+        raise
+
+    # Load Excel File From Path
+    # source = None
+    # config = None
+
+    # if 'source' in data and data['source']:
+    #     source = data['source']
+    # else:
+    #     abort(make_response(jsonify(message="A source is required"), 400))
+
+    # if 'config' in data and data['config']:
+    #     config = data['config']
+    # else:
+    #     abort(make_response(jsonify(message="A configuration is required"), 400))
+
+
+    return jsonify(**utilities.get_column_headers(filepath)), 200
 
 @module.route('/v1/convert', methods=['POST'])
 def convert_post(*args, **kwargs):

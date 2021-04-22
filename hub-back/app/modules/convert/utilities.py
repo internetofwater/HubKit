@@ -33,6 +33,8 @@ from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
 from openpyxl import Workbook
 
+from openpyxl.utils.cell import coordinate_from_string, column_index_from_string
+
 
 from flask import current_app
 
@@ -67,9 +69,6 @@ def import_csv(source, min_count, max_count):
 				result.append(row)
 				line_count += 1
 						
-			
-	
-
 	return result
 
 def convert_data_from_csv(source,config):
@@ -681,3 +680,39 @@ def create_config(config):
 
 
 
+def get_column_headers(source):
+
+	sheets = []
+
+	workbook = import_excel(source)
+	if workbook:
+		sheet = workbook.active
+	else:
+		abort(make_response(jsonify(message='Could not import excel file'), 400))
+
+	
+	for item in workbook.sheetnames:
+		sheet = workbook[item]
+
+		list_with_values=[]
+		for cell in sheet[1]:
+
+			list_with_values.append(
+				{
+					'column': cell.column_letter,
+					'row':cell.row,
+					'value':cell.value
+				}
+			)
+
+		sheets.append({
+			'sheet':item,
+			'headers':list_with_values
+		})
+
+	result ={
+		"type": "FeatureCollection",
+		"features": sheets
+	}
+
+	return result
