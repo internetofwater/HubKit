@@ -56,12 +56,12 @@ def file_upload_post(*args, **kwargs):
 
     """
     Prepare the file for processing
-    """
-    extension = os.path.splitext(_file.filename)[1]
-    secure_filename = uuid4().hex + extension
+    # """
+    # extension = os.path.splitext(_file.filename)[1]
+    # secure_filename = uuid4().hex + extension
 
-    filepath = os.path.join(directory, secure_filename)
-    fileurl = os.path.join(basepath, secure_filename)
+    filepath = os.path.join(directory, _file.filename)
+    fileurl = os.path.join(basepath, _file.filename)
 
     try:
         # logger.debug('[MEDIA utilities:upload_file] Saving file source information to server')
