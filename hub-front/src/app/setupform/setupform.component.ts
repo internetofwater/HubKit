@@ -25,13 +25,30 @@ export class SetupformComponent implements OnInit {
 
   answer = {
     data_source:""
-  } 
+  }
+  
+  config = {
+    
+  }
 
+  successful_load = "";
   setting_fields = SETTINGS_FIELDS;
   transform_config;
   fields = FIELDS;
   test = "";
-  file_contents= {};
+  sheet_selected = "";
+  file_contents_local:any= {
+    status:'',
+    features : [{
+      headers:[{
+        column:'',
+        row:'',
+        value:'test'
+      }],
+      sheet:'default',
+      sheet_number:0
+    }]
+  };
 
   groups = [
     {
@@ -80,9 +97,10 @@ export class SetupformComponent implements OnInit {
 
         const upload$ = this.http.post("http://localhost:5000/v1/upload-file", formData);
 
-        upload$.subscribe(file_contents => this.file_contents = file_contents);
+        upload$.subscribe(file_contents => this.file_contents_local = file_contents);
 
-        debugger
+        this.successful_load = "File has loaded";
+
     }
 }
 

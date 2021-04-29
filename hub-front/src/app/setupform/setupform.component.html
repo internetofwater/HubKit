@@ -2,7 +2,6 @@
 <article class="form">
     <div class="double-top" name="data_wizard">
 
-        {{file_contents | json}}
 
         <div *ngFor="let group of groups"  class="form-group" >
             <h2 class="big heavy caps">{{group.group_name}}</h2>    
@@ -10,7 +9,10 @@
             <fieldset class="form-fieldset" >
                 
                 <div class="row">
-                    <div class="col-xs-12">
+                    <div class="col-xs-2">
+                        {{transform_config | json}}
+                    </div>
+                    <div class="col-xs-10">
 
                         <div *ngFor="let item of setting_fields"  class="form-group">
                             <div *ngIf="group.group_name === item.field.component.group">
@@ -47,8 +49,9 @@
                                                 <select class="form-control" id="{{item.field.field_name}}"
                                                         required="item.field.is_required"
                                                         selected
-                                                        [(ngModel)]="transform_config[item.field.model][item.field.param]" name="{{item.field.field_name}}"
+                                                        [(ngModel)]="item.datavalue" name="{{item.field.field_name}}"
                                                         #{{item.field.field_name}}="ngModel">
+                                                <option selected>-- Make a Selection --</option>>
                                                 <option *ngFor="let val of item.field.component.options.values" [value]="val">{{val}}</option>
                                                 </select>                               
                                             </div>
@@ -56,9 +59,46 @@
                                         </div>
 
                                         <div class="col-xs-6">
-                                            <label  class="form-label" for="{{item.field.field_name}}_value">Value</label>
-                                            <input class="form-control marign--left" [(ngModel)]="item.datavalue" placeholder="{{item.field.field_placeholder}}" id="{{item.field.field_name}}_value">
+                                            <div *ngIf="item.datavalue==='Custom Text'">
+                                                <label  class="form-label" for="{{item.field.field_name}}_value">Value</label>
+                                                <input class="form-control marign--left" [(ngModel)]="transform_config[item.field.model][item.field.param]" placeholder="{{item.field.field_placeholder}}" id="{{item.field.field_name}}_value">
+                                            </div>
+                                            <div class="single-space" *ngIf="item.datavalue==='From Data Source'" >
+                                                <label  class="form-label" for="">Select Sheet</label>
+                                                <div class="container--selection single-space" >               
+                                                    <select class="form-control" id=""
+                                                            required=""
+                                                            selected
+                                                            name=""
+                                                            [(ngModel)]="sheet_selected">
+                                                    <option selected> -- Select A Sheet --</option>
+                                                    <option
+                                                     *ngFor="let item of file_contents_local.features" [value]="item.sheet_number">{{item.sheet}}</option>
+                                                    </select>                               
+                                                </div>
+                                                <label  class="form-label" for="">Select Cell</label>
+                                                <div class="container--selection single-space"
+                                                *ngIf="sheet_selected"  >               
+                                                    <select class="form-control" id=""
+                                                            required=""
+                                                            selected
+                                                            name=""
+                                                            [(ngModel)]="transform_config[item.field.model][item.field.param]">
+                                                    <option
+                                                     *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.value">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                                                    </select>                               
+                                                </div>
+                                     
+                                            </div>
+                                            <div class="single-space" *ngIf="item.datavalue==='Autogenerated'" >
+                                                <div type="hidden" *ngShow="transform_config[item.field.model][item.field.param]=3"></div>
+                                                {{transform_config[item.field.model][item.field.param]}}
+                                     
+                                            </div>
+                                       
                                         </div>
+
+
 
                                     </div>
 
@@ -83,11 +123,12 @@
                                            <div class="file-upload">
 
                                             {{fileName || "No file uploaded yet."}}
+                                            {{successful_load}}
                                          
-                                             <button mat-mini-fab color="primary" class="upload-btn"
+                                             <!-- <button mat-mini-fab color="primary" class="upload-btn"
                                                (click)="fileUpload.click()">
                                                  icon here
-                                             </button>
+                                             </button> -->
                                          </div>
                                 </div>
                             </div>

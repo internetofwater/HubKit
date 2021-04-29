@@ -683,6 +683,7 @@ def create_config(config):
 def get_column_headers(source):
 
 	sheets = []
+	sheet_number = 0
 
 	workbook = import_excel(source)
 	if workbook:
@@ -707,10 +708,13 @@ def get_column_headers(source):
 
 		sheets.append({
 			'sheet':item,
+			'sheet_number':sheet_number,
 			'headers':list_with_values
 		})
+		sheet_number = sheet_number + 1
 
 	result ={
+		"status":"File Loaded",
 		"type": "FeatureCollection",
 		"features": sheets
 	}
