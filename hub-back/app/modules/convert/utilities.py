@@ -687,8 +687,12 @@ def create_config(config):
 	"""
 	Prepare the file for processing
 	"""
+
 	extension = "json"
-	filename = "config." + extension
+	if config and 'settings' in config and 'file' in config['settings']:
+		filename = config["settings"]["file"]
+	else:
+		filename = "config." + extension
 
 	filepath = os.path.join(directory, filename)
 	fileurl = os.path.join(basepath, filename)

@@ -6,7 +6,7 @@ export const TRANSFORM_CONFIG_SETTINGS: TransformConfig =
             source:"1B-example.xls",
             data_structure:"One Sensor per row",
             type:"Excel",	
-            file:""
+            file:"transform_config.json"
         },
         Things:{
             name_of_thing:"",
