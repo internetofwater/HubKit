@@ -135,4 +135,17 @@ export class SetupformComponent implements OnInit {
     .subscribe(transform_config => this.transform_config = transform_config);
   }
 
+
+  run_convert():void{
+
+    // this.transform_config.settings.type = 'DUDE' 
+
+    // PREPARE DATA TO BE SENT
+
+    //
+    console.log("I was pressed");
+    this.apiService.run_convert(this.transform_config)
+    .subscribe(transform_config => this.transform_config = transform_config);
+  }
+
 }

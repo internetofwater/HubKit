@@ -15,7 +15,7 @@ import { TransformConfig } from '../interfaces/transformconfig';
 })
 export class ApiService {
 
-  private apiUrl = 'http://localhost:5000/v1/config';  // URL to web api
+  private apiUrl = 'http://localhost:5000/v1';  // URL to web api
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -26,10 +26,24 @@ export class ApiService {
   ) { }
 
   create_config(transform_config: TransformConfig): Observable<TransformConfig> {
-    return this.http.post<TransformConfig>(this.apiUrl,transform_config , this.httpOptions )
+    return this.http.post<TransformConfig>(this.apiUrl+"/config",transform_config , this.httpOptions )
     .pipe(
-      tap(_ => this.log('fetched heroes')),
+      tap(_ => this.log('post config')),
       catchError(this.handleError<TransformConfig>('create_config', transform_config ))
+    );
+  }
+
+  run_convert(transform_config: TransformConfig): Observable<TransformConfig> {
+
+    let payload = {
+      source:transform_config.settings.source,
+      config:transform_config.settings.file
+    }
+
+    return this.http.post<TransformConfig>(this.apiUrl+"/convert",payload , this.httpOptions )
+    .pipe(
+      tap(_ => this.log('post convert')),
+      catchError(this.handleError<TransformConfig>('run_convert', payload ))
     );
   }
 
