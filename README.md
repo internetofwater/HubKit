@@ -6,10 +6,9 @@ Making a HubKit based on SensorThings API and PyGeoAPI
 Start the docker container do this. 
 cd hub-front && docker build -t webapp:dev . && cd ../
 cd hub-back && docker build -t python:dev . && cd ../
-cd devops && docker-compose up
+cd devops && docker-compose up && cd../
 
-When you're all done.
-
+# When you're all done.
 docker rm webapp api
 
 
