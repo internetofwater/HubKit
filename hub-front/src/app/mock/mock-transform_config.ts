@@ -3,7 +3,7 @@ import { TransformConfig } from "../interfaces/transformconfig"
 export const TRANSFORM_CONFIG_SETTINGS: TransformConfig = 
     { 
         settings:{
-            source:"1B-example.xls",
+            source:"",
             data_structure:"One Sensor per row",
             type:"Excel",	
             file:"transform_config.json"

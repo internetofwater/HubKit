@@ -101,6 +101,8 @@ export class SetupformComponent implements OnInit {
 
         this.successful_load = "File has loaded";
 
+        this.transform_config.settings.source = this.fileName;
+
     }
 }
 
