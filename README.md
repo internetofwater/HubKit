@@ -13,10 +13,10 @@ docker rm webapp api
 
 
 # Run Docker Via Command Line
-docker run -d -v ${PWD}:/app -v /app/node_modules -p 4200:4200 --name webapp --rm webapp:dev
+docker run -v ${PWD}:/app -v /app/node_modules -p 4200:4200 --name webapp --rm webapp:dev
 
 cd ../hub-back && docker build -t python:dev . 
-docker run -d -v ${PWD}:/app -p 5000:5000 --name api --rm python:dev 
+docker run -v ${PWD}:/app -p 5000:5000 --name api --rm python:dev 
 
 
 # Run tests

@@ -18,6 +18,11 @@ from flask import request
 from flask import json
 from flask import make_response
 from flask import jsonify
+from flask import current_app
+
+
+import os.path
+import json
 
 import urllib3
 import csv
@@ -674,7 +679,22 @@ def convert_data(source, config):
 
 def create_config(config):
 
-	result = {}
+
+	# Save JSON File
+	basepath = current_app.config['MEDIA_BASE_PATH'] + 'files/'
+	directory = current_app.config['MEDIA_DIRECTORY'] + 'files/'
+
+	"""
+	Prepare the file for processing
+	"""
+	extension = "json"
+	filename = "config." + extension
+
+	filepath = os.path.join(directory, filename)
+	fileurl = os.path.join(basepath, filename)
+
+	with open(filepath, 'w') as outfile:
+		json.dump(config, outfile)
 
 	return config
 
