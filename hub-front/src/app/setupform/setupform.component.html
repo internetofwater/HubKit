@@ -13,6 +13,7 @@
                         {{transform_config | json}}
                     </div>
                     <div class="col-xs-10">
+                        
 
                         <div *ngFor="let item of setting_fields"  class="form-group">
                             <div *ngIf="group.group_name === item.field.component.group">
@@ -32,7 +33,7 @@
                                                 [(ngModel)]="transform_config[item.field.model][item.field.param]" name="{{item.field.field_name}}"
                                                 #{{item.field.field_name}}="ngModel">
                                         <option *ngFor="let val of item.field.component.options.values" [value]="val">{{val}}</option>
-                                        </select>                               
+                                        </select>                             
                                     </div>
                                     <div [hidden]="transform_config[item.field.model][item.field.param].length > 0" class="single--top alert error">
                                         {{item.field.field_label}} is required
@@ -55,6 +56,15 @@
                                                 <option *ngFor="let val of item.field.component.options.values" [value]="val">{{val}}</option>
                                                 </select>                               
                                             </div>
+                                            <div>
+                                                <button type="button" (click)="onAddToThings(
+                                                    {
+                                                        mapped_to:item.field.config_field_name,
+                                                        field:transform_config[item.field.model][item.field.param],
+                                                        sheet:file_contents_local.features[sheet_selected].sheet                                                        
+                                                    }
+                                                    )" class="button button-primaryAction">Add Things</button>
+                                            </div>  
 
                                         </div>
 
@@ -76,6 +86,11 @@
                                                      *ngFor="let item of file_contents_local.features" [value]="item.sheet_number">{{item.sheet}}</option>
                                                     </select>                               
                                                 </div>
+    
+                                                
+                                                <div *ngIf="sheet_selected">
+                                                    {{transform_config[item.field.model][item.field.param] | json}}
+                                                </div>
                                                 <label  class="form-label" for="">Select Cell</label>
                                                 <div class="container--selection single-space"
                                                 *ngIf="sheet_selected"  >               
@@ -85,7 +100,7 @@
                                                             name=""
                                                             [(ngModel)]="transform_config[item.field.model][item.field.param]">
                                                     <option
-                                                     *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.value">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                                                     *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="[item.value,item.column]">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
                                                     </select>                               
                                                 </div>
                                      

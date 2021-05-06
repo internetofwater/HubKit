@@ -83,6 +83,39 @@ export class SetupformComponent implements OnInit {
     this.transform_config = TRANSFORM_CONFIG_SETTINGS;
   }
 
+  onAddToThings(payload:any):void{
+
+
+    debugger
+    var mapped_to = payload["mapped_to"]?payload["mapped_to"]:"";
+    var field_name = "";
+    var field = payload["field"]?payload.field.split(','):"";
+    var sheet = payload["sheet"]?payload["sheet"]:"";
+    var value = "";
+
+
+    if  (field.length>0){
+      
+      field_name = field[0];
+      value = field[1]+"2";
+    }
+
+    
+
+    this.transform_config.Things.fields.push(
+      {
+                    type:"single",
+                    mapped_to:mapped_to,
+                    field_source_type:"text",
+                    field_name:field_name,
+                    sheet:sheet,
+                    value_type:"sheet",
+                    value:value,
+                    data_source:"sheet"
+                }
+    )
+  }
+
   onFileSelected(event: any) {
 
     const file:File = event.target.files[0];
@@ -145,7 +178,7 @@ export class SetupformComponent implements OnInit {
     //
     console.log("I was pressed");
     this.apiService.run_convert(this.transform_config)
-    .subscribe(transform_config => this.transform_config = transform_config);
+    .subscribe();
   }
 
 }

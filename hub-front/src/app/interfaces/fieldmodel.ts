@@ -7,6 +7,7 @@ export interface FieldModel {
     field_label: string;
     field_help: string;
     field_order: number;
+    config_field_name: string;
     field_placeholder: string;
     is_editable: boolean;
     is_custom: boolean;
