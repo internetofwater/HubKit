@@ -9,10 +9,10 @@
             <fieldset class="form-fieldset" >
                 
                 <div class="row">
-                    <div class="col-xs-2">
-                        {{transform_config | json}}
-                    </div>
-                    <div class="col-xs-10">
+                    <div class="col-xs-12">
+
+                        {{config_response | json}}
+
                         
 
                         <div *ngFor="let item of setting_fields"  class="form-group">
@@ -87,10 +87,6 @@
                                                     </select>                               
                                                 </div>
     
-                                                
-                                                <div *ngIf="sheet_selected">
-                                                    {{transform_config[item.field.model][item.field.param] | json}}
-                                                </div>
                                                 <label  class="form-label" for="">Select Cell</label>
                                                 <div class="container--selection single-space"
                                                 *ngIf="sheet_selected"  >               
@@ -120,9 +116,9 @@
                                     <!-- {{item.datavalue.length < 0}}
                                     {{transform_config[item.field.model][item.field.param] !== 'Custom Text'}} -->
                                     
-                                    <div [hidden]="transform_config[item.field.model][item.field.param] !== 'Custom Text'" class="single--top alert error">
+                                    <!-- <div [hidden]="transform_config[item.field.model][item.field.param] !== 'Custom Text'" class="single--top alert error">
                                         {{item.field.field_label}} is required
-                                    </div>
+                                    </div> -->
                                 </div>
 
                                 
@@ -158,7 +154,154 @@
         <div>
             <button type="button" (click)="run_convert()" class="button button-primaryAction">Run Conversion</button>
         </div>
+        <div>
+            <button type="button" (click)="process_data()" class="button button-primaryAction">Process Data</button>
+        </div>
+        <div>
+            <button type="button" (click)="post_to_frost_server()" class="button button-primaryAction">Run on Frost Server</button>
+        </div>
         <!-- END SETTINGS -->
+
+        {{transform_config.settings | json}}
+
+
+        <h2 class="big heavy caps">Select Your Data Sheet Source</h2>    
+            <hr />
+            <fieldset class="form-fieldset" >
+
+                <div class="row">
+                    <div class="col-xs-12">
+                    <!-- SELECT OPTIONS -->                            
+                        <div class="single-space form-group">
+
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <label  class="form-label" for="select_data_source">Select Thing Name Source</label>
+                                    <div class="container--selection single-space width-95">     
+                                        <select class="form-control" id=""
+                                                            required=""
+                                                            selected
+                                                            name=""
+                                                            [(ngModel)]="sheet_selected">
+                                            <option selected> -- Select A Sheet --</option>
+                                            <option
+                                             *ngFor="let item of file_contents_local.features" [value]="item.sheet_number">{{item.sheet}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-xs-12">
+                                    <label  class="form-label" for="thing_name_column">Select Thing Name Column</label>
+                                    <div class="container--selection single-space"
+                                                *ngIf="sheet_selected"  >               
+                                                    <select class="form-control" id="thing_name_column"
+                                                            required=""
+                                                            selected
+                                                            name="thing_name_column"
+                                                            [(ngModel)]="transform_config.settings.thing_name_column" >
+                                                    <option
+                                                     *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="[item.column]">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                                                    </select>                               
+                                                </div>
+                                </div>
+
+                                <div class="col-sm-6 col-xs-12">
+                                    <label  class="form-label" for="thing_name_column">Select Thing Description Column</label>
+                                    <div class="container--selection single-space"
+                                                *ngIf="sheet_selected"  >               
+                                                    <select class="form-control" id="thing_description_column"
+                                                            required=""
+                                                            selected
+                                                            name="thing_description_column"
+                                                            [(ngModel)]="transform_config.settings.thing_description_column" >
+                                                            
+                                                    <option
+                                                     *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                                                    </select>                               
+                                                </div>
+                                </div>
+
+                        <!-- <div class="col-xs-6">
+                            <label  class="form-label" for="{{item.field.field_name}}">{{item.field.field_label}}</label>
+                            <div class="container--selection single-space width-95">               
+                                <select class="form-control" id="{{item.field.field_name}}"
+                                        required="item.field.is_required"
+                                        selected
+                                        [(ngModel)]="item.datavalue" name="{{item.field.field_name}}"
+                                        #{{item.field.field_name}}="ngModel">
+                                <option selected>-- Make a Selection --</option>>
+                                <option *ngFor="let val of item.field.component.options.values" [value]="val">{{val}}</option>
+                                </select>                               
+                            </div>
+                            <div>
+                                <button type="button" (click)="onAddToThings(
+                                    {
+                                        mapped_to:item.field.config_field_name,
+                                        field:transform_config[item.field.model][item.field.param],
+                                        sheet:file_contents_local.features[sheet_selected].sheet                                                        
+                                    }
+                                    )" class="button button-primaryAction">Add Things</button>
+                            </div>  
+
+                        </div>
+
+                        <div class="col-xs-6">
+                            <div *ngIf="item.datavalue==='Custom Text'">
+                                <label  class="form-label" for="{{item.field.field_name}}_value">Value</label>
+                                <input class="form-control marign--left" [(ngModel)]="transform_config[item.field.model][item.field.param]" placeholder="{{item.field.field_placeholder}}" id="{{item.field.field_name}}_value">
+                            </div>
+                            <div class="single-space" *ngIf="item.datavalue==='From Data Source'" >
+                                <label  class="form-label" for="">Select Sheet</label>
+                                <div class="container--selection single-space" >               
+                                    <select class="form-control" id=""
+                                            required=""
+                                            selected
+                                            name=""
+                                            [(ngModel)]="sheet_selected">
+                                    <option selected> -- Select A Sheet --</option>
+                                    <option
+                                     *ngFor="let item of file_contents_local.features" [value]="item.sheet_number">{{item.sheet}}</option>
+                                    </select>                               
+                                </div>
+
+                                <label  class="form-label" for="">Select Cell</label>
+                                <div class="container--selection single-space"
+                                *ngIf="sheet_selected"  >               
+                                    <select class="form-control" id=""
+                                            required=""
+                                            selected
+                                            name=""
+                                            [(ngModel)]="transform_config[item.field.model][item.field.param]">
+                                    <option
+                                     *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="[item.value,item.column]">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                                    </select>                               
+                                </div>
+                     
+                            </div>
+                            <div class="single-space" *ngIf="item.datavalue==='Autogenerated'" >
+                                <div type="hidden" *ngShow="transform_config[item.field.model][item.field.param]=3"></div>
+                                {{transform_config[item.field.model][item.field.param]}}
+                     
+                            </div>
+                       
+                        </div> -->
+
+
+
+                            </div>
+
+                    <!-- {{item.datavalue.length < 0}}
+                    {{transform_config[item.field.model][item.field.param] !== 'Custom Text'}} -->
+                    
+                    <!-- <div [hidden]="transform_config[item.field.model][item.field.param] !== 'Custom Text'" class="single--top alert error">
+                        {{item.field.field_label}} is required
+                    </div> -->
+                        </div>
+                    </div>
+                </div>
+
+            </fieldset>
+
+
         <!-- <fieldset class="form-fieldset" >
             <div class="row">
                 <div class="col-xs-12">

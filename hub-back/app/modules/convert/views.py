@@ -135,6 +135,33 @@ def config_post(*args, **kwargs):
 
     abort(make_response(jsonify(message="Must be in JSON format"), 400))
 
+@module.route('/v1/process', methods=['OPTIONS'])
+def process_options():
+    return jsonify(**{
+        'meta': {
+            'status': 200
+        }
+    })
+
+
+@module.route('/v1/process', methods=['POST'])
+
+def process_post(*args, **kwargs):
+    if request.content_type is None:
+        abort(make_response(jsonify(message="Must be in JSON format"), 400))
+
+    if request.content_type is not None and (request.content_type == 'application/json' or 'application/json' in request.content_type):
+        try:
+            data = json.loads(request.data)
+        except ValueError as e:
+             abort(make_response(jsonify(message="Must be in JSON format"), 400))
+        print(data)
+       
+        return jsonify(**utilities.process_data(data)), 200
+
+
+    abort(make_response(jsonify(message="Must be in JSON format"), 400))
+
         
 @module.route('/v1/form', methods=['GET'])
 def form_get(*args, **kwargs):

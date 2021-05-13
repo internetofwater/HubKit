@@ -34,6 +34,8 @@ export class SetupformComponent implements OnInit {
   successful_load = "";
   setting_fields = SETTINGS_FIELDS;
   transform_config;
+  config_response:any;
+  process_response:any;
   fields = FIELDS;
   test = "";
   sheet_selected = "";
@@ -59,34 +61,51 @@ export class SetupformComponent implements OnInit {
           "columns": 1
       }
     },
-    {
-      "group_name": "Things",
-      "group_order": 2,
-      "visibility": true,
-      "layout": {
-          "columns": 1
-      }
-    },
-    {
-      "group_name": "Location",
-      "group_order": 3,
-      "visibility": true,
-      "layout": {
-          "columns": 1
-      }
-    },
+    // {
+    //   "group_name": "Things",
+    //   "group_order": 2,
+    //   "visibility": true,
+    //   "layout": {
+    //       "columns": 1
+    //   }
+    // },
+    // {
+    //   "group_name": "Location",
+    //   "group_order": 3,
+    //   "visibility": true,
+    //   "layout": {
+    //       "columns": 1
+    //   }
+    // },
   ]
 
   fileName = '';
 
   constructor(private apiService: ApiService, private http: HttpClient) { 
     this.transform_config = TRANSFORM_CONFIG_SETTINGS;
+    this.config_response = {}
+    this.process_response = {}
+    
+  }
+
+  get_column_letter(csv:string):string{
+
+    var result = ""
+
+    var field = csv?csv.split(','):"";
+
+    if  (field.length>0){
+
+      result = field[1]
+      
+    }
+
+    return result
   }
 
   onAddToThings(payload:any):void{
 
 
-    debugger
     var mapped_to = payload["mapped_to"]?payload["mapped_to"]:"";
     var field_name = "";
     var field = payload["field"]?payload.field.split(','):"";
@@ -97,22 +116,21 @@ export class SetupformComponent implements OnInit {
     if  (field.length>0){
       
       field_name = field[0];
-      value = field[1]+"2";
+      value = field[1];
     }
 
-    
-
+  
     this.transform_config.Things.fields.push(
       {
-                    type:"single",
-                    mapped_to:mapped_to,
-                    field_source_type:"text",
-                    field_name:field_name,
-                    sheet:sheet,
-                    value_type:"sheet",
-                    value:value,
-                    data_source:"sheet"
-                }
+        type:"single",
+        mapped_to:mapped_to,
+        field_source_type:"text",
+        field_name:field_name,
+        sheet:sheet,
+        value_type:"sheet",
+        value:value,
+        data_source:"sheet"
+      }
     )
   }
 
@@ -178,6 +196,30 @@ export class SetupformComponent implements OnInit {
     //
     console.log("I was pressed");
     this.apiService.run_convert(this.transform_config)
+    .subscribe(config_response => this.config_response = config_response);
+  }
+
+  process_data():void{
+
+    // this.transform_config.settings.type = 'DUDE' 
+
+    // PREPARE DATA TO BE SENT
+
+    //
+    console.log("I was pressed");
+    this.apiService.run_process(this.config_response)
+    .subscribe(process_response => this.process_response = process_response);
+  }
+
+  post_to_frost_server():void{
+
+    // this.transform_config.settings.type = 'DUDE' 
+
+    // PREPARE DATA TO BE SENT
+
+    //
+    console.log("I was pressed");
+    this.apiService.post_to_frost_server(this.config_response)
     .subscribe();
   }
 

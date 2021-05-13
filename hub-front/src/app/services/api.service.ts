@@ -16,6 +16,7 @@ import { TransformConfig } from '../interfaces/transformconfig';
 export class ApiService {
 
   private apiUrl = 'http://localhost:5000/v1';  // URL to web api
+  private frost_apiUrl = 'http://localhost:8080/FROST-Server/v1.1/Things';  // URL to web api
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -30,6 +31,33 @@ export class ApiService {
     .pipe(
       tap(_ => this.log('post config')),
       catchError(this.handleError<TransformConfig>('create_config', transform_config ))
+    );
+  }
+
+  run_process(config_response: any): Observable<TransformConfig> {
+
+    return this.http.post<TransformConfig>(this.apiUrl+"/process", config_response, this.httpOptions )
+    .pipe(
+      tap(_ => this.log('run_process')),
+      catchError(this.handleError<TransformConfig>('run_process', config_response ))
+    );
+  }
+  post_to_frost_server(config_response: any): Observable<TransformConfig> {
+
+
+    if (config_response.Datastreams && config_response.Datastreams.length === 0){
+      delete config_response.Datastreams;
+    }
+    if (config_response.Locations && config_response.Locations.length === 0){
+      delete config_response.Locations;
+    }
+
+
+
+    return this.http.post<TransformConfig>(this.frost_apiUrl,config_response , this.httpOptions )
+    .pipe(
+      tap(_ => this.log('post convert')),
+      catchError(this.handleError<TransformConfig>('run_convert', config_response ))
     );
   }
 

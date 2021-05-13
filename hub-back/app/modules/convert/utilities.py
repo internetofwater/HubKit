@@ -20,7 +20,6 @@ from flask import make_response
 from flask import jsonify
 from flask import current_app
 
-
 import os.path
 import json
 
@@ -28,6 +27,8 @@ import urllib3
 import csv
 import pytz
 import datetime
+
+import requests
 
 import csv
 
@@ -401,185 +402,265 @@ def convert_data_from_excel(source, config):
 	else:
 		abort(make_response(jsonify(message='Could not import excel file'), 400))
 
-	""" THING AND PROPERTIES """
-	if 'fields' in config['Things']:
+		#Get the name
 
-		for field in config['Things']['fields']:
+	output = []
 
-			if field['type']== 'single':
+	# GET NAME OF COLUMN
 
-				if field['mapped_to']== 'name':
-					result_name = get_data_from_excel_cell(workbook, \
-								field['sheet'], \
-								field['value'])
-					thing_id = result_name.lower()
-					thing_id = thing_id.replace(" ", "_")
+	# REPEAT FOR EVERY ROW IN THE SHEET
 
-				if field['mapped_to']== 'properties':
-					restult_properties = get_data_from_excel_cell(workbook, \
-								field['sheet'], \
-								field['value'])
+	sh = workbook['Test Data']
+	print(sh["a1"].value)
+	print(sh.max_row)
+	print(sh.max_column)
 
-				if field['mapped_to']== 'description':
-					result_description = get_data_from_excel_cell(workbook, \
-								field['sheet'], \
-								field['value'])
 
-			if field['type']== 'many':
-				if field['mapped_to']== 'properties':
-					for val in field['value']:
-						for key, value in val.items():
-							key_result = get_data_from_excel_cell(workbook, \
-								field['sheet'], \
-								key)
-							value_result = get_data_from_excel_cell(workbook, \
-								field['sheet'], \
-								value)
-							restult_properties[key_result] = value_result
+	thing_name_value = config['settings']['thing_name_column']
+	thing_description_value = config['settings']['thing_description_column']
 
-	""" LOCATIONS """
-	if 'fields' in config['Locations']:
+	# if 'Things' in config:
+	# 	for field in config['Things']['fields']:
 
-		for location in config['Locations']:
-			for field in location['fields']:
-				location_name = ""
-				location_description = ""
-				location_coordinates = []
-				if field['type']== 'single':
+	# 		if field['type']== 'single':
 
-					if field['mapped_to']== 'name':
-						location_name = get_data_from_excel_cell(workbook, \
-									field['sheet'], \
-									field['value'])
-						location_id = result_name.lower()
-						location_id = location_id.replace(" ", "_")
+	# 			if field['mapped_to']== 'name':
+	# 				# result_name = get_data_from_excel_cell(workbook, \
+	# 				# 			field['sheet'], \
+	# 				# 			field['value'])
+	# 				thing_name_value = field['value']
+	# 				thing_id = result_name.lower()
+	# 				thing_id = thing_id.replace(" ", "_")
 
-					if field['mapped_to']== 'description':
-						location_description = get_data_from_excel_cell(workbook, \
-									field['sheet'], \
-									field['value'])
+	# 			if field['mapped_to']== 'properties':
+	# 				restult_properties = get_data_from_excel_cell(workbook, \
+	# 							field['sheet'], \
+	# 							field['value'])
 
-				if field['type']== 'many':
-					if field['mapped_to']== 'location':
-						for val in field['value']:
-							location_coordinates.append(get_data_from_excel_cell(workbook, \
-									field['sheet'], \
-									val))
-						locations.append({
-							"name": location_name,
-							"description": location_description,
-							"encodingType": "application/vnd.geo+json",
-							"@iot.id": location_id,
-							"location": {
-								"type": "Point",
-								"coordinates": location_coordinates
-								}
-						})
+	# 			if field['mapped_to']== 'description':
+	# 				result_description = get_data_from_excel_cell(workbook, \
+	# 							field['sheet'], \
+	# 							field['value'])
 
-	""" DATA STREAM """
-	if 'fields' in config['Datastreams']:
-		for datastream in config['Datastreams']:
-			datastream_name = ""
-			datastream_description = ""
-			datastream_observation_type = ""
-			unit_of_measurement_name = ""
-			unit_of_measurement_symbol = ""
-			unit_of_measurement_definition = ""
-			sensor_name = ""
-			sensor_description = ""
-			sensor_encoding_type = ""
-			sensor_metadata = ""
-			observerd_property_name = ""
-			observerd_property_definition = ""
-			observerd_property_description = ""
-			observation_time = ""
-			observation_result = ""
-			for field in datastream['fields']:
+	# 		if field['type']== 'many':
+	# 			if field['mapped_to']== 'properties':
+	# 				for val in field['value']:
+	# 					for key, value in val.items():
+	# 						key_result = get_data_from_excel_cell(workbook, \
+	# 							field['sheet'], \
+	# 							key)
+	# 						value_result = get_data_from_excel_cell(workbook, \
+	# 							field['sheet'], \
+	# 							value)
+	# 						restult_properties[key_result] = value_result
+
+
+	for i in range(2, sh.max_row):
+		thing_name =  sh["%s%s" % (thing_name_value,i)].value
+		thing_description = sh["%s%s" % (thing_description_value,i)].value
+		thing_id = thing_name.lower()
+		thing_id = thing_id.replace(" ", "_")
+
+		output.append({
+			"@iot.id":thing_id,
+			"name": thing_name,
+			"description": thing_description if thing_description else "none",
+			"properties": {
+			}
+		})
+
+	# iterate through excel and display data
+	# for row in sh.iter_rows(min_row=1, min_col=1, max_row=12, max_col=3):
+	# 	for cell in row:
+	# 		print(cell.value, end=" ")
+	# 	print()
+
+	
+
+
+	# if 'Things' in config:
+		
+	# 	for thing in config['Things']:
+
+	# 		""" THING AND PROPERTIES """
+	# 		if 'fields' in thing:
+
+	# 			for field in thing['fields']:
+
+	# 				if field['type']== 'single':
+
+	# 					if field['mapped_to']== 'name':
+	# 						result_name = get_data_from_excel_cell(workbook, \
+	# 									field['sheet'], \
+	# 									field['value'])
+	# 						thing_id = result_name.lower()
+	# 						thing_id = thing_id.replace(" ", "_")
+
+	# 					if field['mapped_to']== 'properties':
+	# 						restult_properties = get_data_from_excel_cell(workbook, \
+	# 									field['sheet'], \
+	# 									field['value'])
+
+	# 					if field['mapped_to']== 'description':
+	# 						result_description = get_data_from_excel_cell(workbook, \
+	# 									field['sheet'], \
+	# 									field['value'])
+
+	# 				if field['type']== 'many':
+	# 					if field['mapped_to']== 'properties':
+	# 						for val in field['value']:
+	# 							for key, value in val.items():
+	# 								key_result = get_data_from_excel_cell(workbook, \
+	# 									field['sheet'], \
+	# 									key)
+	# 								value_result = get_data_from_excel_cell(workbook, \
+	# 									field['sheet'], \
+	# 									value)
+	# 								restult_properties[key_result] = value_result
+
+	# """ LOCATIONS """
+	# if 'fields' in config['Locations']:
+
+	# 	for location in config['Locations']:
+	# 		for field in location['fields']:
+	# 			location_name = ""
+	# 			location_description = ""
+	# 			location_coordinates = []
+	# 			if field['type']== 'single':
+
+	# 				if field['mapped_to']== 'name':
+	# 					location_name = get_data_from_excel_cell(workbook, \
+	# 								field['sheet'], \
+	# 								field['value'])
+	# 					location_id = result_name.lower()
+	# 					location_id = location_id.replace(" ", "_")
+
+	# 				if field['mapped_to']== 'description':
+	# 					location_description = get_data_from_excel_cell(workbook, \
+	# 								field['sheet'], \
+	# 								field['value'])
+
+	# 			if field['type']== 'many':
+	# 				if field['mapped_to']== 'location':
+	# 					for val in field['value']:
+	# 						location_coordinates.append(get_data_from_excel_cell(workbook, \
+	# 								field['sheet'], \
+	# 								val))
+	# 					locations.append({
+	# 						"name": location_name,
+	# 						"description": location_description,
+	# 						"encodingType": "application/vnd.geo+json",
+	# 						"@iot.id": location_id,
+	# 						"location": {
+	# 							"type": "Point",
+	# 							"coordinates": location_coordinates
+	# 							}
+	# 					})
+
+	# """ DATA STREAM """
+	# if 'fields' in config['Datastreams']:
+	# 	for datastream in config['Datastreams']:
+	# 		datastream_name = ""
+	# 		datastream_description = ""
+	# 		datastream_observation_type = ""
+	# 		unit_of_measurement_name = ""
+	# 		unit_of_measurement_symbol = ""
+	# 		unit_of_measurement_definition = ""
+	# 		sensor_name = ""
+	# 		sensor_description = ""
+	# 		sensor_encoding_type = ""
+	# 		sensor_metadata = ""
+	# 		observerd_property_name = ""
+	# 		observerd_property_definition = ""
+	# 		observerd_property_description = ""
+	# 		observation_time = ""
+	# 		observation_result = ""
+	# 		for field in datastream['fields']:
 				
-				if field['type']== 'single':
+	# 			if field['type']== 'single':
 
-					if field['mapped_to']== 'name':
-						datastream_name = get_data_from_excel_cell(workbook, \
-									field['sheet'], \
-									field['value'])
-						data_stream_id = "%s %s" % (datastream_name.lower(), "param")
-						data_stream_id = data_stream_id.replace(" ", "_")
+	# 				if field['mapped_to']== 'name':
+	# 					datastream_name = get_data_from_excel_cell(workbook, \
+	# 								field['sheet'], \
+	# 								field['value'])
+	# 					data_stream_id = "%s %s" % (datastream_name.lower(), "param")
+	# 					data_stream_id = data_stream_id.replace(" ", "_")
 
-					# datastream_observation_type = get_data_from_sheet_or_input('datastream_observation_type', field, workbook)
+	# 				# datastream_observation_type = get_data_from_sheet_or_input('datastream_observation_type', field, workbook)
 
-					if field['mapped_to']== 'datastream_observation_type':
-						datastream_observation_type = get_data_from_sheet_or_input('datastream_observation_type', field, workbook)
+	# 				if field['mapped_to']== 'datastream_observation_type':
+	# 					datastream_observation_type = get_data_from_sheet_or_input('datastream_observation_type', field, workbook)
 
-					if field['mapped_to']== 'unit_of_measurement_symbol':
-						unit_of_measurement_symbol = get_data_from_sheet_or_input('unit_of_measurement_symbol', field, workbook)
+	# 				if field['mapped_to']== 'unit_of_measurement_symbol':
+	# 					unit_of_measurement_symbol = get_data_from_sheet_or_input('unit_of_measurement_symbol', field, workbook)
 
-					if field['mapped_to']== 'unit_of_measurement_name':
-						unit_of_measurement_name = get_data_from_sheet_or_input('unit_of_measurement_name', field, workbook)
+	# 				if field['mapped_to']== 'unit_of_measurement_name':
+	# 					unit_of_measurement_name = get_data_from_sheet_or_input('unit_of_measurement_name', field, workbook)
 
-					if field['mapped_to']== 'unit_of_measurement_definition':
-						unit_of_measurement_definition = get_data_from_sheet_or_input('unit_of_measurement_definition', field, workbook)
+	# 				if field['mapped_to']== 'unit_of_measurement_definition':
+	# 					unit_of_measurement_definition = get_data_from_sheet_or_input('unit_of_measurement_definition', field, workbook)
 
-					if field['mapped_to']== 'sensor_name':
-						sensor_name = get_data_from_sheet_or_input('sensor_name', field, workbook)
+	# 				if field['mapped_to']== 'sensor_name':
+	# 					sensor_name = get_data_from_sheet_or_input('sensor_name', field, workbook)
 
-					if field['mapped_to']== 'sensor_description':
-						sensor_description = get_data_from_sheet_or_input('sensor_description', field, workbook)
+	# 				if field['mapped_to']== 'sensor_description':
+	# 					sensor_description = get_data_from_sheet_or_input('sensor_description', field, workbook)
 
-					if field['mapped_to']== 'sensor_encoding_type':
-						sensor_encoding_type = get_data_from_sheet_or_input('sensor_encoding_type', field, workbook)
+	# 				if field['mapped_to']== 'sensor_encoding_type':
+	# 					sensor_encoding_type = get_data_from_sheet_or_input('sensor_encoding_type', field, workbook)
 
-					if field['mapped_to']== 'sensor_metadata':
-						sensor_metadata = get_data_from_sheet_or_input('sensor_metadata', field, workbook)
+	# 				if field['mapped_to']== 'sensor_metadata':
+	# 					sensor_metadata = get_data_from_sheet_or_input('sensor_metadata', field, workbook)
 						
-					if field['mapped_to']== 'observerd_property_name':
-						observerd_property_name = get_data_from_sheet_or_input('observerd_property_name', field, workbook)
+	# 				if field['mapped_to']== 'observerd_property_name':
+	# 					observerd_property_name = get_data_from_sheet_or_input('observerd_property_name', field, workbook)
 
-					if field['mapped_to']== 'observerd_property_definition':
-						observerd_property_definition = get_data_from_sheet_or_input('observerd_property_definition', field, workbook)
+	# 				if field['mapped_to']== 'observerd_property_definition':
+	# 					observerd_property_definition = get_data_from_sheet_or_input('observerd_property_definition', field, workbook)
 
-					if field['mapped_to']== 'observerd_property_description':
-						observerd_property_description = get_data_from_sheet_or_input('observerd_property_description', field, workbook)
+	# 				if field['mapped_to']== 'observerd_property_description':
+	# 					observerd_property_description = get_data_from_sheet_or_input('observerd_property_description', field, workbook)
 
-					if field['mapped_to']== 'observation_result':
-						observation_result = get_data_from_sheet_or_input('observation_result', field, workbook)
+	# 				if field['mapped_to']== 'observation_result':
+	# 					observation_result = get_data_from_sheet_or_input('observation_result', field, workbook)
 
-					if field['mapped_to']== 'observation_time':
-						if field['value_type']== 'input':
-							observation_time = field['value']
-						if field['value_type']== 'sheet':
-							observation_time = get_data_from_excel_cell(workbook, \
-									field['sheet'], \
-									field['value'])
-							observation_time = observation_time.isoformat()
+	# 				if field['mapped_to']== 'observation_time':
+	# 					if field['value_type']== 'input':
+	# 						observation_time = field['value']
+	# 					if field['value_type']== 'sheet':
+	# 						observation_time = get_data_from_excel_cell(workbook, \
+	# 								field['sheet'], \
+	# 								field['value'])
+	# 						observation_time = observation_time.isoformat()
 
-			data_streams.append({
-					"@iot.id":data_stream_id,
-					"name": datastream_name,
-					"description": datastream_description,
-					"observationType": datastream_observation_type,
-						"unitOfMeasurement": {
-						"name": unit_of_measurement_name,
-						"symbol": unit_of_measurement_symbol,
-						"definition": unit_of_measurement_definition
-					},
-					"Sensor": {
-						"name": sensor_name,
-						"description": sensor_description,
-						"encodingType": sensor_encoding_type,
-						"metadata": sensor_metadata
-					},
-					"ObservedProperty": {
-						"name": observerd_property_name,
-						"definition": observerd_property_definition,
-						"description": observerd_property_description
-					},
-					"Observations": [
-						{
-							"phenomenonTime": observation_time,
-							"result":observation_result
-						}
-					]
-				},)
+	# 		data_streams.append({
+	# 				"@iot.id":data_stream_id,
+	# 				"name": datastream_name,
+	# 				"description": datastream_description,
+	# 				"observationType": datastream_observation_type,
+	# 					"unitOfMeasurement": {
+	# 					"name": unit_of_measurement_name,
+	# 					"symbol": unit_of_measurement_symbol,
+	# 					"definition": unit_of_measurement_definition
+	# 				},
+	# 				"Sensor": {
+	# 					"name": sensor_name,
+	# 					"description": sensor_description,
+	# 					"encodingType": sensor_encoding_type,
+	# 					"metadata": sensor_metadata
+	# 				},
+	# 				"ObservedProperty": {
+	# 					"name": observerd_property_name,
+	# 					"definition": observerd_property_definition,
+	# 					"description": observerd_property_description
+	# 				},
+	# 				"Observations": [
+	# 					{
+	# 						"phenomenonTime": observation_time,
+	# 						"result":observation_result
+	# 					}
+	# 				]
+	# 			},)
 
 						
 	# """ MULTI DATA STREAMS """
@@ -639,12 +720,14 @@ def convert_data_from_excel(source, config):
 	# 			]
 
 	result = {
-		"name": result_name,
-		"description": result_description,
-		"properties": restult_properties,
-		"Locations": locations,
-		"@iot.id": thing_id,
-		"Datastreams": data_streams
+		"status":"okay",
+		"output":output
+		# "name": result_name,
+		# "description": result_description,
+		# "properties": restult_properties,
+		# "Locations": locations,
+		# "@iot.id": thing_id,
+		# "Datastreams": data_streams
 	}
 
 	return result
@@ -752,5 +835,72 @@ def get_column_headers(source):
 		"type": "FeatureCollection",
 		"features": sheets
 	}
+
+	return result
+
+
+def process_data(data):
+
+	if "output" in data:
+		for item in data["output"]:
+			print("Starting")
+
+			path = "http://localhost:8080/FROST-Server/v1.1"
+			thing = "Things('%s')" % item["@iot.id"]
+			url_collection = "%s/Things" % (path)
+			url_thing = "%s/%s" % (path, thing)
+
+			print(url_collection)
+			print(url_thing)
+
+
+			try:
+				response = requests.get(url=url_thing,
+					headers={
+						"Content-Type": "application/json; charset=utf-8",
+					})
+				data = response.json()
+			#         print('Response HTTP Response Body: {content}'.format(
+			#             content=response.content))
+			except requests.exceptions.RequestException:
+				print('HTTP Request failed')
+
+			input()
+			if response.status_code == 200:
+				print("We Got it")
+				continue
+			elif response.status_code == 404:
+				print("Let's Make it")
+				input()
+				data_to_post = {
+					"@iot.id":item['@iot.id'],
+						"name": item['name'],
+						"description": item['description']			
+				}
+				data_to_post = json.dumps(data_to_post)
+				print(data_to_post)
+				input()
+				try:
+					response = requests.post(url=url_collection,
+						headers={
+							"Content-Type": "application/json; charset=utf-8",
+						},
+						data=data_to_post
+            			)
+					# data = response.json()
+					# print('Response HTTP Response Body: {content}'.format(
+					# 	content=response.content))
+				except requests.exceptions.RequestException:
+					print('HTTP Request failed')
+				input()
+
+
+			input()
+
+
+	result = {
+		"staus":"okay",
+		"data":data
+		}
 
 	return result
