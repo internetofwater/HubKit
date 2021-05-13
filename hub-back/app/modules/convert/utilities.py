@@ -418,46 +418,15 @@ def convert_data_from_excel(source, config):
 
 	thing_name_value = config['settings']['thing_name_column']
 	thing_description_value = config['settings']['thing_description_column']
-
-	# if 'Things' in config:
-	# 	for field in config['Things']['fields']:
-
-	# 		if field['type']== 'single':
-
-	# 			if field['mapped_to']== 'name':
-	# 				# result_name = get_data_from_excel_cell(workbook, \
-	# 				# 			field['sheet'], \
-	# 				# 			field['value'])
-	# 				thing_name_value = field['value']
-	# 				thing_id = result_name.lower()
-	# 				thing_id = thing_id.replace(" ", "_")
-
-	# 			if field['mapped_to']== 'properties':
-	# 				restult_properties = get_data_from_excel_cell(workbook, \
-	# 							field['sheet'], \
-	# 							field['value'])
-
-	# 			if field['mapped_to']== 'description':
-	# 				result_description = get_data_from_excel_cell(workbook, \
-	# 							field['sheet'], \
-	# 							field['value'])
-
-	# 		if field['type']== 'many':
-	# 			if field['mapped_to']== 'properties':
-	# 				for val in field['value']:
-	# 					for key, value in val.items():
-	# 						key_result = get_data_from_excel_cell(workbook, \
-	# 							field['sheet'], \
-	# 							key)
-	# 						value_result = get_data_from_excel_cell(workbook, \
-	# 							field['sheet'], \
-	# 							value)
-	# 						restult_properties[key_result] = value_result
+	thing_lng_value = config['settings']['thing_lng_column']
+	thing_lat_value = config['settings']['thing_lat_column']
 
 
 	for i in range(2, sh.max_row):
 		thing_name =  sh["%s%s" % (thing_name_value,i)].value
 		thing_description = sh["%s%s" % (thing_description_value,i)].value
+		lng = sh["%s%s" % (thing_lng_value,i)].value
+		lat = sh["%s%s" % (thing_lat_value,i)].value
 		thing_id = thing_name.lower()
 		thing_id = thing_id.replace(" ", "_")
 
@@ -466,7 +435,9 @@ def convert_data_from_excel(source, config):
 			"name": thing_name,
 			"description": thing_description if thing_description else "none",
 			"properties": {
-			}
+			},
+			"lng":lng,
+			"lat":lat
 		})
 
 	# iterate through excel and display data
@@ -854,6 +825,7 @@ def process_data(data):
 			print(url_thing)
 
 
+			## CHECK FOR EXISTANCE
 			try:
 				response = requests.get(url=url_thing,
 					headers={
@@ -864,6 +836,7 @@ def process_data(data):
 			#             content=response.content))
 			except requests.exceptions.RequestException:
 				print('HTTP Request failed')
+			## END CHECK FOR EXISTANCE
 
 			input()
 			if response.status_code == 200:
@@ -874,8 +847,17 @@ def process_data(data):
 				input()
 				data_to_post = {
 					"@iot.id":item['@iot.id'],
-						"name": item['name'],
-						"description": item['description']			
+					"name": item['name'],
+					"description": item['description'],
+					"Locations": [{
+						"name":  item['name'],
+						"description":  item['description'],
+						"encodingType": "application/vnd.geo+json",
+						"location": {
+							"type": "Point",
+							"coordinates": [item['lng'], item['lat']]
+						}
+					}],			
 				}
 				data_to_post = json.dumps(data_to_post)
 				print(data_to_post)
@@ -888,6 +870,7 @@ def process_data(data):
 						data=data_to_post
             			)
 					# data = response.json()
+
 					# print('Response HTTP Response Body: {content}'.format(
 					# 	content=response.content))
 				except requests.exceptions.RequestException:
