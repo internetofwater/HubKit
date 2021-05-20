@@ -410,11 +410,9 @@ def convert_data_from_excel(source, config):
 
 	# REPEAT FOR EVERY ROW IN THE SHEET
 
-	sh = workbook['Test Data']
-	print(sh["a1"].value)
-	print(sh.max_row)
-	print(sh.max_column)
+	sheet = config['settings']['sheet']
 
+	sh = workbook[sheet]
 
 	thing_name_value = config['settings']['thing_name_column']
 	thing_description_value = config['settings']['thing_description_column']
@@ -843,7 +841,8 @@ def process_data(data):
 				print("We Got it")
 				continue
 			elif response.status_code == 404:
-				print("Let's Make it")
+				# CREATE THE THING
+				print("Let's Make the THING")
 				input()
 				data_to_post = {
 					"@iot.id":item['@iot.id'],

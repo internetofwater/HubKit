@@ -172,16 +172,16 @@ export class SetupformComponent implements OnInit {
 
   create_config():void{
 
-    
-
     // this.transform_config.settings.type = 'DUDE' 
 
     // PREPARE DATA TO BE SENT
 
     //
 
+    // console.log(this.file_contents_local.features)
 
-    console.log("I was pressed");
+
+    console.log("I was pressed yo yo");
     this.apiService.create_config(this.transform_config)
     .subscribe(transform_config => this.transform_config = transform_config);
   }
@@ -221,6 +221,12 @@ export class SetupformComponent implements OnInit {
     console.log("I was pressed");
     this.apiService.post_to_frost_server(this.config_response)
     .subscribe();
+  }
+
+  set_sheet_name():void{
+
+    this.transform_config.settings.sheet = this.file_contents_local.features[this.sheet_selected].sheet
+
   }
 
 }

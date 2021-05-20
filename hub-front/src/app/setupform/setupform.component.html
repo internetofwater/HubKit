@@ -79,7 +79,7 @@
                                                             [(ngModel)]="sheet_selected">
                                                     <option selected> -- Select A Sheet --</option>
                                                     <option
-                                                     *ngFor="let item of file_contents_local.features" [value]="item.sheet_number">{{item.sheet}}</option>
+                                                     *ngFor="let item of file_contents_local.features"   [value]="item.sheet_number">{{item.sheet}}</option>
                                                     </select>                               
                                                 </div>
     
@@ -165,18 +165,19 @@
                                     <select class="form-control" id=""
                                                         required=""
                                                         selected
+                                                        (change)="transform_config.settings.sheet = file_contents_local.features[sheet_selected].sheet"
                                                         name=""
                                                         [(ngModel)]="sheet_selected">
                                         <option selected> -- Select A Sheet --</option>
                                         <option
-                                            *ngFor="let item of file_contents_local.features" [value]="item.sheet_number">{{item.sheet}}</option>
+                                            *ngFor="let item of file_contents_local.features"  [value]="item.sheet_number">{{item.sheet}}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-sm-6 col-xs-12">
-                                <label  class="form-label" for="thing_name_column">Select Thing Name Column</label>
                                 <div class="container--selection single-space"
-                                            *ngIf="sheet_selected"  >               
+                                            *ngIf="sheet_selected"  >     
+                                    <label  class="form-label" for="thing_name_column">Select Thing Name Column</label>
                                     <select class="form-control" id="thing_name_column"
                                             required=""
                                             selected
@@ -189,9 +190,9 @@
                             </div>
 
                             <div class="col-sm-6 col-xs-12">
-                                <label  class="form-label" for="thing_name_column">Select Thing Description Column</label>
                                 <div class="container--selection single-space"
-                                            *ngIf="sheet_selected"  >               
+                                            *ngIf="sheet_selected"  >
+                                    <label  class="form-label" for="thing_name_column">Select Thing Description Column</label>               
                                     <select class="form-control" id="thing_description_column"
                                             required=""
                                             selected
@@ -205,9 +206,9 @@
                             </div>
                             <!-- LONGITUDE -->
                             <div class="col-sm-6 col-xs-12">
-                                <label  class="form-label" for="thing_name_column">Select Location Longitude</label>
                                 <div class="container--selection single-space"
-                                            *ngIf="sheet_selected"  >               
+                                            *ngIf="sheet_selected"  >
+                                    <label  class="form-label" for="thing_name_column">Select Location Longitude</label>
                                     <select class="form-control" id="thing_lng_column"
                                             required=""
                                             selected
@@ -222,9 +223,10 @@
 
                             <!-- LATTITUDE -->
                             <div class="col-sm-6 col-xs-12">
-                                <label  class="form-label" for="thing_name_column">Select Location Lattitude</label>
+                               
                                 <div class="container--selection single-space"
-                                            *ngIf="sheet_selected"  >               
+                                            *ngIf="sheet_selected"  >
+                                    <label  class="form-label" for="thing_name_column">Select Location Lattitude</label>               
                                     <select class="form-control" id="thing_lat_column"
                                             required=""
                                             selected
@@ -253,6 +255,129 @@
         <div>
             <button type="button" (click)="process_data()" class="button button-primaryAction">Process Things</button>
         </div>
+
+        <h2 class="big heavy caps">Add Your Parameters</h2>    
+        <hr />
+        <fieldset class="form-fieldset" >
+           
+            <div class="single-space form-group">
+                @iot.id =
+                <div class="row">
+                    
+                    <!-- FIELD -->
+                    <div class="col-sm-6 col-xs-12">
+                        <div class="container--selection single-space">
+                            <label  class="form-label" for="datastream_property_name">Property Name</label>
+                            <input class="form-control"  type="text" id="datastream_property_name"/>                             
+                        </div>
+                    </div>
+                    <!-- FIELD -->
+                    <div class="col-sm-6 col-xs-12">
+                        <div class="container--selection single-space">
+                            <label  class="form-label" for="datastream_property_definition">Property Definition</label>
+                            <input class="form-control"  type="text" id="datastream_property_definition"/>                             
+                        </div>
+                    </div>
+                    <!-- FIELD -->
+                    <div class="col-sm-6 col-xs-12">
+                        <div class="container--selection single-space">
+                            <label  class="form-label" for="datastream_property_description">Property Description</label>
+                            <input class="form-control"  type="text" id="datastream_property_description"/>                             
+                        </div>
+                    </div>
+                    <!-- FIELD -->
+                    <div class="col-sm-6 col-xs-12">
+                        <div class="container--selection single-space">
+                            <label  class="form-label" for="datastream_unit_of_measurement">Unit of Measurement</label>
+                            <input class="form-control"  type="text" id="datastream_unit_of_measurement"/>                             
+                        </div>
+                    </div>
+                    <!-- FIELD -->
+                    <div class="col-sm-6 col-xs-12">
+                        <div class="container--selection single-space">
+                            <label  class="form-label" for="datastream_unit_symbol">Unit Symbol</label>
+                            <input class="form-control"  type="text" id="datastream_unit_symbol"/>                             
+                        </div>
+                    </div>
+                    <!-- FIELD -->
+                    <div class="col-sm-6 col-xs-12">
+                        <div class="container--selection single-space">
+                            <label  class="form-label" for="datastream_unit_definition">Unit definition</label>
+                            <input class="form-control"  type="text" id="datastream_unit_definition"/>                             
+                        </div>
+                    </div>
+
+
+                    <!-- FIELD -->
+                    <div class="col-sm-6 col-xs-12">
+                        <div class="container--selection single-space">
+                            <label  class="form-label" for="datastream_sensor_name">Sensor Name</label>
+                            <input class="form-control"  type="text" id="datastream_sensor_name"/>                             
+                        </div>
+                    </div>
+                    <!-- FIELD -->
+                    <div class="col-sm-6 col-xs-12">
+                        <div class="container--selection single-space">
+                            <label  class="form-label" for="datastream_sensor_description">Sensor Description</label>
+                            <input class="form-control"  type="text" id="datastream_sensor_description"/>                             
+                        </div>
+                    </div>
+                    <!-- FIELD -->
+                    <div class="col-sm-6 col-xs-12">
+                        <div class="container--selection single-space">
+                            <label  class="form-label" for="datastream_sensor_encoding_type">Sensor Encoding Type</label>
+                            <input class="form-control"  type="text" id="datastream_sensor_encoding_type"/>                             
+                        </div>
+                    </div>
+                    <!-- FIELD -->
+                    <div class="col-sm-6 col-xs-12">
+                        <div class="container--selection single-space">
+                            <label  class="form-label" for="datastream_sensor_metadata">Sensor Metadata</label>
+                            <input class="form-control"  type="text" id="datastream_sensor_metadata"/>                             
+                        </div>
+                    </div>
+
+
+
+
+
+                    <!-- SELECT OPTIONS -->                            
+                    <div class="col-sm-6 col-xs-12">
+                        <div class="container--selection single-space"
+                                    *ngIf="sheet_selected"  >
+                            <label  class="form-label" for="datastream_result">Result</label>
+                            <select class="form-control" id="datastream_result"
+                                    required=""
+                                    selected
+                                    name="datastream_result"
+                                    >
+                                    
+                            <option
+                                *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                            </select>                               
+                        </div>
+                    </div>
+                    <!-- SELECT OPTIONS -->                            
+                    <div class="col-sm-6 col-xs-12">
+                        <div class="container--selection single-space"
+                                    *ngIf="sheet_selected"  >
+                            <label  class="form-label" for="datastream_date_time">Date and Time</label>
+                            <select class="form-control" id="datastream_date_time"
+                                    required=""
+                                    selected
+                                    name="datastream_date_time"
+                                    >
+                                    
+                            <option
+                                *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                            </select>                               
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </fieldset>
 
         <!-- END THINGS -->
 
