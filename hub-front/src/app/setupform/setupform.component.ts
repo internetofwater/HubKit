@@ -6,6 +6,7 @@ import { ApiService } from '../services/api.service';
 import { TRANSFORM_CONFIG_SETTINGS } from '../mock/mock-transform_config';
 import {HttpClient, HttpEvent, HttpErrorResponse, HttpEventType} from '@angular/common/http';
 import { IParameter } from '../interfaces/parameter';
+import { IObservation } from '../interfaces/observation';
 
 
 @Component({
@@ -35,6 +36,7 @@ export class SetupformComponent implements OnInit {
   successful_load = "";
   setting_fields = SETTINGS_FIELDS;
   form_parameters:IParameter;
+  form_reading:IObservation;
   transform_config;
   config_response:any;
   process_response:any;
@@ -101,8 +103,12 @@ export class SetupformComponent implements OnInit {
       id:"",
       name:"",
       description:""
-      
     } 
+    this.form_reading = {
+      name:"",
+      phenomenonTime:"",
+      result:""
+    }
     this.config_response = {}
     this.process_response = {}    
   }
@@ -125,6 +131,19 @@ export class SetupformComponent implements OnInit {
       name:"",
       description:""
       
+    } 
+
+    return result
+  }
+
+  reset_form_reading():IObservation{
+
+    let result = {
+
+      name:"",
+      phenomenonTime:"",
+      result:""
+
     } 
 
     return result
@@ -273,6 +292,8 @@ export class SetupformComponent implements OnInit {
 
   save_parameter():void{
 
+    this.form_reading.name = this.form_parameters.property_name;
+
     // ANY VALUES IN PARAMS? NO? THEN ADD ONE
     if (this.transform_config.parameters.length===0){
       this.transform_config.parameters.push(this.form_parameters);
@@ -291,7 +312,30 @@ export class SetupformComponent implements OnInit {
       }
     }
 
-    this.form_parameters = this.reset_form_parameters();    
+    this.form_parameters = this.reset_form_parameters();  
+    
+    // SAVE READING
+
+    // ANY VALUES IN PARAMS? NO? THEN ADD ONE
+    if (this.transform_config.datastreams.length===0){
+      this.transform_config.datastreams.push(this.form_reading);
+    }
+
+    // // LOOP THROUGH AND CHECK IF NO MATCHES ADD PARAMS OTHERWISE OVERWRITE
+    // for (let i=0; i<this.transform_config.datastreams.length;i++){
+    //   var item = this.transform_config.datastreams[i];
+    //   if (item.property_name === this.form_reading.name){
+    //     item = this.form_reading;
+    //     break;
+    //   }
+
+    //   if (i===this.transform_config.datastreams.length-1){
+    //     this.transform_config.datastreams.push(this.form_reading);
+    //   }
+    // }
+
+
+    this.form_reading = this.reset_form_reading();
       
   }
 

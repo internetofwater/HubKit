@@ -13,7 +13,8 @@ export const TRANSFORM_CONFIG_SETTINGS: TransformConfig =
             thing_lng_column:"",
             thing_lat_column:"",
         },
-        parameters:[]
+        parameters:[],
+        datastreams:[]
     }
 
 
