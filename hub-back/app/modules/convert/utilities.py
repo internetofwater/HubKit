@@ -414,10 +414,18 @@ def convert_data_from_excel(source, config):
 
 	sh = workbook[sheet]
 
+	
+
 	thing_name_value = config['settings']['thing_name_column']
 	thing_description_value = config['settings']['thing_description_column']
 	thing_lng_value = config['settings']['thing_lng_column']
 	thing_lat_value = config['settings']['thing_lat_column']
+	
+
+
+	
+	
+
 
 
 	for i in range(2, sh.max_row):
@@ -428,6 +436,42 @@ def convert_data_from_excel(source, config):
 		thing_id = thing_name.lower()
 		thing_id = thing_id.replace(" ", "_")
 
+		parameters = []
+
+		for param in config['parameters']:
+			observation_type = param['observation_type']
+			property_definition = param['property_definition']
+			property_description = param['property_description']
+			property_name = param['property_name']
+			sensor_description = param['sensor_description']
+			sensor_encoding_type = param['sensor_encoding_type']
+			sensor_metadata = param['sensor_metadata']
+			sensor_name = param['sensor_name']
+			unit_definition = param['unit_definition']
+			unit_name = param['unit_name']
+			unit_symbol = param['unit_symbol']
+
+			datastrem_id = "%s_%s" % (thing_id,property_name.lower())
+			datastrem_id = datastrem_id.replace(" ", "_")
+
+			parameters.append({
+				"name":thing_name,
+				"description":thing_description,
+				"@iot.id":datastrem_id,
+				"observation_type":observation_type,
+				"property_definition":property_definition,
+				"property_description":property_description,
+				"property_name":property_name,
+				"sensor_description":sensor_description,
+				"sensor_encoding_type":sensor_encoding_type,
+				"sensor_metadata":sensor_metadata,
+				"sensor_name":sensor_name,
+				"unit_definition":unit_definition,
+				"unit_name":unit_name,
+				"unit_symbol":unit_symbol
+			})
+		
+
 		output.append({
 			"@iot.id":thing_id,
 			"name": thing_name,
@@ -435,8 +479,12 @@ def convert_data_from_excel(source, config):
 			"properties": {
 			},
 			"lng":lng,
-			"lat":lat
+			"lat":lat,
+			"parameters":parameters
+
 		})
+
+
 
 	# iterate through excel and display data
 	# for row in sh.iter_rows(min_row=1, min_col=1, max_row=12, max_col=3):
@@ -810,6 +858,8 @@ def get_column_headers(source):
 
 def process_data(data):
 
+	input()
+
 	if "output" in data:
 		for item in data["output"]:
 			print("Starting")
@@ -818,10 +868,6 @@ def process_data(data):
 			thing = "Things('%s')" % item["@iot.id"]
 			url_collection = "%s/Things" % (path)
 			url_thing = "%s/%s" % (path, thing)
-
-			print(url_collection)
-			print(url_thing)
-
 
 			## CHECK FOR EXISTANCE
 			try:
@@ -844,6 +890,34 @@ def process_data(data):
 				# CREATE THE THING
 				print("Let's Make the THING")
 				input()
+
+				datastreams = []
+
+				for param in item['parameters']:
+					datastreams.append(
+						{
+						"@iot.id":param['@iot.id'],
+						"name": item['name'],
+						"description":item['description'],
+						"observationType":param['observation_type'],
+						"unitOfMeasurement": {
+							"name": param['unit_name'],
+							"symbol":param['unit_symbol'],
+							"definition": param['unit_definition'],
+						},
+						"Sensor": {
+							"name": param['sensor_name'],
+							"description": param['sensor_description'],
+							"encodingType": param['sensor_encoding_type'],
+							"metadata": param['sensor_metadata'],
+						},
+						"ObservedProperty": {
+							"name": param['property_name'],
+							"definition": param['property_definition'],
+							"description": param['property_description'],
+						},			
+					})
+
 				data_to_post = {
 					"@iot.id":item['@iot.id'],
 					"name": item['name'],
@@ -856,10 +930,11 @@ def process_data(data):
 							"type": "Point",
 							"coordinates": [item['lng'], item['lat']]
 						}
-					}],			
+					}],
+					"Datastreams": datastreams
 				}
 				data_to_post = json.dumps(data_to_post)
-				print(data_to_post)
+				print("BOUT TO POST SOME DATA")
 				input()
 				try:
 					response = requests.post(url=url_collection,

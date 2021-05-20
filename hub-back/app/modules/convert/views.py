@@ -128,7 +128,6 @@ def config_post(*args, **kwargs):
             data = json.loads(request.data)
         except ValueError as e:
              abort(make_response(jsonify(message="Must be in JSON format"), 400))
-        print(data)
        
         return jsonify(**utilities.create_config(data)), 200
 
@@ -155,7 +154,6 @@ def process_post(*args, **kwargs):
             data = json.loads(request.data)
         except ValueError as e:
              abort(make_response(jsonify(message="Must be in JSON format"), 400))
-        print(data)
        
         return jsonify(**utilities.process_data(data)), 200
 
