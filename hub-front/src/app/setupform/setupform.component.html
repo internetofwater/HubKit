@@ -262,7 +262,14 @@
            
             <div class="single-space form-group">
                 @iot.id =
-                <div class="row">
+                <div>
+                    <button type="button" (click)="add_new_parameter_is_active=true;" class="button button-primaryAction">Add Parameter</button>
+
+                </div>
+                <div class="row" *ngIf="add_new_parameter_is_active">
+                    <div class="col-xs-12 double-top double-space">
+                        <button type="button" (click)="add_parameter(); add_new_parameter_is_active=false;" class="button button-primaryAction">Save</button>
+                    </div>
                     
                     <!-- FIELD -->
                     <div class="col-sm-6 col-xs-12">
@@ -381,7 +388,7 @@
 
         <!-- END THINGS -->
 
-        {{transform_config.settings | json}}
+        {{transform_config | json}}
         {{config_response | json}}
 
         

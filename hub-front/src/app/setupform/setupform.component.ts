@@ -5,6 +5,7 @@ import {FIELDS } from  '../mock/mock-fields';
 import { ApiService } from '../services/api.service';
 import { TRANSFORM_CONFIG_SETTINGS } from '../mock/mock-transform_config';
 import {HttpClient, HttpEvent, HttpErrorResponse, HttpEventType} from '@angular/common/http';
+import { IParameter } from '../interfaces/parameter';
 
 
 @Component({
@@ -21,7 +22,6 @@ export class SetupformComponent implements OnInit {
   //   placeholder: ''
   // };
 
-  
 
   answer = {
     data_source:""
@@ -31,6 +31,7 @@ export class SetupformComponent implements OnInit {
     
   }
 
+  add_new_parameter_is_active = false;
   successful_load = "";
   setting_fields = SETTINGS_FIELDS;
   transform_config;
@@ -81,11 +82,11 @@ export class SetupformComponent implements OnInit {
 
   fileName = '';
 
+
   constructor(private apiService: ApiService, private http: HttpClient) { 
     this.transform_config = TRANSFORM_CONFIG_SETTINGS;
     this.config_response = {}
-    this.process_response = {}
-    
+    this.process_response = {}    
   }
 
   get_column_letter(csv:string):string{
@@ -227,6 +228,31 @@ export class SetupformComponent implements OnInit {
 
     this.transform_config.settings.sheet = this.file_contents_local.features[this.sheet_selected].sheet
 
+  }
+
+  add_parameter():void{
+
+    let parameter: IParameter
+
+    parameter = {
+      property_name:"string",
+      property_definition:"string",
+      property_description:"string",
+      sensor_name:"string",
+      sensor_description:"string",
+      sensor_encoding_type:"string",
+      sensor_metadata:"string",
+      unit_name:"string",
+      unit_symbol:"string",
+      unit_definition:"string",
+      observation_type:"string",
+      id:"string",
+      name:"string",
+      description:"string"
+    }
+
+    this.transform_config.parameters.push(parameter);
+      
   }
 
 }
