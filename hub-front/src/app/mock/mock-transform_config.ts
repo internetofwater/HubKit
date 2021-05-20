@@ -14,8 +14,6 @@ export const TRANSFORM_CONFIG_SETTINGS: TransformConfig =
             thing_lat_column:"",
         },
         parameters:[]
-
-        
     }
 
 

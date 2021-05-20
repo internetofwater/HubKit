@@ -259,6 +259,9 @@
         <h2 class="big heavy caps">Add Your Parameters</h2>    
         <hr />
         <fieldset class="form-fieldset" >
+            <div class="single-space form-group">
+                <button  class="button button-primaryAction" *ngFor="let item of transform_config.parameters" (click)="add_new_parameter_is_active=true;display_params(item.property_name)" >{{item.property_name}}</button>
+            </div>
            
             <div class="single-space form-group">
                 @iot.id =
@@ -268,49 +271,49 @@
                 </div>
                 <div class="row" *ngIf="add_new_parameter_is_active">
                     <div class="col-xs-12 double-top double-space">
-                        <button type="button" (click)="add_parameter(); add_new_parameter_is_active=false;" class="button button-primaryAction">Save</button>
+                        <button type="button" (click)="save_parameter(); add_new_parameter_is_active=false;" class="button button-primaryAction">Save</button>
                     </div>
                     
                     <!-- FIELD -->
                     <div class="col-sm-6 col-xs-12">
                         <div class="container--selection single-space">
                             <label  class="form-label" for="datastream_property_name">Property Name</label>
-                            <input class="form-control"  type="text" id="datastream_property_name"/>                             
+                            <input class="form-control"  type="text" id="datastream_property_name" [(ngModel)]="form_parameters.property_name"/>                             
                         </div>
                     </div>
                     <!-- FIELD -->
                     <div class="col-sm-6 col-xs-12">
                         <div class="container--selection single-space">
                             <label  class="form-label" for="datastream_property_definition">Property Definition</label>
-                            <input class="form-control"  type="text" id="datastream_property_definition"/>                             
+                            <input class="form-control"  type="text" id="datastream_property_definition" [(ngModel)]="form_parameters.property_definition"/>                             
                         </div>
                     </div>
                     <!-- FIELD -->
                     <div class="col-sm-6 col-xs-12">
                         <div class="container--selection single-space">
                             <label  class="form-label" for="datastream_property_description">Property Description</label>
-                            <input class="form-control"  type="text" id="datastream_property_description"/>                             
+                            <input class="form-control"  type="text" id="datastream_property_description" [(ngModel)]="form_parameters.property_description"/>                             
                         </div>
                     </div>
                     <!-- FIELD -->
                     <div class="col-sm-6 col-xs-12">
                         <div class="container--selection single-space">
                             <label  class="form-label" for="datastream_unit_of_measurement">Unit of Measurement</label>
-                            <input class="form-control"  type="text" id="datastream_unit_of_measurement"/>                             
+                            <input class="form-control"  type="text" id="datastream_unit_of_measurement" [(ngModel)]="form_parameters.unit_name"/>                             
                         </div>
                     </div>
                     <!-- FIELD -->
                     <div class="col-sm-6 col-xs-12">
                         <div class="container--selection single-space">
                             <label  class="form-label" for="datastream_unit_symbol">Unit Symbol</label>
-                            <input class="form-control"  type="text" id="datastream_unit_symbol"/>                             
+                            <input class="form-control"  type="text" id="datastream_unit_symbol"  [(ngModel)]="form_parameters.unit_symbol" />                             
                         </div>
                     </div>
                     <!-- FIELD -->
                     <div class="col-sm-6 col-xs-12">
                         <div class="container--selection single-space">
                             <label  class="form-label" for="datastream_unit_definition">Unit definition</label>
-                            <input class="form-control"  type="text" id="datastream_unit_definition"/>                             
+                            <input class="form-control"  type="text" id="datastream_unit_definition" [(ngModel)]="form_parameters.unit_definition" />                             
                         </div>
                     </div>
 
@@ -319,28 +322,28 @@
                     <div class="col-sm-6 col-xs-12">
                         <div class="container--selection single-space">
                             <label  class="form-label" for="datastream_sensor_name">Sensor Name</label>
-                            <input class="form-control"  type="text" id="datastream_sensor_name"/>                             
+                            <input class="form-control"  type="text" id="datastream_sensor_name" [(ngModel)]="form_parameters.sensor_name" />                             
                         </div>
                     </div>
                     <!-- FIELD -->
                     <div class="col-sm-6 col-xs-12">
                         <div class="container--selection single-space">
                             <label  class="form-label" for="datastream_sensor_description">Sensor Description</label>
-                            <input class="form-control"  type="text" id="datastream_sensor_description"/>                             
+                            <input class="form-control"  type="text" id="datastream_sensor_description" [(ngModel)]="form_parameters.sensor_description" />                             
                         </div>
                     </div>
                     <!-- FIELD -->
                     <div class="col-sm-6 col-xs-12">
                         <div class="container--selection single-space">
                             <label  class="form-label" for="datastream_sensor_encoding_type">Sensor Encoding Type</label>
-                            <input class="form-control"  type="text" id="datastream_sensor_encoding_type"/>                             
+                            <input class="form-control"  type="text" id="datastream_sensor_encoding_type" [(ngModel)]="form_parameters.sensor_encoding_type" />                             
                         </div>
                     </div>
                     <!-- FIELD -->
                     <div class="col-sm-6 col-xs-12">
                         <div class="container--selection single-space">
                             <label  class="form-label" for="datastream_sensor_metadata">Sensor Metadata</label>
-                            <input class="form-control"  type="text" id="datastream_sensor_metadata"/>                             
+                            <input class="form-control"  type="text" id="datastream_sensor_metadata" [(ngModel)]="form_parameters.sensor_metadata" />                             
                         </div>
                     </div>
 

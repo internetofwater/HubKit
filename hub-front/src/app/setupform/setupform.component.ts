@@ -34,6 +34,7 @@ export class SetupformComponent implements OnInit {
   add_new_parameter_is_active = false;
   successful_load = "";
   setting_fields = SETTINGS_FIELDS;
+  form_parameters:IParameter;
   transform_config;
   config_response:any;
   process_response:any;
@@ -85,8 +86,48 @@ export class SetupformComponent implements OnInit {
 
   constructor(private apiService: ApiService, private http: HttpClient) { 
     this.transform_config = TRANSFORM_CONFIG_SETTINGS;
+    this.form_parameters = {
+      property_name:"",
+      property_definition:"",
+      property_description:"",
+      sensor_name:"",
+      sensor_description:"",
+      sensor_encoding_type:"",
+      sensor_metadata:"",
+      unit_name:"",
+      unit_symbol:"",
+      unit_definition:"",
+      observation_type:"",
+      id:"",
+      name:"",
+      description:""
+      
+    } 
     this.config_response = {}
     this.process_response = {}    
+  }
+
+  reset_form_parameters():IParameter{
+
+    let result = {
+      property_name:"",
+      property_definition:"",
+      property_description:"",
+      sensor_name:"",
+      sensor_description:"",
+      sensor_encoding_type:"",
+      sensor_metadata:"",
+      unit_name:"",
+      unit_symbol:"",
+      unit_definition:"",
+      observation_type:"",
+      id:"",
+      name:"",
+      description:""
+      
+    } 
+
+    return result
   }
 
   get_column_letter(csv:string):string{
@@ -230,29 +271,39 @@ export class SetupformComponent implements OnInit {
 
   }
 
-  add_parameter():void{
+  save_parameter():void{
 
-    let parameter: IParameter
-
-    parameter = {
-      property_name:"string",
-      property_definition:"string",
-      property_description:"string",
-      sensor_name:"string",
-      sensor_description:"string",
-      sensor_encoding_type:"string",
-      sensor_metadata:"string",
-      unit_name:"string",
-      unit_symbol:"string",
-      unit_definition:"string",
-      observation_type:"string",
-      id:"string",
-      name:"string",
-      description:"string"
+    // ANY VALUES IN PARAMS? NO? THEN ADD ONE
+    if (this.transform_config.parameters.length===0){
+      this.transform_config.parameters.push(this.form_parameters);
     }
 
-    this.transform_config.parameters.push(parameter);
+    // LOOP THROUGH AND CHECK IF NO MATCHES ADD PARAMS OTHERWISE OVERWRITE
+    for (let i=0; i<this.transform_config.parameters.length;i++){
+      var item = this.transform_config.parameters[i];
+      if (item.property_name === this.form_parameters.property_name){
+        item = this.form_parameters;
+        break;
+      }
+
+      if (i===this.transform_config.parameters.length-1){
+        this.transform_config.parameters.push(this.form_parameters);
+      }
+    }
+
+    this.form_parameters = this.reset_form_parameters();    
       
+  }
+
+  display_params(property_name:string):void{
+
+    for (let i=0; i<this.transform_config.parameters.length;i++){
+      var item = this.transform_config.parameters[i];
+      if (item.property_name === property_name){
+        this.form_parameters=item
+      }
+    }
+
   }
 
 }
