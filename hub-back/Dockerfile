@@ -28,7 +28,6 @@ RUN rm -rf venv
 RUN pip3 install -r requirements/development.txt 
 
 # DB STUFF
-RUN apt-get install postgresql postgresql-contrib postgresql-postgis -y
 RUN apt-get install systemctl
 
 
