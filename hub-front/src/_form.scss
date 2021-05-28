@@ -1,0 +1,442 @@
+//
+// _form.scss
+//
+// @description
+//    v3.0.3 | MIT License | github.com/necolas/normalize.css
+//
+// @overview
+//    This stylesheet is written in SASS(1) and compiles all of the styles
+//    we use throughout the site.
+//
+// @see (1) http://sass-lang.com/documentation/file.SASS_REFERENCE.html
+//
+
+
+/**
+ * Form
+ */
+.form input.form-control, form textarea.form-control {
+    border-radius: 3px;
+    border: 1px solid rgb(212,212,212);
+    box-shadow: 0 0 5px rgba(0,0,0,0.125) inset;
+    font-size: 0.875rem;
+    padding: .75rem 1rem;
+    width:100%;
+    max-width: 100%;
+    box-sizing:border-box;
+
+}
+.form input.form-control.input--icon, form .input--icon{
+  padding-left: 2.75rem;
+}
+
+.form textarea.form-control{
+  min-height: 12rem;
+  line-height: 1.5rem;
+}
+
+.form input.radio{
+  background:red;
+}
+
+.form input.button,
+.form input:active.button,
+.form input:focus.button,
+.form input:link.button,
+.form input:visited.button,
+.form input:hover.button {
+
+    @include border-radius(0.1875rem);
+    background-color: $color--text-base;
+    border: none;
+    color: $color--white-pure;
+    font-size: 0.8125rem;
+    font-style: normal;
+    font-weight: 500;
+    letter-spacing: .05rem;
+    margin: 1rem;
+    opacity: .7;
+    padding: 0.625rem 3rem;
+    position: relative;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.form input:active.button {
+    background-color: rgb(3, 104, 158);
+    top: 1px;
+}
+
+.form input.form-control, .form textarea.form-control{
+    outline: 0;
+
+    &:focus{
+      border: 1px solid $color--branding-blue-base;
+    }
+    &.success{
+      border: 1px solid $color--success-base;
+    }
+    &.error{
+      border: 2px solid $color--error-base;
+    }
+}
+
+.form input.form-control.fail  {
+    border: 1px solid $color--branding-blue-base;
+    outline: 0;
+}
+
+.input--container{
+  width:100%;
+  position: relative;
+}
+
+
+//
+// Fix the Number input field
+//
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+//
+// Override Select Form Field
+//
+select.form-control {
+  -webkit-appearance: none;
+  background-color: transparent;
+  background-image: url(/assets/images/select-arrows.svg);
+  background-position: right;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border: 1px solid rgb(212,212,212);
+
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 600;
+  margin: 0 0.25rem 0;
+  padding: 0.5rem 1rem;
+  position: relative;
+
+}
+
+
+//
+// <fieldset> and <legend>
+//
+.form-fieldset {
+  background-color: $color--white-pure;
+  border: 0;
+  box-shadow: rgba(0,0,0,0.14) 0px 2px 4px 0;
+
+  @include border-radius(3px);
+
+  margin: 0.5rem 0 2rem;
+  padding: 2rem 0 0;
+
+  max-width: 100%;
+}
+
+.form-fieldset .legend {
+  color: $color--black-light;
+  display: block;
+  font-size: 1.125rem;
+  font-weight: 400;
+  letter-spacing: 0.0125rem;
+  line-height: 1;
+  margin: 0 0 1.5rem;
+  padding: 2rem 1.5rem 0;
+}
+
+.form-fieldset .form-actions {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.form-actions-sticky {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  position: sticky;
+  padding: 2rem 0;
+  background: $color--gray-light;
+  top:-2px;
+  text-align: right;
+  z-index: 9999;
+}
+
+.form-actions-floating {
+  background-color: rgb(252,252,252);
+  border-bottom: 1px solid rgb(212,212,212);
+  left: 0;
+  margin: 0;
+  padding: 1rem 2rem;
+  position: absolute;
+  top: 0;
+
+  width: 100%;
+}
+
+
+//
+// <label>
+//
+address .form-label,
+.form-label {
+  color: $color--text-base;
+  display: block;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 500;
+  margin: 0 0 .5rem .25rem;
+  padding: 0;
+  text-align: left;
+}
+
+
+//
+// form-group
+//
+.form-group {
+  display: block;
+  margin: 0 1.5rem 1.5rem;
+
+  &.form-group-fullWidth {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  &.form-group-short {
+    margin-bottom: 0;
+  }
+
+  .form-control {
+    width: 100%;
+  }
+
+  .form-inline {
+    display: inline-block;
+  }
+
+  .form-field {
+    margin: 0 0 1.5rem;
+
+    &.form-field-column {
+      display: inline-block;
+      width: 48%;
+    }
+  }
+}
+
+
+//
+// Form Actions
+//
+.form-actions {
+  border-top: 1px solid #d4d4d4;
+  margin: 1rem 0;
+  padding: 1rem 0;
+
+  button.button {
+    float: right;
+    margin-left: 1rem;
+
+    &:hover{
+      margin-left: 1rem;
+    }
+  }
+}
+
+
+
+.form-centered {
+  text-align: center;
+}
+
+.form-standalone {
+  background: #ffffff;
+  display: block;
+
+  -moz-border-radius: 0.25rem;
+  -webkit-border-radius: 0.25rem;
+  border-radius: 0.25rem;
+
+  margin: 0 auto;
+  padding: 3rem 3rem;
+
+  width: 30em;
+}
+
+
+//
+// Form Metadata
+//
+.meta-field {
+  margin-bottom: 0.8125rem;
+
+  .meta-field-title {
+    color: $color--black-lightest;
+    font-family: $font-sans;
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.0125rem;
+  }
+
+  .meta-field-content {
+    color: $color--black-light;
+    font-family: $font-sans;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.0125rem;
+  }
+}
+
+
+//
+// Form Related Data
+//
+.relationship {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  .relationship-field {
+    border-top: 1px solid rgb(216,216,216);
+    color: $color--black-lightest;
+    cursor: pointer;
+    font-family: $font-sans;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.0125rem;
+    margin: 0;
+    padding: 1rem 0;
+
+    ul {
+      list-style: none;
+      margin: 1rem;
+      padding: 0;
+
+      li {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .relationship-field-count {
+      background-color: $color--gray-base;
+      padding: 0.25rem 0.5rem;
+    }
+
+    .relationship-field-link {
+      color: $color--branding-blue-base;
+      font-family: $font-sans;
+      font-size: 0.8125rem;
+      font-weight: 400;
+      letter-spacing: 0;
+      text-decoration: underline;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+
+
+  }
+
+}
+
+
+//
+// Form > Checkboxes
+//
+.form-checkbox {
+  position: relative;
+  display: block;
+}
+
+.form-checkbox-input {
+  margin-bottom: 0;
+}
+
+.form-checkbox-label {
+  color: $color--black-light;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  overflow: hidden;
+  margin: 2px 0 0 0.25rem;
+  padding: 0;
+  text-align: left;
+  vertical-align: top;
+}
+
+  //
+  // Form > Slider (Checkbox Override)
+  //
+  .form-checkbox-original {
+  	height: 0;
+    visibility: hidden;
+  	width: 0;
+  }
+
+  .form-checkbox-input {
+    width: 40px;
+  	height: 20px;
+
+
+    background: grey;
+    border-radius: 20px;
+  	cursor: pointer;
+    display: inline-block;
+  	text-indent: -9999px;
+  	position: relative;
+  }
+
+  .form-checkbox-input:after {
+    width: 16px;
+  	height: 16px;
+    top: 2px;
+  	left: 2px;
+
+
+    background: $color--white-pure;
+    border-radius: 8px;
+  	content: '';
+  	position: absolute;
+  	transition: 0.3s;
+  }
+
+  .form-checkbox-original:checked + .form-checkbox-input {
+  	background: $color--branding-blue-base;
+  }
+
+  .form-checkbox-original:checked + .form-checkbox-input:after {
+  	left: calc(100% - 2px);
+  	transform: translateX(-100%);
+  }
+
+  .form-checkbox-input:active:after {
+  	width: 21px;
+  }
+
+  // HELP TEXT
+  .form .error{
+    color: $color--error-base !important;
+  }
+  .form .help--text{
+    margin: 0.25rem 0;
+    font-size: 0.75rem;
+    font-style: italic;
+  }
