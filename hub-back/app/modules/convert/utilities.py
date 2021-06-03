@@ -405,7 +405,7 @@ def convert_data_from_excel(source, config):
 		#Get the name
 
 	output = []
-
+	datasstreams = []
 	# GET NAME OF COLUMN
 
 	# REPEAT FOR EVERY ROW IN THE SHEET
@@ -422,12 +422,6 @@ def convert_data_from_excel(source, config):
 	thing_lat_value = config['settings']['thing_lat_column']
 	
 
-
-	
-	
-
-
-
 	for i in range(2, sh.max_row):
 		thing_name =  sh["%s%s" % (thing_name_value,i)].value
 		thing_description = sh["%s%s" % (thing_description_value,i)].value
@@ -437,6 +431,7 @@ def convert_data_from_excel(source, config):
 		thing_id = thing_id.replace(" ", "_")
 
 		parameters = []
+
 
 		for param in config['parameters']:
 			observation_type = param['observation_type'].strip()
@@ -469,6 +464,23 @@ def convert_data_from_excel(source, config):
 				"unit_definition":unit_definition,
 				"unit_name":unit_name,
 				"unit_symbol":unit_symbol
+			})
+
+		for datastream in config['datastreams']:
+			data_stream_property_name = datastream['name'].strip()
+
+			data_stream_iotid = "%s_%s" % (thing_id,data_stream_property_name.lower())
+			data_stream_iotid = data_stream_iotid.replace(" ", "_")
+			data_stream_phenomenonTime = datastream['phenomenonTime'].strip()
+			data_stream_result = datastream['result'].strip()
+
+			data_stream_phenomenonTime = sh["%s%s" % (data_stream_phenomenonTime,i)].value
+			data_stream_result = sh["%s%s" % (data_stream_result,i)].value
+
+			datasstreams.append({
+				"@iot.id":data_stream_iotid,
+				"phenomenonTime":data_stream_phenomenonTime,
+				"result":data_stream_result
 			})
 		
 
@@ -738,7 +750,8 @@ def convert_data_from_excel(source, config):
 
 	result = {
 		"status":"okay",
-		"output":output
+		"output":output,
+		"datatstreams":datasstreams
 		# "name": result_name,
 		# "description": result_description,
 		# "properties": restult_properties,
