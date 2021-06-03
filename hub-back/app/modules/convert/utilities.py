@@ -439,17 +439,17 @@ def convert_data_from_excel(source, config):
 		parameters = []
 
 		for param in config['parameters']:
-			observation_type = param['observation_type']
-			property_definition = param['property_definition']
-			property_description = param['property_description']
-			property_name = param['property_name']
-			sensor_description = param['sensor_description']
-			sensor_encoding_type = param['sensor_encoding_type']
-			sensor_metadata = param['sensor_metadata']
-			sensor_name = param['sensor_name']
-			unit_definition = param['unit_definition']
-			unit_name = param['unit_name']
-			unit_symbol = param['unit_symbol']
+			observation_type = param['observation_type'].strip()
+			property_definition = param['property_definition'].strip()
+			property_description = param['property_description'].strip()
+			property_name = param['property_name'].strip()
+			sensor_description = param['sensor_description'].strip()
+			sensor_encoding_type = param['sensor_encoding_type'].strip()
+			sensor_metadata = param['sensor_metadata'].strip()
+			sensor_name = param['sensor_name'].strip()
+			unit_definition = param['unit_definition'].strip()
+			unit_name = param['unit_name'].strip()
+			unit_symbol = param['unit_symbol'].strip()
 
 			datastrem_id = "%s_%s" % (thing_id,property_name.lower())
 			datastrem_id = datastrem_id.replace(" ", "_")
@@ -869,6 +869,7 @@ def process_data(data):
 			url_collection = "%s/Things" % (path)
 			url_thing = "%s/%s" % (path, thing)
 
+
 			## CHECK FOR EXISTANCE
 			try:
 				response = requests.get(url=url_thing,
@@ -879,7 +880,7 @@ def process_data(data):
 			#         print('Response HTTP Response Body: {content}'.format(
 			#             content=response.content))
 			except requests.exceptions.RequestException:
-				print('HTTP Request failed')
+				print('HTTP Request failed - Frost Server is not on')
 			## END CHECK FOR EXISTANCE
 
 			input()

@@ -13,6 +13,7 @@ docker rm webapp api
 
 
 # Run Docker Via Command Line
+cd hub-front && docker build -t webapp:dev . 
 docker run -v ${PWD}:/app -v /app/node_modules -p 4200:4200 --name webapp --rm webapp:dev
 
 cd ../hub-back && docker build -t python:dev . 

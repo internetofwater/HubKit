@@ -105,6 +105,7 @@ export class SetupformComponent implements OnInit {
       description:""
     } 
     this.form_reading = {
+      id:"",
       name:"",
       phenomenonTime:"",
       result:""
@@ -139,7 +140,7 @@ export class SetupformComponent implements OnInit {
   reset_form_reading():IObservation{
 
     let result = {
-
+      id:"",
       name:"",
       phenomenonTime:"",
       result:""
@@ -309,6 +310,7 @@ export class SetupformComponent implements OnInit {
 
       if (i===this.transform_config.parameters.length-1){
         this.transform_config.parameters.push(this.form_parameters);
+        break;
       }
     }
 
@@ -316,23 +318,36 @@ export class SetupformComponent implements OnInit {
     
     // SAVE READING
 
+    debugger
+
     // ANY VALUES IN PARAMS? NO? THEN ADD ONE
     if (this.transform_config.datastreams.length===0){
+      debugger
+      this.form_reading.id = 0;
       this.transform_config.datastreams.push(this.form_reading);
+    }else{
+      // LOOP THROUGH AND CHECK IF NO MATCHES ADD PARAMS OTHERWISE OVERWRITE
+      for (let i=0; i<this.transform_config.datastreams.length;i++){
+        var item = this.transform_config.datastreams[i];
+        debugger
+        if (item.id === this.form_reading.id){
+          item = this.form_reading;
+          debugger
+          break;
+        }
+
+        if (i===this.transform_config.datastreams.length-1){
+          debugger
+          this.form_reading.id = this.transform_config.datastreams[this.transform_config.datastreams.length-1].id + 1;
+          this.transform_config.datastreams.push(this.form_reading);
+        break;
+        }
+      }
+
     }
 
-    // // LOOP THROUGH AND CHECK IF NO MATCHES ADD PARAMS OTHERWISE OVERWRITE
-    // for (let i=0; i<this.transform_config.datastreams.length;i++){
-    //   var item = this.transform_config.datastreams[i];
-    //   if (item.property_name === this.form_reading.name){
-    //     item = this.form_reading;
-    //     break;
-    //   }
 
-    //   if (i===this.transform_config.datastreams.length-1){
-    //     this.transform_config.datastreams.push(this.form_reading);
-    //   }
-    // }
+
 
 
     this.form_reading = this.reset_form_reading();
@@ -345,6 +360,13 @@ export class SetupformComponent implements OnInit {
       var item = this.transform_config.parameters[i];
       if (item.property_name === property_name){
         this.form_parameters=item
+      }
+    }
+
+    for (let i=0; i<this.transform_config.datastreams.length;i++){
+      var item = this.transform_config.datastreams[i];
+      if (item.name === property_name){
+        this.form_reading=item
       }
     }
 
