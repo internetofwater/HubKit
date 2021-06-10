@@ -20,6 +20,8 @@ from flask import make_response
 from flask import jsonify
 from flask import current_app
 
+import os
+
 import os.path
 import json
 
@@ -766,7 +768,7 @@ def convert_data(source, config):
 
 
 	basepath = current_app.config['MEDIA_BASE_PATH'] + 'files/'
-	directory = current_app.config['MEDIA_DIRECTORY'] + 'files/'
+	directory = os.getcwd() + '/hub-back/app/static/usercontent/' + 'files/'
 
 
 	_source_type = None
@@ -804,8 +806,10 @@ def create_config(config):
 
 
 	# Save JSON File
+
+
 	basepath = current_app.config['MEDIA_BASE_PATH'] + 'files/'
-	directory = current_app.config['MEDIA_DIRECTORY'] + 'files/'
+	directory = os.getcwd() + '/hub-back/app/static/usercontent/' + 'files/'
 
 	"""
 	Prepare the file for processing

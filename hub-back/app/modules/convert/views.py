@@ -25,6 +25,7 @@ from flask import current_app
 from . import module
 from . import utilities
 
+import os
 import os.path
 
 from uuid import uuid4
@@ -52,7 +53,8 @@ def file_upload_post(*args, **kwargs):
     # Save Excel File
 
     basepath = current_app.config['MEDIA_BASE_PATH'] + 'files/'
-    directory = current_app.config['MEDIA_DIRECTORY'] + 'files/'
+    directory = os.getcwd() + '/app/static/usercontent/' + 'files/'
+
 
     """
     Prepare the file for processing
