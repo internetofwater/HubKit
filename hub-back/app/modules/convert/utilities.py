@@ -649,6 +649,7 @@ def get_column_headers(source):
 
 def process_data(data): 
 
+	response = None
 
 
 	if "output" in data:
@@ -673,6 +674,9 @@ def process_data(data):
 			except requests.exceptions.RequestException:
 				print('HTTP Request failed - Frost Server is not on')
 			## END CHECK FOR EXISTANCE
+
+			if response is None:
+				 abort(make_response(jsonify(message="FROST SERVER IS NOT ONLINE"), 400))
 
 			if response.status_code == 200:
 				print("We Got it")

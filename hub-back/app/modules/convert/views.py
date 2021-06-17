@@ -25,6 +25,7 @@ from flask import current_app
 from . import module
 from . import utilities
 
+import json
 import os
 import os.path
 
@@ -45,49 +46,66 @@ def file_upload_post(*args, **kwargs):
 
     # data = json.loads(request)
 
-    
-
     _file = request.files['excel']
 
-
-    # Save Excel File
+    # Save  File
 
     basepath = current_app.config['MEDIA_BASE_PATH'] + 'files/'
     directory = os.getcwd() + '/app/static/usercontent/' + 'files/'
 
-
     """
     Prepare the file for processing
     # """
-    # extension = os.path.splitext(_file.filename)[1]
-    # secure_filename = uuid4().hex + extension
 
     filepath = os.path.join(directory, _file.filename)
     fileurl = os.path.join(basepath, _file.filename)
 
     try:
-        # logger.debug('[MEDIA utilities:upload_file] Saving file source information to server')
         _file.save(filepath)
     except:
-        # logger.debug('[MEDIA utilities:upload_file] Exception raised while saving file source information to server')
         raise
 
-    # Load Excel File From Path
-    # source = None
-    # config = None
-
-    # if 'source' in data and data['source']:
-    #     source = data['source']
-    # else:
-    #     abort(make_response(jsonify(message="A source is required"), 400))
-
-    # if 'config' in data and data['config']:
-    #     config = data['config']
-    # else:
-    #     abort(make_response(jsonify(message="A configuration is required"), 400))
 
 
     return jsonify(**utilities.get_column_headers(filepath)), 200
+
+@module.route('/v1/upload-config', methods=['POST'])
+def file_upload_json_post(*args, **kwargs):
+
+
+    if request and request.files and 'json' in request.files:
+        _file = request.files['json']
+
+    result = {"status":"okay"}
+
+    basepath = current_app.config['MEDIA_BASE_PATH'] + 'files/'
+    directory = os.getcwd() + '/app/static/usercontent/' + 'files/'
+
+    """
+    Prepare the file for processing
+    # """
+
+    filepath = os.path.join(directory, _file.filename)
+    fileurl = os.path.join(basepath, _file.filename)
+
+    try:
+        _file.save(filepath)
+    except:
+        raise
+
+    # Opening JSON file
+    f = open(filepath,)
+    
+    # returns JSON object as 
+    # a dictionary
+    result = json.load(f)
+    
+    # Closing file
+    f.close()
+
+
+    return jsonify(**result), 200
+
 
 @module.route('/v1/convert', methods=['POST'])
 def convert_post(*args, **kwargs):

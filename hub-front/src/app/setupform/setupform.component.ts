@@ -16,6 +16,8 @@ import { IObservation } from '../interfaces/observation';
 })
 export class SetupformComponent implements OnInit {
 
+  title = 'Internet of Water Data Wizard';
+
   // field: Field = {
   //   id: 1,
   //   label: 'Excel',
@@ -33,7 +35,7 @@ export class SetupformComponent implements OnInit {
   }
 
   add_new_parameter_is_active = false;
-  successful_load = "";
+  
   setting_fields = SETTINGS_FIELDS;
   form_parameters:IParameter;
   form_reading:IObservation;
@@ -84,6 +86,9 @@ export class SetupformComponent implements OnInit {
   ]
 
   fileName = '';
+  successful_load = "";
+  configFileName = ''
+  successful_config_load = "";
 
 
   constructor(private apiService: ApiService, private http: HttpClient) { 
@@ -219,6 +224,31 @@ export class SetupformComponent implements OnInit {
     }
 }
 
+onLoadConfig(event:any){
+  const file:File = event.target.files[0];
+
+    if (file) {
+
+        this.configFileName = file.name;
+
+        // this.transform_config = {}
+
+        const formData = new FormData();
+
+        formData.append("json", file);
+
+        const upload$ = this.http.post("http://localhost:5000//v1/upload-config", formData);
+
+        upload$.subscribe(transform_config => this.transform_config = transform_config);
+
+        this.successful_config_load = "File has loaded";
+
+        // this.transform_config.settings.source = this.fileName;
+
+    }
+  
+}
+
   ngOnInit(): void {
     this.getFields()
   }
@@ -317,27 +347,20 @@ export class SetupformComponent implements OnInit {
     this.form_parameters = this.reset_form_parameters();  
     
     // SAVE READING
-
-    debugger
-
     // ANY VALUES IN PARAMS? NO? THEN ADD ONE
     if (this.transform_config.datastreams.length===0){
-      debugger
       this.form_reading.id = 0;
       this.transform_config.datastreams.push(this.form_reading);
     }else{
       // LOOP THROUGH AND CHECK IF NO MATCHES ADD PARAMS OTHERWISE OVERWRITE
       for (let i=0; i<this.transform_config.datastreams.length;i++){
         var item = this.transform_config.datastreams[i];
-        debugger
         if (item.id === this.form_reading.id){
           item = this.form_reading;
-          debugger
           break;
         }
 
         if (i===this.transform_config.datastreams.length-1){
-          debugger
           this.form_reading.id = this.transform_config.datastreams[this.transform_config.datastreams.length-1].id + 1;
           this.transform_config.datastreams.push(this.form_reading);
         break;
