@@ -311,16 +311,6 @@ def import_json(config):
 		abort(make_response(jsonify(message=error_response), 400))
 		return None
 
-
-    #  with open(filepath) as json_file:
-    #         try:
-    #             data = json.load(json_file)
-    #         except:
-    #             result = get_org_and_suborg_sites(id)
-    #             with open(filepath, 'w') as json_file:
-    #                 json.dump(result, json_file)
-    #             with open(filepath) as json_file:
-    #                     data = json.load(json_file)
     
 def get_data_from_excel_cell(workbook, sheet,cell):
 
@@ -409,6 +399,7 @@ def convert_data_from_excel(source, config):
 
 	output = []
 	datasstreams = []
+	error_log = []
 	# GET NAME OF COLUMN
 
 	# REPEAT FOR EVERY ROW IN THE SHEET
@@ -480,13 +471,23 @@ def convert_data_from_excel(source, config):
 			data_stream_phenomenonTime = sh["%s%s" % (data_stream_phenomenonTime,i)].value
 			data_stream_result = sh["%s%s" % (data_stream_result,i)].value
 
-			if data_stream_result is not None and  isinstance(data_stream_phenomenonTime, datetime):
+			if data_stream_result is not None:
+				if isinstance(data_stream_phenomenonTime, datetime):
 			
-				datasstreams.append({
-					"@iot.id":data_stream_iotid,
-					"phenomenonTime":data_stream_phenomenonTime.isoformat(),
-					"result":data_stream_result
-				})
+					datasstreams.append({
+						"@iot.id":data_stream_iotid,
+						"phenomenonTime":data_stream_phenomenonTime.isoformat(),
+						"result":data_stream_result
+					})
+				else:
+					error_log.append({
+						"name":thing_name,
+						"error": "PhenomenonTime is not in a date format",
+						"property":data_stream_property_name,
+						"@iot.id":data_stream_iotid,
+						"phenomenonTime":str(data_stream_phenomenonTime),
+						"result":data_stream_result
+					})
 		
 
 		output.append({
@@ -498,13 +499,13 @@ def convert_data_from_excel(source, config):
 			"lng":lng,
 			"lat":lat,
 			"parameters":parameters
-
 		})
 
 	result = {
 		"status":"okay",
 		"output":output,
-		"datatstreams":datasstreams
+		"datatstreams":datasstreams,
+		"error_log":error_log
 	}
 
 	create_data_file_to_import(config,result)

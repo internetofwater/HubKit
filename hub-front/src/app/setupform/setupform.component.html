@@ -9,8 +9,35 @@
     </nav>
 
 <div class="container-fluid siteContent">
-
     <h1 class="heavy">{{title}}</h1>
+
+    <div *ngIf="config_response.error_log" class="error">
+        <h1>Errors</h1>
+        <div class="form-group">
+            <table class="table">
+                <tr>
+                    <td class="heavy">Number</td>
+                    <td class="heavy">@iot.id</td>
+                    <td class="heavy">error</td>
+                    <td class="heavy">name</td>
+                    <td class="heavy">phenomenonTime</td>
+                    <td class="heavy">property</td>
+                    <td class="heavy">result</td>
+                </tr>
+                <tr *ngFor="let item of config_response.error_log; let i = index">
+                    <td>{{i}}</td>
+                    <td>{{item['@iot.id']}}</td>
+                    <td>{{item['error']}}</td>
+                    <td>{{item['name']}}</td>
+                    <td>{{item['phenomenonTime']}}</td>
+                    <td>{{item['property']}}</td>
+                    <td>{{item['result']}}</td>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+
     <article class="form">
         <div class="double-top" name="data_wizard">
             <div>
