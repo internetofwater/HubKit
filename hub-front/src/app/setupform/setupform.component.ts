@@ -53,7 +53,7 @@ export class SetupformComponent implements OnInit {
         row:'',
         value:'test'
       }],
-      sheet:'default',
+      sheet:'',
       sheet_number:0
     }]
   };
@@ -211,7 +211,7 @@ export class SetupformComponent implements OnInit {
 
         const formData = new FormData();
 
-        formData.append("excel", file);
+        formData.append('file', file);
 
         const upload$ = this.http.post("http://localhost:5000/v1/upload-file", formData);
 

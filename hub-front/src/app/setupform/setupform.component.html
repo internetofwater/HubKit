@@ -11,13 +11,13 @@
 <div class="container-fluid siteContent">
     <h1 class="heavy">{{title}}</h1>
 
-    <div *ngIf="config_response.error_log" class="error">
-        <h1>Errors</h1>
+    <div *ngIf="config_response" class="error">
+        {{config_response[0] |json}}
+        <h1 *ngIf="config_response.error_log">Errors ({{config_response.error_log.length}})</h1>
         <div class="form-group">
             <table class="table">
                 <tr>
                     <td class="heavy" width="16%">Number</td>
-                    <td class="heavy" width="16%">@iot.id</td>
                     <td class="heavy" width="16%">error</td>
                     <td class="heavy" width="16%">name</td>
                     <td class="heavy" width="16%">phenomenonTime</td>
@@ -25,13 +25,12 @@
                     <td class="heavy" width="16%">result</td>
                 </tr>
                 <tr *ngFor="let item of config_response.error_log; let i = index">
-                    <td>{{i}}</td>
-                    <td>{{item['@iot.id']}}</td>
-                    <td>{{item['error']}}</td>
-                    <td>{{item['name']}}</td>
-                    <td>{{item['phenomenonTime']}}</td>
-                    <td>{{item['property']}}</td>
-                    <td>{{item['result']}}</td>
+                    <td width="16%">{{i}}</td>
+                    <td width="16%">{{item['error']}}</td>
+                    <td width="16%">{{item['name']}}</td>
+                    <td width="16%">{{item['phenomenonTime']}}</td>
+                    <td width="16%">{{item['property']}}</td>
+                    <td width="16%">{{item['result']}}</td>
                 </tr>
 
             </table>
@@ -220,103 +219,105 @@
 
 
             <!-- THINGS -->
-            <h2 class="big heavy caps">Select Your Data Sheet Source</h2>    
-            <hr />
-            <fieldset class="form-fieldset" >
+            {{file_contents_local.features[0].sheet}}
+            <div *ngIf="file_contents_local.features[0].sheet !== ''">
+                <h2 class="big heavy caps">Select Your Data Sheet Source</h2>    
+                <hr />
+                <fieldset class="form-fieldset" >
 
-                <div class="row">
-                    <div class="col-xs-12">
-                    <!-- SELECT OPTIONS -->                            
-                        <div class="single-space form-group">
+                    <div class="row">
+                        <div class="col-xs-12">
+                        <!-- SELECT OPTIONS -->                            
+                            <div class="single-space form-group">
 
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <label  class="form-label" for="select_data_source">Select Thing Name Source</label>
-                                    <div class="container--selection single-space width-95">     
-                                        <select class="form-control" id=""
-                                                            required=""
-                                                            selected
-                                                            (change)="transform_config.settings.sheet = file_contents_local.features[sheet_selected].sheet"
-                                                            name=""
-                                                            [(ngModel)]="sheet_selected">
-                                            <option selected> -- Select A Sheet --</option>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <label  class="form-label" for="select_data_source">Select Thing Name Source</label>
+                                        <div class="container--selection single-space width-95">     
+                                            <select class="form-control" id=""
+                                                                required=""
+                                                                selected
+                                                                (change)="transform_config.settings.sheet = file_contents_local.features[sheet_selected].sheet"
+                                                                name=""
+                                                                [(ngModel)]="sheet_selected">
+                                                <option selected> -- Select A Sheet --</option>
+                                                <option
+                                                    *ngFor="let item of file_contents_local.features"  [value]="item.sheet_number">{{item.sheet}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-xs-12">
+                                        <div class="container--selection single-space"
+                                                    *ngIf="sheet_selected"  >     
+                                            <label  class="form-label" for="thing_name_column">Select Thing Name Column</label>
+                                            <select class="form-control" id="thing_name_column"
+                                                    required=""
+                                                    selected
+                                                    name="thing_name_column"
+                                                    [(ngModel)]="transform_config.settings.thing_name_column" >
                                             <option
-                                                *ngFor="let item of file_contents_local.features"  [value]="item.sheet_number">{{item.sheet}}</option>
-                                        </select>
+                                                *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="[item.column]">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                                            </select>                               
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-sm-6 col-xs-12">
-                                    <div class="container--selection single-space"
-                                                *ngIf="sheet_selected"  >     
-                                        <label  class="form-label" for="thing_name_column">Select Thing Name Column</label>
-                                        <select class="form-control" id="thing_name_column"
-                                                required=""
-                                                selected
-                                                name="thing_name_column"
-                                                [(ngModel)]="transform_config.settings.thing_name_column" >
-                                        <option
-                                            *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="[item.column]">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
-                                        </select>                               
-                                    </div>
-                                </div>
 
-                                <div class="col-sm-6 col-xs-12">
-                                    <div class="container--selection single-space"
-                                                *ngIf="sheet_selected"  >
-                                        <label  class="form-label" for="thing_name_column">Select Thing Description Column</label>               
-                                        <select class="form-control" id="thing_description_column"
-                                                required=""
-                                                selected
-                                                name="thing_description_column"
-                                                [(ngModel)]="transform_config.settings.thing_description_column" >
-                                                
-                                        <option
-                                            *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
-                                        </select>                               
+                                    <div class="col-sm-6 col-xs-12">
+                                        <div class="container--selection single-space"
+                                                    *ngIf="sheet_selected"  >
+                                            <label  class="form-label" for="thing_name_column">Select Thing Description Column</label>               
+                                            <select class="form-control" id="thing_description_column"
+                                                    required=""
+                                                    selected
+                                                    name="thing_description_column"
+                                                    [(ngModel)]="transform_config.settings.thing_description_column" >
+                                                    
+                                            <option
+                                                *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                                            </select>                               
+                                        </div>
                                     </div>
-                                </div>
-                                <!-- LONGITUDE -->
-                                <div class="col-sm-6 col-xs-12">
-                                    <div class="container--selection single-space"
-                                                *ngIf="sheet_selected"  >
-                                        <label  class="form-label" for="thing_name_column">Select Location Longitude</label>
-                                        <select class="form-control" id="thing_lng_column"
-                                                required=""
-                                                selected
-                                                name="thing_lng_column"
-                                                [(ngModel)]="transform_config.settings.thing_lng_column" >
-                                                
-                                        <option
-                                            *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
-                                        </select>                               
+                                    <!-- LONGITUDE -->
+                                    <div class="col-sm-6 col-xs-12">
+                                        <div class="container--selection single-space"
+                                                    *ngIf="sheet_selected"  >
+                                            <label  class="form-label" for="thing_name_column">Select Location Longitude</label>
+                                            <select class="form-control" id="thing_lng_column"
+                                                    required=""
+                                                    selected
+                                                    name="thing_lng_column"
+                                                    [(ngModel)]="transform_config.settings.thing_lng_column" >
+                                                    
+                                            <option
+                                                *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                                            </select>                               
+                                        </div>
                                     </div>
-                                </div>
 
-                                <!-- LATTITUDE -->
-                                <div class="col-sm-6 col-xs-12">
-                                
-                                    <div class="container--selection single-space"
-                                                *ngIf="sheet_selected"  >
-                                        <label  class="form-label" for="thing_name_column">Select Location Lattitude</label>               
-                                        <select class="form-control" id="thing_lat_column"
-                                                required=""
-                                                selected
-                                                name="thing_lat_column"
-                                                [(ngModel)]="transform_config.settings.thing_lat_column" >
-                                                
-                                        <option
-                                            *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
-                                        </select>                               
+                                    <!-- LATTITUDE -->
+                                    <div class="col-sm-6 col-xs-12">
+                                    
+                                        <div class="container--selection single-space"
+                                                    *ngIf="sheet_selected"  >
+                                            <label  class="form-label" for="thing_name_column">Select Location Lattitude</label>               
+                                            <select class="form-control" id="thing_lat_column"
+                                                    required=""
+                                                    selected
+                                                    name="thing_lat_column"
+                                                    [(ngModel)]="transform_config.settings.thing_lat_column" >
+                                                    
+                                            <option
+                                                *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                                            </select>                               
+                                        </div>
                                     </div>
-                                </div>
 
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-            </fieldset>
-
+                </fieldset>
+            </div>
 
 
             <h2 class="big heavy caps">Add Your Parameters</h2>    

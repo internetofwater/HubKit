@@ -44,9 +44,19 @@ def convert_options():
 @module.route('/v1/upload-file', methods=['POST'])
 def file_upload_post(*args, **kwargs):
 
-    # data = json.loads(request)
+    _file = request.files['file']
+    _type = None
 
-    _file = request.files['excel']
+    if len(os.path.splitext(_file.filename))>1:
+        if os.path.splitext(_file.filename)[1] == '.csv':
+            _type = 'csv'
+        elif os.path.splitext(_file.filename)[1] == '.xlsx':
+            _type = 'excel' 
+        else:
+            abort(make_response(jsonify(message="File type must be .csv or .xlsx"), 400))
+    else:
+        abort(make_response(jsonify(message="File type was not found"), 400))
+    
 
     # Save  File
 
@@ -67,7 +77,7 @@ def file_upload_post(*args, **kwargs):
 
 
 
-    return jsonify(**utilities.get_column_headers(filepath)), 200
+    return jsonify(**utilities.get_column_headers(filepath, _type)), 200
 
 @module.route('/v1/upload-config', methods=['POST'])
 def file_upload_json_post(*args, **kwargs):
@@ -166,6 +176,11 @@ def process_options():
 @module.route('/v1/process', methods=['POST'])
 
 def process_post(*args, **kwargs):
+
+    print("bout to process")
+
+    print("Tell me your content type", request.content_type)
+
     if request.content_type is None:
         abort(make_response(jsonify(message="Must be in JSON format"), 400))
 
@@ -176,6 +191,9 @@ def process_post(*args, **kwargs):
              abort(make_response(jsonify(message="Must be in JSON format"), 400))
        
         return jsonify(**utilities.process_data(data)), 200
+    else:
+        print("Not so much")
+        return {}
 
 
     abort(make_response(jsonify(message="Must be in JSON format"), 400))
