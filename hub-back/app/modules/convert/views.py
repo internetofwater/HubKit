@@ -177,9 +177,8 @@ def process_options():
 
 def process_post(*args, **kwargs):
 
-    print("bout to process")
-
-    print("Tell me your content type", request.content_type)
+    data = json.loads(request.data)
+    result = {}
 
     if request.content_type is None:
         abort(make_response(jsonify(message="Must be in JSON format"), 400))
@@ -187,16 +186,20 @@ def process_post(*args, **kwargs):
     if request.content_type is not None and (request.content_type == 'application/json' or 'application/json' in request.content_type):
         try:
             data = json.loads(request.data)
+            print("Lets do it", "output" in data )
+            result = utilities.process_data(data)
+            # return jsonify(**result), 200
         except ValueError as e:
-             abort(make_response(jsonify(message="Must be in JSON format"), 400))
-       
-        return jsonify(**utilities.process_data(data)), 200
-    else:
-        print("Not so much")
-        return {}
+             abort(make_response(jsonify(message="This is not working out"), 400))
 
 
-    abort(make_response(jsonify(message="Must be in JSON format"), 400))
+    # abort(make_response(jsonify(message="Must be in JSON format"), 400))
+    return {
+        "content-type":request.content_type,
+        "result":result
+        # "data":data
+        }
+
 
         
 @module.route('/v1/form', methods=['GET'])

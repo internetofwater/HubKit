@@ -24,5 +24,8 @@ docker run -v ${PWD}:/app -p 5000:5000 --name api --rm python:dev
 docker exec -it foo ng test --watch=false
 docker exec -it foo ng e2e --port 4202
 
+# WHEN IT'S A NEW DB DO THIS
+create extension "uuid-ossp"
+
 
 

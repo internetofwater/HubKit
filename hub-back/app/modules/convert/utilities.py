@@ -606,16 +606,25 @@ def get_column_headers(source, file_type):
 def process_data(data): 
 
 	response = None
+	data_output = None
+
+	# print("This is the data yall", data)
+
+	data_data_stream = None
+	print("Starting Thing", "output" in data)
 
 
 	if "output" in data:
+		print("Starting Things")
 		for item in data["output"]:
 			print("Starting Thing")
 
-			path = "http://devops_web_1:8080/FROST-Server/v1.1"
+			path = "http://frost:8080/FROST-Server/v1.1"
 			thing = "Things('%s')" % item["@iot.id"]
 			url_collection = "%s/Things" % (path)
 			url_thing = "%s/%s" % (path, thing)
+			# return url_thing
+
 
 
 			## CHECK FOR EXISTANCE
@@ -629,6 +638,7 @@ def process_data(data):
 			#             content=response.content))
 			except requests.exceptions.RequestException:
 				print('HTTP Request failed - Frost Server is not on')
+				abort(make_response(jsonify(message="HTTP Request failed - Frost Server is not on"), 400))
 			## END CHECK FOR EXISTANCE
 
 			if response is None:
@@ -716,7 +726,7 @@ def process_data(data):
 		for item in data['datatstreams']:
 			print("Starting Data Stream")
 
-			path = "http://devops_web_1:8080/FROST-Server/v1.1"
+			path = "http://frost:8080/FROST-Server/v1.1"
 			observation = "Datastreams('%s')/Observations" % item["@iot.id"]
 			url_data_stream = "%s/%s" % (path, observation)
 
@@ -762,7 +772,7 @@ def process_data(data):
 				except requests.exceptions.RequestException:
 					print('HTTP Request failed')
 				
-			elif response_to_post.status_code == 404:
+			elif response_check.status_code == 404:
 				continue
 
 
