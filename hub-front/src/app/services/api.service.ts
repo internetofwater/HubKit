@@ -34,6 +34,14 @@ export class ApiService {
     );
   }
 
+  get_data_from_url(payload: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl+"/upload-file-url",payload , this.httpOptions )
+    .pipe(
+      tap(_ => this.log('post config')),
+      catchError(this.handleError<any>('get file via url', payload ))
+    );
+  }
+
   run_process(config_response: any): Observable<TransformConfig> {
 
     return this.http.post<TransformConfig>(this.apiUrl+"/process", config_response, this.httpOptions )
@@ -74,6 +82,8 @@ export class ApiService {
       catchError(this.handleError<TransformConfig>('run_convert', payload ))
     );
   }
+
+
 
   /**
  * Handle Http operation that failed.

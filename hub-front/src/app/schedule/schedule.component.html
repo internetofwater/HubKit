@@ -1,0 +1,122 @@
+<nav class="button-navigation">
+    <div class="container-fluid">
+        <ul >
+            <li><a href="/" class="button"  class="button button-primaryAction">Configuration Builder</a></li>
+        </ul>    
+    </div>
+</nav>
+
+<div class="container-fluid siteContent">
+    <h1 class="heavy">{{title}}</h1>
+
+    <article class="form">
+        <div class="double-top" name="data_wizard">
+            <div>                <hr />
+                <fieldset class="form-fieldset">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                <!-- FILE UPLOAD -->
+                                <div class="single-space">
+                                    
+                                    <label  class="form-label" for="load_config">Load Config</label>
+                                    <input type="file" class="form-control" 
+                                        id="load_config">
+                                    
+                                   
+                                        <!-- {{configFileName || "No file uploaded yet."}}
+                                                {{successful_config_load}} -->
+
+                                        <!-- <button mat-mini-fab color="primary" class="upload-btn">
+                                            Upload Config
+                                        </button> -->
+                                </div>
+                                <div class="single-space">
+                                    <label class="form-label" for="data_source">Data Source</label>
+                                    <input class="form-control" type="url" >
+                                </div>
+                                <div class="single-space">
+                                    <label class="form-label" for="data_source">How often do you want the data to be imported?</label>
+                                    <select class="form-control">
+                                        <option>Nightly</option>
+                                        <option>Weekly</option>
+                                        <option>Monthly</option>
+                                        <option>Annually</option>
+                                    </select>
+                                </div>
+                                <div class="single-space">
+                                    <input type="submit" value="Schedule" class="button" />
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                
+                <fieldset class="form-fieldset">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                <h2 class="caps">History</h2>
+
+                                <div>
+                                    <h1 >Log</h1>
+                                    <div class="form-group">
+                                        <table class="table" width="100%">
+                                            <tr>
+                                                <td class="heavy" width="25%">Date</td>
+                                                <td class="heavy" width="25%">Status</td>
+                                                <td class="heavy" width="25%">Task</td>
+                                                <td class="heavy" width="25%">Notes</td>
+                                            </tr>
+                                            <tr *ngFor="let item of logs; let i = index">
+                                                <td width="25%">{{item.date}}</td>
+                                                <td width="25%">{{item.status}}</td>
+                                                <td width="25%">{{item.task}}</td>
+                                                <td width="25%">{{item.notes}}</td>
+                                            </tr>
+                            
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </fieldset> 
+                <fieldset class="form-fieldset">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                <h2 class="caps">History</h2>
+
+                                <div>
+                                    <h1 >Log</h1>
+                                    <div class="form-group">
+                                        <table class="table" width="100%">
+                                            <tr>
+                                                <td class="heavy" width="25%">Name</td>
+                                                <td class="heavy" width="25%">Interval</td>
+                                                <td class="heavy" width="25%">Notes</td>
+                                                <td class="heavy" width="25%">Action</td>
+                                            </tr>
+                                            <tr *ngFor="let item of cron_jobs; let i = index">
+                                                <td width="25%">{{item.name}}</td>
+                                                <td width="25%">{{item.internval}}</td>
+                                                <td width="25%">{{item.notes}}</td>
+                                                <td width="25%">Remove</td>
+                                            </tr>
+                            
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </fieldset> 
+            </div>
+        </div>
+    </article>
+</div>

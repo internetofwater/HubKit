@@ -10,7 +10,7 @@ services:
             dockerfile: ../hub-front/Dockerfile
         volumes:
             - '../hub-front:/app'
-            - '../hub-front/app/node_modules'
+            - '../hub-front:/node_modules'
         ports:
             - '4200:4200'
 

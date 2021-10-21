@@ -7,6 +7,8 @@ import { TRANSFORM_CONFIG_SETTINGS } from '../mock/mock-transform_config';
 import {HttpClient, HttpEvent, HttpErrorResponse, HttpEventType} from '@angular/common/http';
 import { IParameter } from '../interfaces/parameter';
 import { IObservation } from '../interfaces/observation';
+import * as fileSaver from 'file-saver';
+
 
 
 @Component({
@@ -45,6 +47,7 @@ export class SetupformComponent implements OnInit {
   fields = FIELDS;
   test = "";
   sheet_selected = "";
+  upload_type = "file"; // or web
   file_contents_local:any= {
     status:'',
     features : [{
@@ -224,6 +227,35 @@ export class SetupformComponent implements OnInit {
     }
 }
 
+upload_via_url(event: any) {
+
+  console.log( this.transform_config.settings.file_url);
+  const payload = {"file_path":this.transform_config.settings.file_url}
+
+  this.apiService.get_data_from_url(payload)
+    .subscribe(payload => this.file_contents_local = payload);
+
+  // const file:File = event.target.files[0];
+
+  // if (file) {
+
+  //     this.fileName = file.name;
+
+  //     const formData = new FormData();
+
+  //     formData.append('file', file);
+
+  //     const upload$ = this.http.post("http://localhost:5000/v1/upload-file", formData);
+
+  //     upload$.subscribe(file_contents => this.file_contents_local = file_contents);
+
+  //     this.successful_load = "File has loaded";
+
+  //     this.transform_config.settings.source = this.fileName;
+
+  // }
+}
+
 onLoadConfig(event:any){
   const file:File = event.target.files[0];
 
@@ -272,10 +304,15 @@ onLoadConfig(event:any){
 
     // console.log(this.file_contents_local.features)
 
-
-    console.log("I was pressed yo yo");
     this.apiService.create_config(this.transform_config)
     .subscribe(transform_config => this.transform_config = transform_config);
+
+    let response = JSON.stringify(this.transform_config)
+
+    let blob:any = new Blob([response], { type: 'text/json; charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+
+			fileSaver.saveAs(blob, 'config.json');
   }
 
 

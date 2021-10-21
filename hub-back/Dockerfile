@@ -29,6 +29,7 @@ RUN pip3 install -r requirements/development.txt
 
 # DB STUFF
 RUN apt-get install systemctl
+RUN apt-get install cron
 
 RUN mkdir -p /app/static/usercontent/files
 

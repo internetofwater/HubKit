@@ -8,11 +8,13 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SetupformComponent } from './setupform/setupform.component';
 import { FormsModule } from '@angular/forms';
+import { ScheduleComponent } from './schedule/schedule.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    SetupformComponent
+    SetupformComponent,
+    ScheduleComponent
   ],
   imports: [
     BrowserModule,

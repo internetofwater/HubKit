@@ -25,6 +25,7 @@ from flask import current_app
 from . import module
 from . import utilities
 
+import wget
 import json
 import os
 import os.path
@@ -78,6 +79,29 @@ def file_upload_post(*args, **kwargs):
 
 
     return jsonify(**utilities.get_column_headers(filepath, _type)), 200
+
+
+@module.route('/v1/upload-file-url', methods=['POST'])
+def file_url_upload_post(*args, **kwargs):
+
+    data = json.loads(request.data)
+
+    if data['file_path']:
+        url = data['file_path']
+        directory = os.getcwd() + '/app/static/usercontent/' + 'files/'
+        filename = wget.download(url, out=directory)
+
+    if len(os.path.splitext(filename))>1:
+        if os.path.splitext(filename)[1] == '.csv':
+            _type = 'csv'
+        elif os.path.splitext(filename)[1] == '.xlsx':
+            _type = 'excel' 
+        else:
+            abort(make_response(jsonify(message="File type must be .csv or .xlsx"), 400))
+    else:
+        abort(make_response(jsonify(message="File type was not found"), 400))
+
+    return jsonify(**utilities.get_column_headers(filename, _type)), 200
 
 @module.route('/v1/upload-config', methods=['POST'])
 def file_upload_json_post(*args, **kwargs):

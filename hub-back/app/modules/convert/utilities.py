@@ -176,23 +176,81 @@ def convert_data_from_csv(source,config):
 						"phenomenonTime":data_stream_phenomenonTime.isoformat(),
 						"result":data_stream_result
 					})
+
 				else: 
-					try:
-						date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%d/%m/%Y')
-						datasstreams.append({
-						"@iot.id":data_stream_iotid,
-						"phenomenonTime":date_time_obj.isoformat(),
-						"result":data_stream_result
-					})
-					except:
+
+					if data_stream_phenomenonTime.find('/') > 0 and len(data_stream_phenomenonTime) >= 8:
+						if data_stream_phenomenonTime.index('/') == 2 or data_stream_phenomenonTime.index('/') == 1:
+							print("one")
+							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%d/%m/%Y')
+							datasstreams.append({
+								"@iot.id":data_stream_iotid,
+								"phenomenonTime":date_time_obj.isoformat(),
+								"result":data_stream_result
+							})
+							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%d/%m/%Y')
+						elif data_stream_phenomenonTime.index('/') == 4 or data_stream_phenomenonTime.index('/') == 3:
+							print("2")
+							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%Y/%m/%d')
+							datasstreams.append({
+								"@iot.id":data_stream_iotid,
+								"phenomenonTime":date_time_obj.isoformat(),
+								"result":data_stream_result
+							})
+						else:
+							print("3", data_stream_phenomenonTime.index('/'))
+							error_log.append({
+								"name":thing_name,
+								"error": "PhenomenonTime is not in a date format",
+								"property":data_stream_property_name,
+								"@iot.id":data_stream_iotid,
+								"phenomenonTime":str(data_stream_phenomenonTime),
+								"result":data_stream_result
+							})
+
+					elif data_stream_phenomenonTime.find('-') > 0 and len(data_stream_phenomenonTime) >= 8:
+						if data_stream_phenomenonTime.index('-') == 2:
+							print("4")
+							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%d-%m-%Y')
+							datasstreams.append({
+								"@iot.id":data_stream_iotid,
+								"phenomenonTime":date_time_obj.isoformat(),
+								"result":data_stream_result
+							})
+						elif data_stream_phenomenonTime.index('-') == 4:
+							print("5")
+							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%Y-%m-%d')
+							datasstreams.append({
+								"@iot.id":data_stream_iotid,
+								"phenomenonTime":date_time_obj.isoformat(),
+								"result":data_stream_result
+							})
+						else:
+							print("6")
+							error_log.append({
+								"name":thing_name,
+								"error": "PhenomenonTime is not in a date format",
+								"property":data_stream_property_name,
+								"@iot.id":data_stream_iotid,
+								"phenomenonTime":str(data_stream_phenomenonTime),
+								"result":data_stream_result
+							})
+					else:
+						print("7")
+						input()
 						error_log.append({
-						"name":thing_name,
-						"error": "PhenomenonTime is not in a date format",
-						"property":data_stream_property_name,
-						"@iot.id":data_stream_iotid,
-						"phenomenonTime":str(data_stream_phenomenonTime),
-						"result":data_stream_result
-					})
+							
+							"name":thing_name,
+							"error": "PhenomenonTime is not in a date format",
+							"property":data_stream_property_name,
+							"@iot.id":data_stream_iotid,
+							"phenomenonTime":str(data_stream_phenomenonTime),
+							"result":data_stream_result
+						})
+
+
+
+					
 					
 		
 
