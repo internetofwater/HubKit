@@ -38,6 +38,8 @@
                                 <div class="single-space">
                                     <label class="form-label" for="data_source">How often do you want the data to be imported?</label>
                                     <select class="form-control">
+                                        <option>Every 15 Mins</option>
+                                        <option>Hourly</option>
                                         <option>Nightly</option>
                                         <option>Weekly</option>
                                         <option>Monthly</option>
@@ -103,7 +105,7 @@
                                             </tr>
                                             <tr *ngFor="let item of cron_jobs; let i = index">
                                                 <td width="25%">{{item.name}}</td>
-                                                <td width="25%">{{item.internval}}</td>
+                                                <td width="25%">{{item.interval}}</td>
                                                 <td width="25%">{{item.notes}}</td>
                                                 <td width="25%">Remove</td>
                                             </tr>
