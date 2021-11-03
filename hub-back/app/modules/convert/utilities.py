@@ -276,7 +276,6 @@ def convert_data_from_csv(source,config):
 
 	return result
 	
-
 def import_excel(source):
 
 	try:
@@ -590,7 +589,6 @@ def create_data_file_to_import(config,data):
 
 	return data
 
-
 def get_column_headers(source, file_type):
 
 	result = {}
@@ -659,7 +657,6 @@ def get_column_headers(source, file_type):
 			"features": sheets
 	}
 	return result
-
 
 def process_data(data): 
 
@@ -841,3 +838,11 @@ def process_data(data):
 		}
 
 	return result
+
+def schedule_cron(data):
+	result = {
+		"staus":200,
+		"message":"cron scheduled",
+		}
+
+	return result	

@@ -41,7 +41,6 @@ def convert_options():
         }
     })
 
-
 @module.route('/v1/upload-file', methods=['POST'])
 def file_upload_post(*args, **kwargs):
 
@@ -79,7 +78,6 @@ def file_upload_post(*args, **kwargs):
 
 
     return jsonify(**utilities.get_column_headers(filepath, _type)), 200
-
 
 @module.route('/v1/upload-file-url', methods=['POST'])
 def file_url_upload_post(*args, **kwargs):
@@ -140,7 +138,6 @@ def file_upload_json_post(*args, **kwargs):
 
     return jsonify(**result), 200
 
-
 @module.route('/v1/convert', methods=['POST'])
 def convert_post(*args, **kwargs):
 
@@ -161,7 +158,6 @@ def convert_post(*args, **kwargs):
 
     return jsonify(**utilities.convert_data(source, config)), 200
 
-
 @module.route('/v1/config', methods=['OPTIONS'])
 def config_options():
     return jsonify(**{
@@ -170,9 +166,7 @@ def config_options():
         }
     })
 
-
 @module.route('/v1/config', methods=['POST'])
-
 def config_post(*args, **kwargs):
     if request.content_type is None:
         abort(make_response(jsonify(message="Must be in JSON format"), 400))
@@ -196,9 +190,7 @@ def process_options():
         }
     })
 
-
 @module.route('/v1/process', methods=['POST'])
-
 def process_post(*args, **kwargs):
 
     data = json.loads(request.data)
@@ -224,9 +216,18 @@ def process_post(*args, **kwargs):
         # "data":data
         }
 
+@module.route('/v1/schedule', methods=['POST'])
+def schedule_cron_post(*args, **kwargs):
+    if request.content_type is None:
+        abort(make_response(jsonify(message="Must be in JSON format"), 400))
 
-        
-@module.route('/v1/form', methods=['GET'])
-def form_get(*args, **kwargs):
+    if request.content_type is not None and (request.content_type == 'application/json' or 'application/json' in request.content_type):
+        try:
+            data = json.loads(request.data)
+        except ValueError as e:
+             abort(make_response(jsonify(message="Must be in JSON format"), 400))
+       
+        return jsonify(**utilities.schedule_cron(data)), 200
 
-    return render_template("index.html")
+
+    abort(make_response(jsonify(message="Must be in JSON format"), 400))
