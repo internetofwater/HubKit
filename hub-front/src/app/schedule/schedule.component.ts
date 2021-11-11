@@ -6,6 +6,7 @@ import {} from '../interfaces/schedule_cron_job';
 import { SCHEDULE_CRON_JOBS } from '../mock/mock-schedule-cron-job';
 import {HttpClient, HttpEvent, HttpErrorResponse, HttpEventType} from '@angular/common/http';
 import { TRANSFORM_CONFIG_SETTINGS } from '../mock/mock-transform_config';
+import { timeout } from 'rxjs/operators';
 
 
 
@@ -27,12 +28,21 @@ export class ScheduleComponent implements OnInit {
   successful_config_load = "";
   fileUrl = "";
 
+  cron_job_list:any={
+    jobs:[]
+  };
+
 
   schedule_cron_job_local:any= {
     config_file:"",
     source:"",
     interval:""
   };
+
+  schedule_response:any={
+
+  }
+  
 
   file_contents_local:any= {
     status:'',
@@ -51,11 +61,20 @@ export class ScheduleComponent implements OnInit {
 
     this.schedule_cron_job = SCHEDULE_CRON_JOBS;
     this.transform_config = TRANSFORM_CONFIG_SETTINGS;
+    this.cron_job_list = {
+      jobs:[]
+    };
+
+    this.schedule_response = {}
+
+    this.get_cron_job()
+
    }
 
   // schedule_cron
 
   ngOnInit(): void {
+
   }
 
   // METHODS
@@ -70,7 +89,17 @@ export class ScheduleComponent implements OnInit {
     
     console.log("Schedule Cron",config,source,interval )
     this.apiService.schedule_cron(this.schedule_cron_job)
-      .subscribe(schedule_cron_job => this.schedule_cron_job = schedule_cron_job)
+      .subscribe(schedule_cron_job => this.schedule_response = schedule_cron_job)
+
+      this.configFileName = ""
+      this.transform_config.settings.file_url = ""
+      this.interval = ""
+      this.transform_config.settings.cron_job_name = ""
+
+
+      setTimeout(() => {this.apiService.get_cron_jobs()
+        .subscribe(cron_job_list => this.cron_job_list = cron_job_list);}, 1000);
+    
   }
 
   onLoadConfig(event:any){
@@ -104,5 +133,25 @@ export class ScheduleComponent implements OnInit {
     this.apiService.get_data_from_url(payload)
       .subscribe(payload => this.file_contents_local = payload);
   }
+
+  get_cron_job() {
+    this.apiService.get_cron_jobs()
+      .subscribe(cron_job_list => this.cron_job_list = cron_job_list);
+  }
+  delete_cron_job(job:string) {
+  
+    this.apiService.delete_cron_job(job)
+      .subscribe();
+    setTimeout(() => {this.apiService.get_cron_jobs()
+      .subscribe(cron_job_list => this.cron_job_list = cron_job_list);}, 1000);
+  }
+
+  delete_all_cron_jobs() {
+    this.apiService.delete_all_cron_jobs()
+      .subscribe();
+    setTimeout(() => {this.apiService.get_cron_jobs()
+      .subscribe(cron_job_list => this.cron_job_list = cron_job_list);}, 1000);
+  }
+
 
 }

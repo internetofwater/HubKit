@@ -890,10 +890,17 @@ def schedule_cron(data):
 
 	result = {}
 
+	current_date = datetime.now()
+
 	if data and "cron_job_name" in data:
-		cron_job_name = data["cron_job_name"]
+		cron_job_name = data["cron_job_name"]+current_date.isoformat()
 	else:
 		abort(make_response(jsonify(message="Cron Job Name is required"), 400))
+
+	if data and "interval" in data:
+		interval = data["interval"]
+	else:
+		abort(make_response(jsonify(message="Interval is required"), 400))
 
 	# DETERMIN HOW OFTEN
 
@@ -901,19 +908,91 @@ def schedule_cron(data):
 	command = "curl 'http://localhost:5000/v1/run_job' \
 	-H 'Connection: keep-alive' \
 	-H 'Content-Type: application/json' \
-	--data-raw '{\"config_file\":\"config (25).json\",\"source\":\"https://raw.githubusercontent.com/internetofwater/HubKit/main/examples/data/tests.csv\",\"interval\":\"15mins\"}' \
+	--data-raw '{\"config_file\":\""+data["config_file"]+"\",\"source\":\""+data["source"]+"\"}' \
 	--compressed"
 	job = cron.new(command=command, comment=cron_job_name)
-	job.minute.every(1)
-	cron.write()
 
+	if interval:
+		if interval == "15mins":
+			job.minute.every(1)
+		elif interval == "hourly":
+			job.minute.every(60)
+		elif interval == "nightly":
+			job.hour.every(23)
+			job.minute.also.on(59)
+		elif interval == "weekly":
+			job.dow.on('SUN')
+			job.minute.also.on(59)
+			job.hour.also.on(23)
+		elif interval == "monthly":
+			job.day.on(1)
+			job.minute.also.on(59)
+			job.hour.also.on(23)
+			
+
+	cron.write()
 	os.system("service cron restart")
+	# job.every_reboot()
 
 	result = {
 		"staus":200,
-		"message":"cron Job Scheduled",
+		"message":"Cron Job Scheduled",
 		"config_file":data["config_file"],
 		"source":data["source"]
 		}
 
-	return result	
+	return result
+
+def delete_job():
+	cron = CronTab(user='root')
+
+	_name = request.args.get('name','')
+
+	iter = cron.find_comment(_name)
+	cron.remove( iter )
+	cron.write()
+
+	result = {
+		"staus":201,
+		"message":"A Single cron job has been removed for %s."% _name
+		}
+
+	return result
+
+def delete_all_jobs():
+	cron = CronTab(user='root')
+	cron.remove_all()
+	cron.write()
+	result = {
+		"staus":201,
+		"message":"All cron jobs have been removed."
+		}
+
+	return result
+
+def get_cron():
+
+	jobs=[]
+
+	cron = CronTab(user='root')
+	for job in cron:
+		jobs.append({
+			"name":job.comment
+		})
+	result = {
+		"staus":200,
+		"jobs":jobs
+		}
+
+	return result
+
+def get_cron_log():
+	jobs = []
+	result = {
+		"staus":200,
+		"jobs":[{
+			"message":"job ran successfully"
+		}]
+		}
+
+	return result

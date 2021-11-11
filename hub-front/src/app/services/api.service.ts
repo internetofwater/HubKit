@@ -51,6 +51,30 @@ export class ApiService {
     );
   }
 
+  get_cron_jobs(): Observable<any> {
+    return this.http.get<any>(this.apiUrl+"/cron", this.httpOptions )
+    .pipe(
+      tap(_ => this.log('get list of crong jobs')),
+      catchError(this.handleError<any>('did not get cron job list' ))
+    );
+  }
+
+  delete_all_cron_jobs(): Observable<any> {
+    return this.http.delete<any>(this.apiUrl+"/cron/delete-all", this.httpOptions )
+    .pipe(
+      tap(_ => this.log('Delete all cron jobs')),
+      catchError(this.handleError<any>('did not delete all cron jobs' ))
+    );
+  }
+
+  delete_cron_job(job:string): Observable<any> {
+    return this.http.delete<any>(this.apiUrl+"/cron?name="+job, this.httpOptions )
+    .pipe(
+      tap(_ => this.log('delete job')),
+      catchError(this.handleError<any>('did not delete the cron job' ))
+    );
+  }
+
   run_process(config_response: any): Observable<TransformConfig> {
 
     return this.http.post<TransformConfig>(this.apiUrl+"/process", config_response, this.httpOptions )

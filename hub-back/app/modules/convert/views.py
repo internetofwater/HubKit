@@ -247,3 +247,22 @@ def run_job_post(*args, **kwargs):
 
 
     abort(make_response(jsonify(message="Must be in JSON format"), 400))
+
+
+
+@module.route('/v1/cron', methods=['GET'])
+def cron_get(*args, **kwargs):
+    return jsonify(**utilities.get_cron()), 200
+
+@module.route('/v1/cron', methods=['DELETE'])
+def cron_delete_one(*args, **kwargs):
+    return jsonify(**utilities.delete_job()), 200
+
+@module.route('/v1/cron/delete-all', methods=['DELETE'])
+def cron_delete_all(*args, **kwargs):
+    return jsonify(**utilities.delete_all_jobs()), 200
+
+
+@module.route('/v1/cron-log', methods=['GET'])
+def cron_log_get(*args, **kwargs):
+    return jsonify(**utilities.get_cron_log()), 200
