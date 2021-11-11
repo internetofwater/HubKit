@@ -59,12 +59,13 @@ export class ScheduleComponent implements OnInit {
   }
 
   // METHODS
-  schedule_cron(config:string,source:string,interval:string){
+  schedule_cron(config:string,source:string,interval:string,cron_job_name:string){
 
     this.schedule_cron_job={
       config_file:config,
       source:source,
-      interval:interval
+      interval:interval,
+      cron_job_name:cron_job_name
     }
     
     console.log("Schedule Cron",config,source,interval )

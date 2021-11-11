@@ -890,6 +890,11 @@ def schedule_cron(data):
 
 	result = {}
 
+	if data and "cron_job_name" in data:
+		cron_job_name = data["cron_job_name"]
+	else:
+		abort(make_response(jsonify(message="Cron Job Name is required"), 400))
+
 	# DETERMIN HOW OFTEN
 
 	cron = CronTab(user='root')
@@ -898,7 +903,7 @@ def schedule_cron(data):
 	-H 'Content-Type: application/json' \
 	--data-raw '{\"config_file\":\"config (25).json\",\"source\":\"https://raw.githubusercontent.com/internetofwater/HubKit/main/examples/data/tests.csv\",\"interval\":\"15mins\"}' \
 	--compressed"
-	job = cron.new(command=command)
+	job = cron.new(command=command, comment=cron_job_name)
 	job.minute.every(1)
 	cron.write()
 

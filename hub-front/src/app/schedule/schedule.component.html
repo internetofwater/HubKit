@@ -16,6 +16,11 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="form-group">
+                                <div class="single-space">
+                                    <label class="form-label" for="cron_job_name">Name of Cron Job (required)</label>
+                                    <input class="form-control" type="text"  id="cron_job_name" required
+                                    [(ngModel)]="transform_config.settings.cron_job_name">
+                                </div>
                                 <!-- FILE UPLOAD -->
                                 <div class="single-space">
                                     
@@ -28,16 +33,16 @@
                                         {{configFileName || "No file uploaded yet."}}
                                                 {{successful_config_load}}
                                 </div>
+         
                                 <div class="single-space" *ngIf="configFileName.length>0">
-                                    <label class="form-label" for="data_source">Data Source</label>
+                                    <label class="form-label" for="load_via_url">Data Source</label>
                                     <input class="form-control" type="url"  id="load_via_url"
-                                    (blur)="dataFromUrl=transform_config.settings.file_url"
                                     [(ngModel)]="transform_config.settings.file_url">
-                                    <button type="button" (click)="upload_via_url($event)" class="button button-primaryAction" >Get Data</button>
+                                    <button type="button" (click)="upload_via_url($event);dataFromUrl=transform_config.settings.file_url" class="button button-primaryAction" >Get Data</button>
                                 </div>
                                 <div class="single-space" *ngIf="configFileName.length>0 && dataFromUrl.length>0 && file_contents_local.status==='File Loaded'">
-                                    <label class="form-label" for="data_source">How often do you want the data to be imported?</label>
-                                    <select class="form-control" [(ngModel)]="interval">
+                                    <label class="form-label" for="interval">How often do you want the data to be imported?</label>
+                                    <select class="form-control" [(ngModel)]="interval" id="interval" name="interval">
                                         <option value="15mins">Every 15 Mins</option>
                                         <option value="hourly">Hourly</option>
                                         <option value="nightly">Nightly</option>
@@ -46,7 +51,7 @@
                                     </select>
                                 </div>
                                 <div class="single-space" *ngIf="configFileName.length>0 && dataFromUrl.length>0 && file_contents_local.status==='File Loaded'">
-                                    <input type="button" value="Schedule" class="button" (click)="schedule_cron(configFileName,transform_config.settings.file_url,interval)" />
+                                    <input type="button" value="Schedule" class="button" (click)="schedule_cron(configFileName,transform_config.settings.file_url,interval,transform_config.settings.cron_job_name)" />
                                 </div>
 
                             </div>
