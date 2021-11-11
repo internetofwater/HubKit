@@ -19,11 +19,13 @@ from flask import json
 from flask import make_response
 from flask import jsonify
 from flask import current_app
+from urllib.parse import urlparse
 
-import os
+from crontab import CronTab
 
-import os.path
 import json
+import os
+import os.path
 
 import urllib3
 import csv
@@ -596,7 +598,7 @@ def get_column_headers(source, file_type):
 
 	if file_type == "excel":
 
-		
+		print(file_type)
 		sheet_number = 0
 
 		workbook = import_excel(source)
@@ -629,6 +631,8 @@ def get_column_headers(source, file_type):
 
 	elif file_type == "csv":
 
+		print(file_type)
+
 		_csv = import_csv(source)
 		list_with_values=[]
 
@@ -654,7 +658,8 @@ def get_column_headers(source, file_type):
 	result ={
 			"status":"File Loaded",
 			"type": "FeatureCollection",
-			"features": sheets
+			"features": sheets,
+			"source":source
 	}
 	return result
 
@@ -839,10 +844,71 @@ def process_data(data):
 
 	return result
 
-def schedule_cron(data):
+def run_cron(data):
+	result = {}
+
+	# 1. upload config file - write a log to json file
+
+	# print("source", data["source"])
+	# print("config", data["config"])
+
+	source_file = urlparse(data["source"])
+	print(os.path.basename(source_file.path))  # Output: 09-09-201315-47-571378756077.jpg
+
+
+	# 2. get data source via url - write a log to json file
+	converted_data = convert_data(os.path.basename(source_file.path), data["config_file"])
+
+	# 3. run prep for data upload - write a log to json file
+
+	try:
+		print("Lets do it", "output" in converted_data)
+		result = process_data(converted_data)
+		# return jsonify(**result), 200
+	except ValueError as e:
+			abort(make_response(jsonify(message="This is not working out"), 400))
+
+
+    # abort(make_response(jsonify(message="Must be in JSON format"), 400))
+    # return {
+    #     "content-type":request.content_type,
+    #     "result":result
+    #     # "data":data
+    #     }
+
+	# 4. process data - write a log to json file
+
 	result = {
 		"staus":200,
-		"message":"cron scheduled",
+		"message":"cron Job Ran",
+		"config_file":data["config_file"],
+		"source":data["source"]
+		}
+	return result
+
+def schedule_cron(data):
+
+	result = {}
+
+	# DETERMIN HOW OFTEN
+
+	cron = CronTab(user='root')
+	command = "curl 'http://localhost:5000/v1/run_job' \
+	-H 'Connection: keep-alive' \
+	-H 'Content-Type: application/json' \
+	--data-raw '{\"config_file\":\"config (25).json\",\"source\":\"https://raw.githubusercontent.com/internetofwater/HubKit/main/examples/data/tests.csv\",\"interval\":\"15mins\"}' \
+	--compressed"
+	job = cron.new(command=command)
+	job.minute.every(1)
+	cron.write()
+
+	os.system("service cron restart")
+
+	result = {
+		"staus":200,
+		"message":"cron Job Scheduled",
+		"config_file":data["config_file"],
+		"source":data["source"]
 		}
 
 	return result	

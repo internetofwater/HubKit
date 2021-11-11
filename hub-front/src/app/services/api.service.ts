@@ -8,6 +8,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { FIELDS } from '../mock/mock-fields';
 import { Field } from '../interfaces/field';
 import { TransformConfig } from '../interfaces/transformconfig';
+import { ScheduleCronJob } from '../interfaces/schedule_cron_job';
 
 
 @Injectable({
@@ -31,6 +32,14 @@ export class ApiService {
     .pipe(
       tap(_ => this.log('post config')),
       catchError(this.handleError<TransformConfig>('create_config', transform_config ))
+    );
+  }
+
+  schedule_cron(schedule_cron_job: ScheduleCronJob): Observable<ScheduleCronJob> {
+    return this.http.post<ScheduleCronJob>(this.apiUrl+"/schedule",schedule_cron_job , this.httpOptions )
+    .pipe(
+      tap(_ => this.log('post config')),
+      catchError(this.handleError<ScheduleCronJob>('create_config', schedule_cron_job ))
     );
   }
 

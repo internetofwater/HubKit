@@ -231,3 +231,19 @@ def schedule_cron_post(*args, **kwargs):
 
 
     abort(make_response(jsonify(message="Must be in JSON format"), 400))
+
+@module.route('/v1/run_job', methods=['POST'])
+def run_job_post(*args, **kwargs):
+    if request.content_type is None:
+        abort(make_response(jsonify(message="Must be in JSON format"), 400))
+
+    if request.content_type is not None and (request.content_type == 'application/json' or 'application/json' in request.content_type):
+        try:
+            data = json.loads(request.data)
+        except ValueError as e:
+             abort(make_response(jsonify(message="Must be in JSON format"), 400))
+       
+        return jsonify(**utilities.run_cron(data)), 200
+
+
+    abort(make_response(jsonify(message="Must be in JSON format"), 400))
