@@ -914,7 +914,7 @@ def schedule_cron(data):
 
 	if interval:
 		if interval == "15mins":
-			job.minute.every(1)
+			job.minute.every(15)
 		elif interval == "hourly":
 			job.minute.every(60)
 		elif interval == "nightly":
