@@ -2,60 +2,60 @@
 import { Field } from '../interfaces/field';
 
 export const SETTINGS_FIELDS: Field[] = [
-  { id: 1, 
-    datavalue:'', 
-    field:{
-      "model" : "settings",
-      "param" : "type",
-      "field_name": "data_source",
-      "field_label": "Data Source",
-      "config_field_name":"",
-      "field_help": "",
-      "field_order": 1,
-      "field_placeholder": "",
-      "is_editable": true,
-      "is_custom": false,
-      "is_required": true,
-      "is_listed": false,
-      "component":{
-      "name": "select",
-      "group":"Settings",
-      "options": {
-          "values": [
-              'Excel',
-              'csv'
-          ]
-        },
-      }
-    }
-  },
-  { id: 2, 
-    datavalue:'', 
-    field:{
-      "model" : "settings",
-      "param" : "data_structure",
-      "field_name": "data_structure",
-      "field_label": "Data Structure",
-      "config_field_name":"",
-      "field_help": "",
-      "field_order": 1,
-      "field_placeholder": "",
-      "is_editable": true,
-      "is_custom": false,
-      "is_required": true,
-      "is_listed": false,
-      "component":{
-      "name": "select",
-      "group":"Settings",
-      "options": {
-          "values": [
-              'Multiple sensors per row',
-              'One Sensor per row'
-          ]
-        },
-      }
-    }
-  },
+  // { id: 1, 
+  //   datavalue:'', 
+  //   field:{
+  //     "model" : "settings",
+  //     "param" : "type",
+  //     "field_name": "data_source",
+  //     "field_label": "Data Source",
+  //     "config_field_name":"",
+  //     "field_help": "",
+  //     "field_order": 1,
+  //     "field_placeholder": "",
+  //     "is_editable": true,
+  //     "is_custom": false,
+  //     "is_required": true,
+  //     "is_listed": false,
+  //     "component":{
+  //     "name": "select",
+  //     "group":"Settings",
+  //     "options": {
+  //         "values": [
+  //             'Excel',
+  //             'csv'
+  //         ]
+  //       },
+  //     }
+  //   }
+  // },
+  // { id: 2, 
+  //   datavalue:'', 
+  //   field:{
+  //     "model" : "settings",
+  //     "param" : "data_structure",
+  //     "field_name": "data_structure",
+  //     "field_label": "Data Structure",
+  //     "config_field_name":"",
+  //     "field_help": "",
+  //     "field_order": 1,
+  //     "field_placeholder": "",
+  //     "is_editable": true,
+  //     "is_custom": false,
+  //     "is_required": true,
+  //     "is_listed": false,
+  //     "component":{
+  //     "name": "select",
+  //     "group":"Settings",
+  //     "options": {
+  //         "values": [
+  //             'Multiple sensors per row',
+  //             'One Sensor per row'
+  //         ]
+  //       },
+  //     }
+  //   }
+  // },
   { id: 3, 
     datavalue:'', 
     field:{

@@ -8,6 +8,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { FIELDS } from '../mock/mock-fields';
 import { Field } from '../interfaces/field';
 import { TransformConfig } from '../interfaces/transformconfig';
+import { ScheduleCronJob } from '../interfaces/schedule_cron_job';
 
 
 @Injectable({
@@ -31,6 +32,46 @@ export class ApiService {
     .pipe(
       tap(_ => this.log('post config')),
       catchError(this.handleError<TransformConfig>('create_config', transform_config ))
+    );
+  }
+
+  schedule_cron(schedule_cron_job: ScheduleCronJob): Observable<ScheduleCronJob> {
+    return this.http.post<ScheduleCronJob>(this.apiUrl+"/schedule",schedule_cron_job , this.httpOptions )
+    .pipe(
+      tap(_ => this.log('post config')),
+      catchError(this.handleError<ScheduleCronJob>('create_config', schedule_cron_job ))
+    );
+  }
+
+  get_data_from_url(payload: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl+"/upload-file-url",payload , this.httpOptions )
+    .pipe(
+      tap(_ => this.log('post config')),
+      catchError(this.handleError<any>('get file via url', payload ))
+    );
+  }
+
+  get_cron_jobs(): Observable<any> {
+    return this.http.get<any>(this.apiUrl+"/cron", this.httpOptions )
+    .pipe(
+      tap(_ => this.log('get list of crong jobs')),
+      catchError(this.handleError<any>('did not get cron job list' ))
+    );
+  }
+
+  delete_all_cron_jobs(): Observable<any> {
+    return this.http.delete<any>(this.apiUrl+"/cron/delete-all", this.httpOptions )
+    .pipe(
+      tap(_ => this.log('Delete all cron jobs')),
+      catchError(this.handleError<any>('did not delete all cron jobs' ))
+    );
+  }
+
+  delete_cron_job(job:string): Observable<any> {
+    return this.http.delete<any>(this.apiUrl+"/cron?name="+job, this.httpOptions )
+    .pipe(
+      tap(_ => this.log('delete job')),
+      catchError(this.handleError<any>('did not delete the cron job' ))
     );
   }
 
@@ -74,6 +115,8 @@ export class ApiService {
       catchError(this.handleError<TransformConfig>('run_convert', payload ))
     );
   }
+
+
 
   /**
  * Handle Http operation that failed.

@@ -8,6 +8,7 @@ export const TRANSFORM_CONFIG_SETTINGS: TransformConfig =
             type:"Excel",
             sheet:"",	
             file:"transform_config.json",
+            file_url:"",
             thing_name_column:"",
             thing_description_column:"",
             thing_lng_column:"",

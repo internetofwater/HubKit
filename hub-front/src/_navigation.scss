@@ -1,0 +1,38 @@
+//
+// _fonts.scss
+//
+// @description
+//    The typography stylesheet helps us define styles that handle the
+//    appearance and positioning of the type used throughtout the site
+//
+// @overview
+//    This stylesheet is written in SASS(1) and compiles all of the styles
+//    we use throughout the site.
+//
+// @see (1) http://sass-lang.com/documentation/file.SASS_REFERENCE.html
+//
+
+.siteContent{
+    margin-top: 8em;
+}
+
+.button-navigation{
+    z-index: 9999;
+    top: 0;
+    position: fixed;
+    display:  block;
+    background: rgb(100, 185, 185);
+    margin: 0 0 ;
+    padding:0;
+    width: 100%;
+    ul{
+        text-indent: 0;
+        margin:1.5em 0;
+        padding: 0;
+    }
+    li{
+        padding: 0 .5em;;
+        list-style: none;
+        display: inline-block
+    }
+}

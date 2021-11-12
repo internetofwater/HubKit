@@ -1,445 +1,531 @@
+    <nav class="button-navigation">
+        <div class="container-fluid">
+            <ul >
+                <li><button type="button" (click)="create_config()" class="button button-primaryAction">Save Config</button> </li>
+                <li><button type="button" (click)="run_convert()" class="button button-primaryAction">Prep Data for Upload</button></li>
+                <li><button type="button" (click)="process_data()" class="button button-primaryAction">Start Processing Data</button></li>
+                <li><a href="/schedule" class="button"  class="button button-primaryAction">Scheduler</a></li>
 
-<article class="form">
-    <div class="double-top" name="data_wizard">
+            </ul>    
+        </div>
+    </nav>
 
+<div class="container-fluid siteContent">
+    <h1 class="heavy">{{title}}</h1>
 
-        <div *ngFor="let group of groups"  class="form-group" >
-            <h2 class="big heavy caps">{{group.group_name}}</h2>    
-            <hr />
-            <fieldset class="form-fieldset" >
-                
-                <div class="row">
-                    <div class="col-xs-12">
+    <div *ngIf="config_response" class="error">
+        {{config_response[0] |json}}
+        <h1 *ngIf="config_response.error_log">Errors ({{config_response.error_log.length}})</h1>
+        <div class="form-group">
+            <table class="table">
+                <tr>
+                    <td class="heavy" width="16%">Number</td>
+                    <td class="heavy" width="16%">error</td>
+                    <td class="heavy" width="16%">name</td>
+                    <td class="heavy" width="16%">phenomenonTime</td>
+                    <td class="heavy" width="16%">property</td>
+                    <td class="heavy" width="16%">result</td>
+                </tr>
+                <tr *ngFor="let item of config_response.error_log; let i = index">
+                    <td width="16%">{{i}}</td>
+                    <td width="16%">{{item['error']}}</td>
+                    <td width="16%">{{item['name']}}</td>
+                    <td width="16%">{{item['phenomenonTime']}}</td>
+                    <td width="16%">{{item['property']}}</td>
+                    <td width="16%">{{item['result']}}</td>
+                </tr>
 
-                        <div *ngFor="let item of setting_fields"  class="form-group">
-                            <div *ngIf="group.group_name === item.field.component.group">
-                                <!-- TEXTFIELD -->
-                                <div class="single-space" *ngIf="item.field.component.name==='textfield'">
-                                    <label  class="form-label" for="{{item.field.field_name}}">{{item.field.field_label}}</label>
-                                    <input class="form-control" [(ngModel)]="item.datavalue" placeholder="{{item.field.field_placeholder}}" id="{{item.field.field_name}}">
-                                </div>
+            </table>
+        </div>
+    </div>
 
-                                <!-- SELECT -->                            
-                                <div class="single-space" *ngIf="item.field.component.name=='select'">
-                                    <label  class="form-label" for="{{item.field.field_name}}">{{item.field.field_label}}</label>
-                                    <div class="container--selection single-space">               
-                                        <select class="form-control" id="{{item.field.field_name}}"
-                                                required="item.field.is_required"
-                                                selected
-                                                [(ngModel)]="transform_config[item.field.model][item.field.param]" name="{{item.field.field_name}}"
-                                                #{{item.field.field_name}}="ngModel">
-                                        <option *ngFor="let val of item.field.component.options.values" [value]="val">{{val}}</option>
-                                        </select>                             
-                                    </div>
-                                    <div [hidden]="transform_config[item.field.model][item.field.param].length > 0" class="single--top alert error">
-                                        {{item.field.field_label}} is required
-                                    </div>
-                                </div>
+    What jobs have been scheduled?
 
-                                <!-- SELECT OPTIONS -->                            
-                                <div class="single-space" *ngIf="item.field.component.name=='select_options'">
-
-                                    <div class="row">
-                                        <div class="col-xs-6">
-                                            <label  class="form-label" for="{{item.field.field_name}}">{{item.field.field_label}}</label>
-                                            <div class="container--selection single-space width-95">               
-                                                <select class="form-control" id="{{item.field.field_name}}"
-                                                        required="item.field.is_required"
-                                                        selected
-                                                        [(ngModel)]="item.datavalue" name="{{item.field.field_name}}"
-                                                        #{{item.field.field_name}}="ngModel">
-                                                <option selected>-- Make a Selection --</option>>
-                                                <option *ngFor="let val of item.field.component.options.values" [value]="val">{{val}}</option>
-                                                </select>                               
-                                            </div>
-                                            <div>
-                                                <button type="button" (click)="onAddToThings(
-                                                    {
-                                                        mapped_to:item.field.config_field_name,
-                                                        field:transform_config[item.field.model][item.field.param],
-                                                        sheet:file_contents_local.features[sheet_selected].sheet                                                        
-                                                    }
-                                                    )" class="button button-primaryAction">Add Things</button>
-                                            </div>  
-
-                                        </div>
-
-                                        <div class="col-xs-6">
-                                            <div *ngIf="item.datavalue==='Custom Text'">
-                                                <label  class="form-label" for="{{item.field.field_name}}_value">Value</label>
-                                                <input class="form-control marign--left" [(ngModel)]="transform_config[item.field.model][item.field.param]" placeholder="{{item.field.field_placeholder}}" id="{{item.field.field_name}}_value">
-                                            </div>
-                                            <div class="single-space" *ngIf="item.datavalue==='From Data Source'" >
-                                                <label  class="form-label" for="">Select Sheet</label>
-                                                <div class="container--selection single-space" >               
-                                                    <select class="form-control" id=""
-                                                            required=""
-                                                            selected
-                                                            name=""
-                                                            [(ngModel)]="sheet_selected">
-                                                    <option selected> -- Select A Sheet --</option>
-                                                    <option
-                                                     *ngFor="let item of file_contents_local.features"   [value]="item.sheet_number">{{item.sheet}}</option>
-                                                    </select>                               
-                                                </div>
-    
-                                                <label  class="form-label" for="">Select Cell</label>
-                                                <div class="container--selection single-space"
-                                                *ngIf="sheet_selected"  >               
-                                                    <select class="form-control" id=""
-                                                            required=""
-                                                            selected
-                                                            name=""
-                                                            [(ngModel)]="transform_config[item.field.model][item.field.param]">
-                                                    <option
-                                                     *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="[item.value,item.column]">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
-                                                    </select>                               
-                                                </div>
-                                     
-                                            </div>
-                                            <div class="single-space" *ngIf="item.datavalue==='Autogenerated'" >
-                                                <div type="hidden" *ngShow="transform_config[item.field.model][item.field.param]=3"></div>
-                                                {{transform_config[item.field.model][item.field.param]}}
-                                     
-                                            </div>
-                                       
-                                        </div>
-
-
-
-                                    </div>
-
-                                    <!-- {{item.datavalue.length < 0}}
-                                    {{transform_config[item.field.model][item.field.param] !== 'Custom Text'}} -->
-                                    
-                                    <!-- <div [hidden]="transform_config[item.field.model][item.field.param] !== 'Custom Text'" class="single--top alert error">
-                                        {{item.field.field_label}} is required
-                                    </div> -->
-                                </div>
-
-                                
-        
+    <article class="form">
+        <div class="double-top" name="data_wizard">
+            <div>
+                <h2 class="caps">Load Configuration File</h2>
+                <hr />
+                <fieldset class="form-fieldset">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="form-group">
                                 <!-- FILE UPLOAD -->
-                                <div class="single-space" *ngIf="item.field.component.name==='file_upload'">
-                                    <label  class="form-label" for="{{item.field.field_name}}">{{item.field.field_label}}</label>
-                                    <input type="file" class="form-control" [(ngModel)]="item.datavalue" 
-                                           placeholder="{{item.field.field_placeholder}}" 
-                                           id="{{item.field.field_name}}"
-                                           (change)="onFileSelected($event)" #fileUpload>
+                                <div class="single-space">
+                                    <label  class="form-label" for="load_config">Load Config</label>
+                                    <input type="file" class="form-control" 
+                                        id="load_config"
+                                        (change)="onLoadConfig($event)" >
+                                   
+                                        {{configFileName || "No file uploaded yet."}}
+                                                {{successful_config_load}}
 
-                                           <div class="file-upload">
+                                        <!-- <div class="file-upload"> -->
+
+    
+                                        
+                                            <!-- <button mat-mini-fab color="primary" class="upload-btn"
+                                            (click)="fileUpload.click()">
+                                                icon here
+                                            </button> -->
+                                        <!-- </div> -->
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div *ngFor="let group of groups" >
+                <h2 class="big heavy caps">{{group.group_name}}</h2>    
+                <hr />
+                <fieldset class="form-fieldset" >
+                    
+                    <div class="row">
+                        <div class="col-xs-12">
+
+                            <div *ngFor="let item of setting_fields"  class="form-group">
+                                <div *ngIf="group.group_name === item.field.component.group">
+                                    <!-- TEXTFIELD -->
+                                    <div class="single-space" *ngIf="item.field.component.name==='textfield'">
+                                        <label  class="form-label" for="{{item.field.field_name}}">{{item.field.field_label}}</label>
+                                        <input class="form-control" [(ngModel)]="item.datavalue" placeholder="{{item.field.field_placeholder}}" id="{{item.field.field_name}}">
+                                    </div>
+
+                                    <!-- SELECT -->                            
+                                    <div class="single-space" *ngIf="item.field.component.name=='select'">
+                                        <label  class="form-label" for="{{item.field.field_name}}">{{item.field.field_label}}</label>
+                                        <div class="container--selection single-space">               
+                                            <select class="form-control" id="{{item.field.field_name}}"
+                                                    required="item.field.is_required"
+                                                    selected
+                                                    [(ngModel)]="transform_config[item.field.model][item.field.param]" name="{{item.field.field_name}}"
+                                                    #{{item.field.field_name}}="ngModel">
+                                            <option *ngFor="let val of item.field.component.options.values" [value]="val">{{val}}</option>
+                                            </select>                             
+                                        </div>
+                                        <div [hidden]="transform_config[item.field.model][item.field.param].length > 0" class="single--top alert error">
+                                            {{item.field.field_label}} is required
+                                        </div>
+                                    </div>
+
+                                    <!-- SELECT OPTIONS -->                            
+                                    <div class="single-space" *ngIf="item.field.component.name=='select_options'">
+
+                                        <div class="row">
+                                            <div class="col-xs-6">
+                                                <label  class="form-label" for="{{item.field.field_name}}">{{item.field.field_label}}</label>
+                                                <div class="container--selection single-space width-95">               
+                                                    <select class="form-control" id="{{item.field.field_name}}"
+                                                            required="item.field.is_required"
+                                                            selected
+                                                            [(ngModel)]="item.datavalue" name="{{item.field.field_name}}"
+                                                            #{{item.field.field_name}}="ngModel">
+                                                    <option selected>-- Make a Selection --</option>>
+                                                    <option *ngFor="let val of item.field.component.options.values" [value]="val">{{val}}</option>
+                                                    </select>                               
+                                                </div>
+                                                <div>
+                                                    <button type="button" (click)="onAddToThings(
+                                                        {
+                                                            mapped_to:item.field.config_field_name,
+                                                            field:transform_config[item.field.model][item.field.param],
+                                                            sheet:file_contents_local.features[sheet_selected].sheet                                                        
+                                                        }
+                                                        )" class="button button-primaryAction">Add Things</button>
+                                                </div>  
+
+                                            </div>
+
+                                            <div class="col-xs-6">
+                                                <div *ngIf="item.datavalue==='Custom Text'">
+                                                    <label  class="form-label" for="{{item.field.field_name}}_value">Value</label>
+                                                    <input class="form-control marign--left" [(ngModel)]="transform_config[item.field.model][item.field.param]" placeholder="{{item.field.field_placeholder}}" id="{{item.field.field_name}}_value">
+                                                </div>
+                                                <div class="single-space" *ngIf="item.datavalue==='From Data Source'" >
+                                                    <label  class="form-label" for="">Select Sheet</label>
+                                                    <div class="container--selection single-space" >               
+                                                        <select class="form-control" id=""
+                                                                required=""
+                                                                selected
+                                                                name=""
+                                                                [(ngModel)]="sheet_selected">
+                                                        <option selected> -- Select A Sheet --</option>
+                                                        <option
+                                                        *ngFor="let item of file_contents_local.features"   [value]="item.sheet_number">{{item.sheet}}</option>
+                                                        </select>                               
+                                                    </div>
+        
+                                                    <label  class="form-label" for="">Select Cell</label>
+                                                    <div class="container--selection single-space"
+                                                    *ngIf="sheet_selected"  >               
+                                                        <select class="form-control" id=""
+                                                                required=""
+                                                                selected
+                                                                name=""
+                                                                [(ngModel)]="transform_config[item.field.model][item.field.param]">
+                                                        <option
+                                                        *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="[item.value,item.column]">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                                                        </select>                               
+                                                    </div>
+                                        
+                                                </div>
+                                                <div class="single-space" *ngIf="item.datavalue==='Autogenerated'" >
+                                                    <div type="hidden" *ngShow="transform_config[item.field.model][item.field.param]=3"></div>
+                                                    {{transform_config[item.field.model][item.field.param]}}
+                                        
+                                                </div>
+                                        
+                                            </div>
+
+
+
+                                        </div>
+
+                                        <!-- {{item.datavalue.length < 0}}
+                                        {{transform_config[item.field.model][item.field.param] !== 'Custom Text'}} -->
+                                        
+                                        <!-- <div [hidden]="transform_config[item.field.model][item.field.param] !== 'Custom Text'" class="single--top alert error">
+                                            {{item.field.field_label}} is required
+                                        </div> -->
+                                    </div>
+
+                                    
+            
+                                    <!-- FILE UPLOAD -->
+                                    <div class="single-space" *ngIf="item.field.component.name==='file_upload'">
+
+                                        <div class="double-space">
+                                            <button type="button" class="button button-primaryAction" (click)="upload_type='file'"> Choose From File </button>
+                                            <button type="button" class="button button-primaryAction" (click)="upload_type='web'"> Choose From Web </button>
+                                        </div>
+
+                                        <div *ngIf="upload_type ==='file'">
+                                            <label  class="form-label" for="{{item.field.field_name}}">{{item.field.field_label}}</label>
+                                            <input type="file" class="form-control" [(ngModel)]="item.datavalue" 
+                                                placeholder="{{item.field.field_placeholder}}" 
+                                                id="{{item.field.field_name}}"
+                                                
+                                                (change)="onFileSelected($event)" #fileUpload>
+                                        </div>
+
+                                        <div *ngIf="upload_type ==='web'">
+                                            <label class="form-label" for="{{item.field.field_name}}_via_url">{{item.field.field_label}} via URL</label>
+                                            <input type="url" class="form-control single-space" 
+                                                id="load_via_url"
+                                                [(ngModel)]="transform_config.settings.file_url">
+
+                                            <button type="button" (click)="upload_via_url($event)" class="button button-primaryAction" >Upload</button>
+                                        </div>
+                                        
+
+                                        <div class="file-upload">
 
                                             {{fileName || "No file uploaded yet."}}
                                             {{successful_load}}
-                                         
-                                             <!-- <button mat-mini-fab color="primary" class="upload-btn"
-                                               (click)="fileUpload.click()">
-                                                 icon here
-                                             </button> -->
-                                         </div>
+                                        
+                                            <!-- <button mat-mini-fab color="primary" class="upload-btn"
+                                            (click)="fileUpload.click()">
+                                                icon here
+                                            </button> -->
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>  
+
+            <!-- END SETTINGS -->
+
+
+            <!-- THINGS -->
+            {{file_contents_local.features[0].sheet}}
+            <div *ngIf="file_contents_local.features[0].sheet !== ''">
+                <h2 class="big heavy caps">Select Your Data Sheet Source</h2>    
+                <hr />
+                <fieldset class="form-fieldset" >
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                        <!-- SELECT OPTIONS -->                            
+                            <div class="single-space form-group">
+
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <label  class="form-label" for="select_data_source">Select Thing Name Source</label>
+                                        <div class="container--selection single-space width-95">     
+                                            <select class="form-control" id=""
+                                                                required=""
+                                                                selected
+                                                                (change)="transform_config.settings.sheet = file_contents_local.features[sheet_selected].sheet"
+                                                                name=""
+                                                                [(ngModel)]="sheet_selected">
+                                                <option selected> -- Select A Sheet --</option>
+                                                <option
+                                                    *ngFor="let item of file_contents_local.features"  [value]="item.sheet_number">{{item.sheet}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-xs-12">
+                                        <div class="container--selection single-space"
+                                                    *ngIf="sheet_selected"  >     
+                                            <label  class="form-label" for="thing_name_column">Select Thing Name Column</label>
+                                            <select class="form-control" id="thing_name_column"
+                                                    required=""
+                                                    selected
+                                                    name="thing_name_column"
+                                                    [(ngModel)]="transform_config.settings.thing_name_column" >
+                                            <option
+                                                *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="[item.column]">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                                            </select>                               
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6 col-xs-12">
+                                        <div class="container--selection single-space"
+                                                    *ngIf="sheet_selected"  >
+                                            <label  class="form-label" for="thing_name_column">Select Thing Description Column</label>               
+                                            <select class="form-control" id="thing_description_column"
+                                                    required=""
+                                                    selected
+                                                    name="thing_description_column"
+                                                    [(ngModel)]="transform_config.settings.thing_description_column" >
+                                                    
+                                            <option
+                                                *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                                            </select>                               
+                                        </div>
+                                    </div>
+                                    <!-- LONGITUDE -->
+                                    <div class="col-sm-6 col-xs-12">
+                                        <div class="container--selection single-space"
+                                                    *ngIf="sheet_selected"  >
+                                            <label  class="form-label" for="thing_name_column">Select Location Longitude</label>
+                                            <select class="form-control" id="thing_lng_column"
+                                                    required=""
+                                                    selected
+                                                    name="thing_lng_column"
+                                                    [(ngModel)]="transform_config.settings.thing_lng_column" >
+                                                    
+                                            <option
+                                                *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                                            </select>                               
+                                        </div>
+                                    </div>
+
+                                    <!-- LATTITUDE -->
+                                    <div class="col-sm-6 col-xs-12">
+                                    
+                                        <div class="container--selection single-space"
+                                                    *ngIf="sheet_selected"  >
+                                            <label  class="form-label" for="thing_name_column">Select Location Lattitude</label>               
+                                            <select class="form-control" id="thing_lat_column"
+                                                    required=""
+                                                    selected
+                                                    name="thing_lat_column"
+                                                    [(ngModel)]="transform_config.settings.thing_lat_column" >
+                                                    
+                                            <option
+                                                *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                                            </select>                               
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </fieldset>
+            </div>
+
+
+            <h2 class="big heavy caps">Add Your Parameters</h2>    
+            <hr />
+            <fieldset class="form-fieldset" >
+                <div class="single-space form-group">
+                    <button  class="button button-primaryAction" *ngFor="let item of transform_config.parameters" (click)="add_new_parameter_is_active=true;display_params(item.property_name)" >{{item.property_name}}</button>
+                </div>
+            
+                <div class="single-space form-group">
+                    <div>
+                        <button type="button" (click)="add_new_parameter_is_active=true;" class="button button-primaryAction">Add Parameter</button>
+
+                    </div>
+                    <div class="row" *ngIf="add_new_parameter_is_active">
+                        <div class="col-xs-12 double-top double-space">
+                            <button type="button" (click)="save_parameter(); add_new_parameter_is_active=false;" class="button button-primaryAction">Save</button>
+                        </div>
+                        
+                        <!-- FIELD -->
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="container--selection single-space">
+                                <label  class="form-label" for="datastream_property_name">Property Name</label>
+                                <input class="form-control"  type="text" id="datastream_property_name" [(ngModel)]="form_parameters.property_name"/>                             
+                            </div>
+                        </div>
+                        <!-- FIELD -->
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="container--selection single-space">
+                                <label  class="form-label" for="datastream_property_definition">Property Definition</label>
+                                <input class="form-control"  type="text" id="datastream_property_definition" [(ngModel)]="form_parameters.property_definition"/>                             
+                            </div>
+                        </div>
+                        <!-- FIELD -->
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="container--selection single-space">
+                                <label  class="form-label" for="datastream_property_description">Property Description</label>
+                                <input class="form-control"  type="text" id="datastream_property_description" [(ngModel)]="form_parameters.property_description"/>                             
+                            </div>
+                        </div>
+                        <!-- FIELD -->
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="container--selection single-space">
+                                <label  class="form-label" for="datastream_observation_type">Observation Type</label>
+                                <input class="form-control"  type="text" id="datastream_observation_type" [(ngModel)]="form_parameters.observation_type"/>                             
+                            </div>
+                        </div>
+                        <!-- FIELD -->
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="container--selection single-space">
+                                <label  class="form-label" for="datastream_unit_of_measurement">Unit of Measurement</label>
+                                <input class="form-control"  type="text" id="datastream_unit_of_measurement" [(ngModel)]="form_parameters.unit_name"/>                             
+                            </div>
+                        </div>
+                        <!-- FIELD -->
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="container--selection single-space">
+                                <label  class="form-label" for="datastream_unit_symbol">Unit Symbol</label>
+                                <input class="form-control"  type="text" id="datastream_unit_symbol"  [(ngModel)]="form_parameters.unit_symbol" />                             
+                            </div>
+                        </div>
+                        <!-- FIELD -->
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="container--selection single-space">
+                                <label  class="form-label" for="datastream_unit_definition">Unit definition</label>
+                                <input class="form-control"  type="text" id="datastream_unit_definition" [(ngModel)]="form_parameters.unit_definition" />                             
+                            </div>
+                        </div>
+
+
+                        <!-- FIELD -->
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="container--selection single-space">
+                                <label  class="form-label" for="datastream_sensor_name">Sensor Name</label>
+                                <input class="form-control"  type="text" id="datastream_sensor_name" [(ngModel)]="form_parameters.sensor_name" />                             
+                            </div>
+                        </div>
+                        <!-- FIELD -->
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="container--selection single-space">
+                                <label  class="form-label" for="datastream_sensor_description">Sensor Description</label>
+                                <input class="form-control"  type="text" id="datastream_sensor_description" [(ngModel)]="form_parameters.sensor_description" />                             
+                            </div>
+                        </div>
+                        <!-- FIELD -->
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="container--selection single-space">
+                                <label  class="form-label" for="datastream_sensor_encoding_type">Sensor Encoding Type</label>
+                                <input class="form-control"  type="text" id="datastream_sensor_encoding_type" [(ngModel)]="form_parameters.sensor_encoding_type" />                             
+                            </div>
+                        </div>
+                        <!-- FIELD -->
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="container--selection single-space">
+                                <label  class="form-label" for="datastream_sensor_metadata">Sensor Metadata</label>
+                                <input class="form-control"  type="text" id="datastream_sensor_metadata" [(ngModel)]="form_parameters.sensor_metadata" />                             
+                            </div>
+                        </div>
+
+
+
+
+
+                        <!-- SELECT OPTIONS -->                            
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="container--selection single-space"
+                                        *ngIf="sheet_selected"  >
+                                <label  class="form-label" for="datastream_result">Result</label>
+                                <select class="form-control" id="datastream_result"
+                                        required=""
+                                        selected
+                                        name="datastream_result"
+                                        [(ngModel)]="form_reading.result"
+                                        >
+                                        
+                                <option
+                                    *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                                </select>                               
+                            </div>
+                        </div>
+                        <!-- SELECT OPTIONS -->                            
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="container--selection single-space"
+                                        *ngIf="sheet_selected"  >
+                                <label  class="form-label" for="datastream_date_time">Date and Time</label>
+                                <select class="form-control" id="datastream_date_time"
+                                        required=""
+                                        selected
+                                        name="datastream_date_time"
+                                        [(ngModel)]="form_reading.phenomenonTime"
+                                        >
+                                        
+                                <option
+                                    *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
+                                </select>                               
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </fieldset>
+
+            <!-- END THINGS -->
+
+
+
+            
+
+            <!-- <fieldset class="form-fieldset" >
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div *ngFor="let field of fields"  class="form-group">
+                            <label  class="form-label">{{field.label}}</label>
+                            <input class="form-control" [(ngModel)]="field.datavalue" placeholder="{{field.placeholder}}">
                         </div>
                     </div>
                 </div>
             </fieldset>
-        </div>  
-
-        <!-- END SETTINGS -->
-
-
-        <!-- THINGS -->
-        <h2 class="big heavy caps">Select Your Data Sheet Source</h2>    
-        <hr />
-        <fieldset class="form-fieldset" >
-
-            <div class="row">
-                <div class="col-xs-12">
-                <!-- SELECT OPTIONS -->                            
-                    <div class="single-space form-group">
-
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <label  class="form-label" for="select_data_source">Select Thing Name Source</label>
-                                <div class="container--selection single-space width-95">     
-                                    <select class="form-control" id=""
-                                                        required=""
-                                                        selected
-                                                        (change)="transform_config.settings.sheet = file_contents_local.features[sheet_selected].sheet"
-                                                        name=""
-                                                        [(ngModel)]="sheet_selected">
-                                        <option selected> -- Select A Sheet --</option>
-                                        <option
-                                            *ngFor="let item of file_contents_local.features"  [value]="item.sheet_number">{{item.sheet}}</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-xs-12">
-                                <div class="container--selection single-space"
-                                            *ngIf="sheet_selected"  >     
-                                    <label  class="form-label" for="thing_name_column">Select Thing Name Column</label>
-                                    <select class="form-control" id="thing_name_column"
-                                            required=""
-                                            selected
-                                            name="thing_name_column"
-                                            [(ngModel)]="transform_config.settings.thing_name_column" >
-                                    <option
-                                        *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="[item.column]">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
-                                    </select>                               
-                                </div>
-                            </div>
-
-                            <div class="col-sm-6 col-xs-12">
-                                <div class="container--selection single-space"
-                                            *ngIf="sheet_selected"  >
-                                    <label  class="form-label" for="thing_name_column">Select Thing Description Column</label>               
-                                    <select class="form-control" id="thing_description_column"
-                                            required=""
-                                            selected
-                                            name="thing_description_column"
-                                            [(ngModel)]="transform_config.settings.thing_description_column" >
-                                            
-                                    <option
-                                        *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
-                                    </select>                               
-                                </div>
-                            </div>
-                            <!-- LONGITUDE -->
-                            <div class="col-sm-6 col-xs-12">
-                                <div class="container--selection single-space"
-                                            *ngIf="sheet_selected"  >
-                                    <label  class="form-label" for="thing_name_column">Select Location Longitude</label>
-                                    <select class="form-control" id="thing_lng_column"
-                                            required=""
-                                            selected
-                                            name="thing_lng_column"
-                                            [(ngModel)]="transform_config.settings.thing_lng_column" >
-                                            
-                                    <option
-                                        *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
-                                    </select>                               
-                                </div>
-                            </div>
-
-                            <!-- LATTITUDE -->
-                            <div class="col-sm-6 col-xs-12">
-                               
-                                <div class="container--selection single-space"
-                                            *ngIf="sheet_selected"  >
-                                    <label  class="form-label" for="thing_name_column">Select Location Lattitude</label>               
-                                    <select class="form-control" id="thing_lat_column"
-                                            required=""
-                                            selected
-                                            name="thing_lat_column"
-                                            [(ngModel)]="transform_config.settings.thing_lat_column" >
-                                            
-                                    <option
-                                        *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
-                                    </select>                               
-                                </div>
-                            </div>
-
+            <h2 class="big heavy caps">Location</h2>    
+            <hr />
+            <fieldset class="form-fieldset" >
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div *ngFor="let field of fields"  class="form-group">
+                            <label  class="form-label">{{field.label}}</label>
+                            <input class="form-control" [(ngModel)]="field.datavalue" placeholder="{{field.placeholder}}">
                         </div>
                     </div>
                 </div>
-            </div>
-
-        </fieldset>
-
-        <div>
-            <button type="button" (click)="create_config()" class="button button-primaryAction">Create Config</button>
-        </div>
-        <div>
-            <button type="button" (click)="run_convert()" class="button button-primaryAction">Run Conversion</button>
-        </div>
-        <div>
-            <button type="button" (click)="process_data()" class="button button-primaryAction">Process Things</button>
+            </fieldset>
+            <h2 class="big heavy caps">Data Stream</h2>    
+            <hr />
+            <fieldset class="form-fieldset" >
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div *ngFor="let field of fields"  class="form-group">
+                            <label  class="form-label">{{field.label}}</label>
+                            <input class="form-control" [(ngModel)]="field.datavalue" placeholder="{{field.placeholder}}">
+                        </div>
+                    </div>
+                </div>
+            </fieldset> -->
         </div>
 
-        <h2 class="big heavy caps">Add Your Parameters</h2>    
-        <hr />
-        <fieldset class="form-fieldset" >
-            <div class="single-space form-group">
-                <button  class="button button-primaryAction" *ngFor="let item of transform_config.parameters" (click)="add_new_parameter_is_active=true;display_params(item.property_name)" >{{item.property_name}}</button>
-            </div>
-           
-            <div class="single-space form-group">
-                @iot.id =
-                <div>
-                    <button type="button" (click)="add_new_parameter_is_active=true;" class="button button-primaryAction">Add Parameter</button>
 
-                </div>
-                <div class="row" *ngIf="add_new_parameter_is_active">
-                    <div class="col-xs-12 double-top double-space">
-                        <button type="button" (click)="save_parameter(); add_new_parameter_is_active=false;" class="button button-primaryAction">Save</button>
-                    </div>
-                    
-                    <!-- FIELD -->
-                    <div class="col-sm-6 col-xs-12">
-                        <div class="container--selection single-space">
-                            <label  class="form-label" for="datastream_property_name">Property Name</label>
-                            <input class="form-control"  type="text" id="datastream_property_name" [(ngModel)]="form_parameters.property_name"/>                             
-                        </div>
-                    </div>
-                    <!-- FIELD -->
-                    <div class="col-sm-6 col-xs-12">
-                        <div class="container--selection single-space">
-                            <label  class="form-label" for="datastream_property_definition">Property Definition</label>
-                            <input class="form-control"  type="text" id="datastream_property_definition" [(ngModel)]="form_parameters.property_definition"/>                             
-                        </div>
-                    </div>
-                    <!-- FIELD -->
-                    <div class="col-sm-6 col-xs-12">
-                        <div class="container--selection single-space">
-                            <label  class="form-label" for="datastream_property_description">Property Description</label>
-                            <input class="form-control"  type="text" id="datastream_property_description" [(ngModel)]="form_parameters.property_description"/>                             
-                        </div>
-                    </div>
-                    <!-- FIELD -->
-                    <div class="col-sm-6 col-xs-12">
-                        <div class="container--selection single-space">
-                            <label  class="form-label" for="datastream_observation_type">Observation Type</label>
-                            <input class="form-control"  type="text" id="datastream_observation_type" [(ngModel)]="form_parameters.observation_type"/>                             
-                        </div>
-                    </div>
-                    <!-- FIELD -->
-                    <div class="col-sm-6 col-xs-12">
-                        <div class="container--selection single-space">
-                            <label  class="form-label" for="datastream_unit_of_measurement">Unit of Measurement</label>
-                            <input class="form-control"  type="text" id="datastream_unit_of_measurement" [(ngModel)]="form_parameters.unit_name"/>                             
-                        </div>
-                    </div>
-                    <!-- FIELD -->
-                    <div class="col-sm-6 col-xs-12">
-                        <div class="container--selection single-space">
-                            <label  class="form-label" for="datastream_unit_symbol">Unit Symbol</label>
-                            <input class="form-control"  type="text" id="datastream_unit_symbol"  [(ngModel)]="form_parameters.unit_symbol" />                             
-                        </div>
-                    </div>
-                    <!-- FIELD -->
-                    <div class="col-sm-6 col-xs-12">
-                        <div class="container--selection single-space">
-                            <label  class="form-label" for="datastream_unit_definition">Unit definition</label>
-                            <input class="form-control"  type="text" id="datastream_unit_definition" [(ngModel)]="form_parameters.unit_definition" />                             
-                        </div>
-                    </div>
-
-
-                    <!-- FIELD -->
-                    <div class="col-sm-6 col-xs-12">
-                        <div class="container--selection single-space">
-                            <label  class="form-label" for="datastream_sensor_name">Sensor Name</label>
-                            <input class="form-control"  type="text" id="datastream_sensor_name" [(ngModel)]="form_parameters.sensor_name" />                             
-                        </div>
-                    </div>
-                    <!-- FIELD -->
-                    <div class="col-sm-6 col-xs-12">
-                        <div class="container--selection single-space">
-                            <label  class="form-label" for="datastream_sensor_description">Sensor Description</label>
-                            <input class="form-control"  type="text" id="datastream_sensor_description" [(ngModel)]="form_parameters.sensor_description" />                             
-                        </div>
-                    </div>
-                    <!-- FIELD -->
-                    <div class="col-sm-6 col-xs-12">
-                        <div class="container--selection single-space">
-                            <label  class="form-label" for="datastream_sensor_encoding_type">Sensor Encoding Type</label>
-                            <input class="form-control"  type="text" id="datastream_sensor_encoding_type" [(ngModel)]="form_parameters.sensor_encoding_type" />                             
-                        </div>
-                    </div>
-                    <!-- FIELD -->
-                    <div class="col-sm-6 col-xs-12">
-                        <div class="container--selection single-space">
-                            <label  class="form-label" for="datastream_sensor_metadata">Sensor Metadata</label>
-                            <input class="form-control"  type="text" id="datastream_sensor_metadata" [(ngModel)]="form_parameters.sensor_metadata" />                             
-                        </div>
-                    </div>
-
-
-
-
-
-                    <!-- SELECT OPTIONS -->                            
-                    <div class="col-sm-6 col-xs-12">
-                        <div class="container--selection single-space"
-                                    *ngIf="sheet_selected"  >
-                            <label  class="form-label" for="datastream_result">Result</label>
-                            <select class="form-control" id="datastream_result"
-                                    required=""
-                                    selected
-                                    name="datastream_result"
-                                    [(ngModel)]="form_reading.result"
-                                    >
-                                    
-                            <option
-                                *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
-                            </select>                               
-                        </div>
-                    </div>
-                    <!-- SELECT OPTIONS -->                            
-                    <div class="col-sm-6 col-xs-12">
-                        <div class="container--selection single-space"
-                                    *ngIf="sheet_selected"  >
-                            <label  class="form-label" for="datastream_date_time">Date and Time</label>
-                            <select class="form-control" id="datastream_date_time"
-                                    required=""
-                                    selected
-                                    name="datastream_date_time"
-                                    [(ngModel)]="form_reading.phenomenonTime"
-                                    >
-                                    
-                            <option
-                                *ngFor="let item of file_contents_local.features[sheet_selected].headers" [value]="item.column">{{item.value || 'no cell name'}} - {{item.row}}{{item.column}}</option>
-                            </select>                               
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-        </fieldset>
-
-        <!-- END THINGS -->
-
-        {{transform_config | json}}
-        {{config_response | json}}
-
-        
-
-        <!-- <fieldset class="form-fieldset" >
-            <div class="row">
-                <div class="col-xs-12">
-                    <div *ngFor="let field of fields"  class="form-group">
-                        <label  class="form-label">{{field.label}}</label>
-                        <input class="form-control" [(ngModel)]="field.datavalue" placeholder="{{field.placeholder}}">
-                    </div>
-                </div>
-            </div>
-        </fieldset>
-        <h2 class="big heavy caps">Location</h2>    
-        <hr />
-        <fieldset class="form-fieldset" >
-            <div class="row">
-                <div class="col-xs-12">
-                    <div *ngFor="let field of fields"  class="form-group">
-                        <label  class="form-label">{{field.label}}</label>
-                        <input class="form-control" [(ngModel)]="field.datavalue" placeholder="{{field.placeholder}}">
-                    </div>
-                </div>
-            </div>
-        </fieldset>
-        <h2 class="big heavy caps">Data Stream</h2>    
-        <hr />
-        <fieldset class="form-fieldset" >
-            <div class="row">
-                <div class="col-xs-12">
-                    <div *ngFor="let field of fields"  class="form-group">
-                        <label  class="form-label">{{field.label}}</label>
-                        <input class="form-control" [(ngModel)]="field.datavalue" placeholder="{{field.placeholder}}">
-                    </div>
-                </div>
-            </div>
-        </fieldset> -->
-    </div>
-
-
-</article>
+    </article>
+</div>

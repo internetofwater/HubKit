@@ -19,9 +19,13 @@ from flask import json
 from flask import make_response
 from flask import jsonify
 from flask import current_app
+from urllib.parse import urlparse
 
-import os.path
+from crontab import CronTab
+
 import json
+import os
+import os.path
 
 import urllib3
 import csv
@@ -29,6 +33,7 @@ import pytz
 import datetime
 
 import requests
+import time
 
 import csv
 
@@ -50,8 +55,7 @@ def get_data_from_csv_row(csv,field_name,row):
 
 	return result
 
-
-def import_csv(source, min_count, max_count):
+def import_csv(source):
 	"""Import a comma separated document into the Clean Water Hub API.
 
 	:param (object) self
@@ -62,229 +66,218 @@ def import_csv(source, min_count, max_count):
 	"""
 	result = []
 
-	with open(source, mode='r') as csv_file:
-		csv_reader = csv.DictReader(csv_file)
-		line_count = min_count
-		max_count = max_count
-		for row in csv_reader:
-			if line_count > max_count:
-				break
-			if line_count == 0:
-				line_count += 1
-			if line_count >= 1:
-				result.append(row)
-				line_count += 1
+	with open(source) as f:
+		reader = csv.DictReader(f, delimiter=',')
+		count = sum(1 for _ in reader)
+		f.seek(0)
+		reader = csv.DictReader(f, delimiter=',')
+		for line in reader:
+			result.append(line)
 						
 	return result
 
 def convert_data_from_csv(source,config):
+	""" START CONVERSION PROCESS """
+
+	thing_id = ""
+	location_id = ""
+	data_stream_id = ""
+
+	""" RESULT VALUE DEFINITIONS """
+	result_name = ""
+	result_description = ""
+	restult_properties = {}
+	data_streams = []
+	observations = []
+	observed_properties = []
+	sensor = {}
+	unit_of_measurements =[]
+	locations = []
 
 
+	output = []
+	datasstreams = []
+	error_log = []
+	# GET NAME OF COLUMN
 
-	min_count = 0
-	max_count = 1
-
-	if config and 'data' in config and 'start' in config['data']:
-		min_count = config['data']['start']+1
-	if config and 'data' in config and 'end' in config['data']:
-		max_count = config['data']['end']
-
-	_csv = import_csv(source, min_count, max_count)
-
-	results = []
-
-	for row in range(min_count, max_count):
-
-		""" START CONVERSION PROCESS """
-
-		thing_id = None # "NAME"
-		location_id = None
-		data_stream_id = None
+	# REPEAT FOR EVERY ROW IN THE SHEET
 
 
-		data_stream_name = ""
+	_csv = import_csv(source)
 
-		""" RESULT VALUE DEFINITIONS """
-		result_name = ""
-		result_description = ""
-		restult_properties = {}
-		observations = {}
-		observed_properties = {}
-		sensor = {}
-		locations = []
 	
+	thing_name_value = config['settings']['thing_name_column']
+	thing_description_value = config['settings']['thing_description_column']
+	thing_lng_value = config['settings']['thing_lng_column']
+	thing_lat_value = config['settings']['thing_lat_column']
 
-		""" THING AND PROPERTIES """
-		for field in config['Thing']['fields']:
-
-			if field['type']== 'single':
-
-				if field['mapped_to']== 'name':
-
-					result_name = get_data_from_csv_row(_csv,field['value'],row)
-
-					thing_id = result_name.lower()
-					thing_id = thing_id.replace(" ", "_")
-
-
-				if field['mapped_to']== 'description':
-					result_description = get_data_from_csv_row(_csv,field['value'],row)
-
-			elif field['type']== 'many':
-
-				if field['mapped_to']== 'properties':
-
-					for val in field['value']:
+	
+	print("thing name", thing_name_value)
+	for i in range(0, len(_csv)):
+		thing_name =  "%s" % (get_data_from_csv_row(_csv,thing_name_value,i))
+		thing_description =  "%s" % (get_data_from_csv_row(_csv,thing_description_value,i))
+		lng =  "%s" % (get_data_from_csv_row(_csv,thing_lng_value,i))
+		lat =  "%s" % (get_data_from_csv_row(_csv,thing_lat_value,i))
 		
-						for key, value in val.items():
-							if value and isinstance(value,dict):
-								restult_properties[key]= get_data_from_csv_row(_csv,value,row)
-							else:
-								restult_properties[key]= ""
+		thing_id = thing_name.lower()
+		thing_id = thing_id.replace(" ", "_")
 
-		for location in config['Locations']:
-			location_coordinates = []
-			for field in location['fields']:
-				
-				location_name = ""
-				location_description = ""
-				if field['type']== 'single':
+		parameters = []
 
-					if field['mapped_to']== 'name':
-						location_name = get_data_from_csv_row(_csv,field['value'],row)
-						location_id = result_name.lower()
-						location_id = location_id.replace(" ", "_")
 
-					if field['mapped_to']== 'description':
-						location_description = get_data_from_csv_row(_csv,field['field_name'],row)
+		for param in config['parameters']:
+			observation_type = param['observation_type'].strip()
+			property_definition = param['property_definition'].strip()
+			property_description = param['property_description'].strip()
+			property_name = param['property_name'].strip()
+			sensor_description = param['sensor_description'].strip()
+			sensor_encoding_type = param['sensor_encoding_type'].strip()
+			sensor_metadata = param['sensor_metadata'].strip()
+			sensor_name = param['sensor_name'].strip()
+			unit_definition = param['unit_definition'].strip()
+			unit_name = param['unit_name'].strip()
+			unit_symbol = param['unit_symbol'].strip()
 
-					if field['mapped_to']== 'location_long':
-						location_coordinates.append(get_data_from_csv_row(_csv,field['value'],row))
+			datastrem_id = "%s_%s" % (thing_id,property_name.lower())
+			datastrem_id = datastrem_id.replace(" ", "_")
 
-					if field['mapped_to']== 'location_lat':
-						location_coordinates.append(get_data_from_csv_row(_csv,field['value'],row))
+			parameters.append({
+				"name":thing_name,
+				"description":thing_description,
+				"@iot.id":datastrem_id,
+				"observation_type":observation_type,
+				"property_definition":property_definition,
+				"property_description":property_description,
+				"property_name":property_name,
+				"sensor_description":sensor_description,
+				"sensor_encoding_type":sensor_encoding_type,
+				"sensor_metadata":sensor_metadata,
+				"sensor_name":sensor_name,
+				"unit_definition":unit_definition,
+				"unit_name":unit_name,
+				"unit_symbol":unit_symbol
+			})
 
-			""" DATA STREAMS """
+		for datastream in config['datastreams']:
+			data_stream_property_name = datastream['name'].strip()
 
-			for _data_stream in config['Datastreams']:
-				for field in _data_stream['fields']:
+			data_stream_iotid = "%s_%s" % (thing_id,data_stream_property_name.lower())
+			data_stream_iotid = data_stream_iotid.replace(" ", "_")
+			data_stream_phenomenonTime = datastream['phenomenonTime'].strip()
+			data_stream_result = datastream['result'].strip()
+
+			data_stream_phenomenonTime = "%s" % (get_data_from_csv_row(_csv,data_stream_phenomenonTime,i)).strip()
+			data_stream_result = "%s" % (get_data_from_csv_row(_csv,data_stream_result,i))
+
+			if data_stream_result is not None:
+
+				if isinstance(data_stream_phenomenonTime, datetime):
+			
+					datasstreams.append({
+						"@iot.id":data_stream_iotid,
+						"phenomenonTime":data_stream_phenomenonTime.isoformat(),
+						"result":data_stream_result
+					})
+
+				else: 
+
+					if data_stream_phenomenonTime.find('/') > 0 and len(data_stream_phenomenonTime) >= 8:
+						if data_stream_phenomenonTime.index('/') == 2 or data_stream_phenomenonTime.index('/') == 1:
+							print("one")
+							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%d/%m/%Y')
+							datasstreams.append({
+								"@iot.id":data_stream_iotid,
+								"phenomenonTime":date_time_obj.isoformat(),
+								"result":data_stream_result
+							})
+							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%d/%m/%Y')
+						elif data_stream_phenomenonTime.index('/') == 4 or data_stream_phenomenonTime.index('/') == 3:
+							print("2")
+							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%Y/%m/%d')
+							datasstreams.append({
+								"@iot.id":data_stream_iotid,
+								"phenomenonTime":date_time_obj.isoformat(),
+								"result":data_stream_result
+							})
+						else:
+							print("3", data_stream_phenomenonTime.index('/'))
+							error_log.append({
+								"name":thing_name,
+								"error": "PhenomenonTime is not in a date format",
+								"property":data_stream_property_name,
+								"@iot.id":data_stream_iotid,
+								"phenomenonTime":str(data_stream_phenomenonTime),
+								"result":data_stream_result
+							})
+
+					elif data_stream_phenomenonTime.find('-') > 0 and len(data_stream_phenomenonTime) >= 8:
+						if data_stream_phenomenonTime.index('-') == 2:
+							print("4")
+							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%d-%m-%Y')
+							datasstreams.append({
+								"@iot.id":data_stream_iotid,
+								"phenomenonTime":date_time_obj.isoformat(),
+								"result":data_stream_result
+							})
+						elif data_stream_phenomenonTime.index('-') == 4:
+							print("5")
+							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%Y-%m-%d')
+							datasstreams.append({
+								"@iot.id":data_stream_iotid,
+								"phenomenonTime":date_time_obj.isoformat(),
+								"result":data_stream_result
+							})
+						else:
+							print("6")
+							error_log.append({
+								"name":thing_name,
+								"error": "PhenomenonTime is not in a date format",
+								"property":data_stream_property_name,
+								"@iot.id":data_stream_iotid,
+								"phenomenonTime":str(data_stream_phenomenonTime),
+								"result":data_stream_result
+							})
+					else:
+						print("7")
+						input()
+						error_log.append({
+							
+							"name":thing_name,
+							"error": "PhenomenonTime is not in a date format",
+							"property":data_stream_property_name,
+							"@iot.id":data_stream_iotid,
+							"phenomenonTime":str(data_stream_phenomenonTime),
+							"result":data_stream_result
+						})
+
+
 
 					
-
-					if field['type']== 'single':
-						pass
-
-					if field['type']== 'many':
-
-						""" DATA STREAMS -- UNIT OF MEASUREMENTS """
-						if field['mapped_to']== 'unitOfMeasurements':
-							unit_of_measurement ={}
-
-							for val in field['value']:
-								for key, value in val.items():
-									if value and isinstance(value,dict): 
-										for i_key, i_value in value.items():
-											unit_of_measurement[key]= get_data_from_csv_row(_csv,i_value,row)
-									else:
-										unit_of_measurement[key]= ""
-
-						""" DATA STREAMS -- OBSERVED PROPERTIES """
-						if field['mapped_to']== 'ObservedProperties':
-							observed_properties ={}
-
-							for val in field['value']:
-								for key, value in val.items():
-									if value and isinstance(value,dict):
-										for i_key, i_value in value.items():
-											data_stream_id = "%s %s" %(result_name, get_data_from_csv_row(_csv,i_value,row))
-											data_stream_id = data_stream_id.lower()
-											data_stream_id = data_stream_id.replace(" ", "_")
-											observed_properties[key]= get_data_from_csv_row(_csv,i_value,row)
-									else:
-										observed_properties[key]= ""
-
-						""" DATA STREAMS -- SENSOR """
-						if field['mapped_to']== 'Sensor':
-							sensor = {}
-							sensor_metadata = {}
-							for val in field['value']:
-								for key, value in val.items():
-									if value and isinstance(value,dict):
-										for i_key, i_value in value.items():
-											sensor[key]= get_data_from_csv_row(_csv,i_value,row)
-									else:
-										
-										if key == 'metadata':
-											for item in value:
-												for i_key, i_value in item.items():
-													sensor_metadata[i_key]= get_data_from_csv_row(_csv,i_value,row)
-											sensor['metadata']=sensor_metadata
-										else:
-											sensor[key]= value
-
-						""" DATA STREAMS -- OBSERVATIONS """
-						if field['mapped_to']== 'Observations':
-							observations = {}
-							for val in field['value']:
-								for key, value in val.items():
-
-									if value and isinstance(value,dict):
-										for i_key, i_value in value.items():
-											observations[key]= get_data_from_csv_row(_csv,i_value,row)
-									elif value and isinstance(value,list):
-
-										time_string = ""
-										for item in value:
-											for i_key, i_value in item.items():
-												if len(time_string) > 0:
-													time_string+= " " + get_data_from_csv_row(_csv,i_value,row)
-												else:
-													time_string+= get_data_from_csv_row(_csv,i_value,row)
-
-										date_time_obj = datetime.strptime(time_string, '%m/%d/%y %H:%M:%S')
-
-										observations[key] = date_time_obj.isoformat()
-							
-									else:
-										observations[key]= value
-
-
 					
-		locations.append({
-			"name": location_name,
-			"description": location_description,
-			"encodingType": "application/vnd.geo+json",
-			"@iot.id": location_id,
-			"location": {
-				"type": "Point",
-				"coordinates": location_coordinates
-				}
-		})
-							
 		
 
-		results.append({
-			"name": result_name,
-			"description": result_description,
-			"properties": restult_properties,
-			"Locations": locations,
-			"@iot.id": thing_id,
-			"Datastreams": [
-				{
-					"@iot.id":data_stream_id,
-					"name": data_stream_name,
-					"description": "",
-					"observationType": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation",
-					"unitOfMeasurement": unit_of_measurement,
-					"Sensor": sensor,
-					"ObservedProperty": observed_properties,
-					"Observations": [observations],
-				}
-			]
+		output.append({
+			"@iot.id":thing_id,
+			"name": thing_name,
+			"description": thing_description if thing_description else "none",
+			"properties": {
+			},
+			"lng":lng,
+			"lat":lat,
+			"parameters":parameters
 		})
 
-	return results
+	result = {
+		"status":"okay yo yo",
+		"output":output,
+		"datatstreams":datasstreams,
+		"error_log":error_log
+	}
 
+	create_data_file_to_import(config,result)
+
+	return result
+	
 def import_excel(source):
 
 	try:
@@ -295,8 +288,7 @@ def import_excel(source):
 	except InvalidFileException as error:
 		error_response = str(error)
 		abort(make_response(jsonify(message=error_response), 400))
-		return None
-	
+		return None	
 
 def import_json(config):
 
@@ -307,17 +299,6 @@ def import_json(config):
 		error_response = str(error)
 		abort(make_response(jsonify(message=error_response), 400))
 		return None
-
-
-    #  with open(filepath) as json_file:
-    #         try:
-    #             data = json.load(json_file)
-    #         except:
-    #             result = get_org_and_suborg_sites(id)
-    #             with open(filepath, 'w') as json_file:
-    #                 json.dump(result, json_file)
-    #             with open(filepath) as json_file:
-    #                     data = json.load(json_file)
     
 def get_data_from_excel_cell(workbook, sheet,cell):
 
@@ -405,7 +386,8 @@ def convert_data_from_excel(source, config):
 		#Get the name
 
 	output = []
-
+	datasstreams = []
+	error_log = []
 	# GET NAME OF COLUMN
 
 	# REPEAT FOR EVERY ROW IN THE SHEET
@@ -422,12 +404,6 @@ def convert_data_from_excel(source, config):
 	thing_lat_value = config['settings']['thing_lat_column']
 	
 
-
-	
-	
-
-
-
 	for i in range(2, sh.max_row):
 		thing_name =  sh["%s%s" % (thing_name_value,i)].value
 		thing_description = sh["%s%s" % (thing_description_value,i)].value
@@ -438,18 +414,19 @@ def convert_data_from_excel(source, config):
 
 		parameters = []
 
+
 		for param in config['parameters']:
-			observation_type = param['observation_type']
-			property_definition = param['property_definition']
-			property_description = param['property_description']
-			property_name = param['property_name']
-			sensor_description = param['sensor_description']
-			sensor_encoding_type = param['sensor_encoding_type']
-			sensor_metadata = param['sensor_metadata']
-			sensor_name = param['sensor_name']
-			unit_definition = param['unit_definition']
-			unit_name = param['unit_name']
-			unit_symbol = param['unit_symbol']
+			observation_type = param['observation_type'].strip()
+			property_definition = param['property_definition'].strip()
+			property_description = param['property_description'].strip()
+			property_name = param['property_name'].strip()
+			sensor_description = param['sensor_description'].strip()
+			sensor_encoding_type = param['sensor_encoding_type'].strip()
+			sensor_metadata = param['sensor_metadata'].strip()
+			sensor_name = param['sensor_name'].strip()
+			unit_definition = param['unit_definition'].strip()
+			unit_name = param['unit_name'].strip()
+			unit_symbol = param['unit_symbol'].strip()
 
 			datastrem_id = "%s_%s" % (thing_id,property_name.lower())
 			datastrem_id = datastrem_id.replace(" ", "_")
@@ -470,6 +447,35 @@ def convert_data_from_excel(source, config):
 				"unit_name":unit_name,
 				"unit_symbol":unit_symbol
 			})
+
+		for datastream in config['datastreams']:
+			data_stream_property_name = datastream['name'].strip()
+
+			data_stream_iotid = "%s_%s" % (thing_id,data_stream_property_name.lower())
+			data_stream_iotid = data_stream_iotid.replace(" ", "_")
+			data_stream_phenomenonTime = datastream['phenomenonTime'].strip()
+			data_stream_result = datastream['result'].strip()
+
+			data_stream_phenomenonTime = sh["%s%s" % (data_stream_phenomenonTime,i)].value
+			data_stream_result = sh["%s%s" % (data_stream_result,i)].value
+
+			if data_stream_result is not None:
+				if isinstance(data_stream_phenomenonTime, datetime):
+			
+					datasstreams.append({
+						"@iot.id":data_stream_iotid,
+						"phenomenonTime":data_stream_phenomenonTime.isoformat(),
+						"result":data_stream_result
+					})
+				else:
+					error_log.append({
+						"name":thing_name,
+						"error": "PhenomenonTime is not in a date format",
+						"property":data_stream_property_name,
+						"@iot.id":data_stream_iotid,
+						"phenomenonTime":str(data_stream_phenomenonTime),
+						"result":data_stream_result
+					})
 		
 
 		output.append({
@@ -481,271 +487,16 @@ def convert_data_from_excel(source, config):
 			"lng":lng,
 			"lat":lat,
 			"parameters":parameters
-
 		})
-
-
-
-	# iterate through excel and display data
-	# for row in sh.iter_rows(min_row=1, min_col=1, max_row=12, max_col=3):
-	# 	for cell in row:
-	# 		print(cell.value, end=" ")
-	# 	print()
-
-	
-
-
-	# if 'Things' in config:
-		
-	# 	for thing in config['Things']:
-
-	# 		""" THING AND PROPERTIES """
-	# 		if 'fields' in thing:
-
-	# 			for field in thing['fields']:
-
-	# 				if field['type']== 'single':
-
-	# 					if field['mapped_to']== 'name':
-	# 						result_name = get_data_from_excel_cell(workbook, \
-	# 									field['sheet'], \
-	# 									field['value'])
-	# 						thing_id = result_name.lower()
-	# 						thing_id = thing_id.replace(" ", "_")
-
-	# 					if field['mapped_to']== 'properties':
-	# 						restult_properties = get_data_from_excel_cell(workbook, \
-	# 									field['sheet'], \
-	# 									field['value'])
-
-	# 					if field['mapped_to']== 'description':
-	# 						result_description = get_data_from_excel_cell(workbook, \
-	# 									field['sheet'], \
-	# 									field['value'])
-
-	# 				if field['type']== 'many':
-	# 					if field['mapped_to']== 'properties':
-	# 						for val in field['value']:
-	# 							for key, value in val.items():
-	# 								key_result = get_data_from_excel_cell(workbook, \
-	# 									field['sheet'], \
-	# 									key)
-	# 								value_result = get_data_from_excel_cell(workbook, \
-	# 									field['sheet'], \
-	# 									value)
-	# 								restult_properties[key_result] = value_result
-
-	# """ LOCATIONS """
-	# if 'fields' in config['Locations']:
-
-	# 	for location in config['Locations']:
-	# 		for field in location['fields']:
-	# 			location_name = ""
-	# 			location_description = ""
-	# 			location_coordinates = []
-	# 			if field['type']== 'single':
-
-	# 				if field['mapped_to']== 'name':
-	# 					location_name = get_data_from_excel_cell(workbook, \
-	# 								field['sheet'], \
-	# 								field['value'])
-	# 					location_id = result_name.lower()
-	# 					location_id = location_id.replace(" ", "_")
-
-	# 				if field['mapped_to']== 'description':
-	# 					location_description = get_data_from_excel_cell(workbook, \
-	# 								field['sheet'], \
-	# 								field['value'])
-
-	# 			if field['type']== 'many':
-	# 				if field['mapped_to']== 'location':
-	# 					for val in field['value']:
-	# 						location_coordinates.append(get_data_from_excel_cell(workbook, \
-	# 								field['sheet'], \
-	# 								val))
-	# 					locations.append({
-	# 						"name": location_name,
-	# 						"description": location_description,
-	# 						"encodingType": "application/vnd.geo+json",
-	# 						"@iot.id": location_id,
-	# 						"location": {
-	# 							"type": "Point",
-	# 							"coordinates": location_coordinates
-	# 							}
-	# 					})
-
-	# """ DATA STREAM """
-	# if 'fields' in config['Datastreams']:
-	# 	for datastream in config['Datastreams']:
-	# 		datastream_name = ""
-	# 		datastream_description = ""
-	# 		datastream_observation_type = ""
-	# 		unit_of_measurement_name = ""
-	# 		unit_of_measurement_symbol = ""
-	# 		unit_of_measurement_definition = ""
-	# 		sensor_name = ""
-	# 		sensor_description = ""
-	# 		sensor_encoding_type = ""
-	# 		sensor_metadata = ""
-	# 		observerd_property_name = ""
-	# 		observerd_property_definition = ""
-	# 		observerd_property_description = ""
-	# 		observation_time = ""
-	# 		observation_result = ""
-	# 		for field in datastream['fields']:
-				
-	# 			if field['type']== 'single':
-
-	# 				if field['mapped_to']== 'name':
-	# 					datastream_name = get_data_from_excel_cell(workbook, \
-	# 								field['sheet'], \
-	# 								field['value'])
-	# 					data_stream_id = "%s %s" % (datastream_name.lower(), "param")
-	# 					data_stream_id = data_stream_id.replace(" ", "_")
-
-	# 				# datastream_observation_type = get_data_from_sheet_or_input('datastream_observation_type', field, workbook)
-
-	# 				if field['mapped_to']== 'datastream_observation_type':
-	# 					datastream_observation_type = get_data_from_sheet_or_input('datastream_observation_type', field, workbook)
-
-	# 				if field['mapped_to']== 'unit_of_measurement_symbol':
-	# 					unit_of_measurement_symbol = get_data_from_sheet_or_input('unit_of_measurement_symbol', field, workbook)
-
-	# 				if field['mapped_to']== 'unit_of_measurement_name':
-	# 					unit_of_measurement_name = get_data_from_sheet_or_input('unit_of_measurement_name', field, workbook)
-
-	# 				if field['mapped_to']== 'unit_of_measurement_definition':
-	# 					unit_of_measurement_definition = get_data_from_sheet_or_input('unit_of_measurement_definition', field, workbook)
-
-	# 				if field['mapped_to']== 'sensor_name':
-	# 					sensor_name = get_data_from_sheet_or_input('sensor_name', field, workbook)
-
-	# 				if field['mapped_to']== 'sensor_description':
-	# 					sensor_description = get_data_from_sheet_or_input('sensor_description', field, workbook)
-
-	# 				if field['mapped_to']== 'sensor_encoding_type':
-	# 					sensor_encoding_type = get_data_from_sheet_or_input('sensor_encoding_type', field, workbook)
-
-	# 				if field['mapped_to']== 'sensor_metadata':
-	# 					sensor_metadata = get_data_from_sheet_or_input('sensor_metadata', field, workbook)
-						
-	# 				if field['mapped_to']== 'observerd_property_name':
-	# 					observerd_property_name = get_data_from_sheet_or_input('observerd_property_name', field, workbook)
-
-	# 				if field['mapped_to']== 'observerd_property_definition':
-	# 					observerd_property_definition = get_data_from_sheet_or_input('observerd_property_definition', field, workbook)
-
-	# 				if field['mapped_to']== 'observerd_property_description':
-	# 					observerd_property_description = get_data_from_sheet_or_input('observerd_property_description', field, workbook)
-
-	# 				if field['mapped_to']== 'observation_result':
-	# 					observation_result = get_data_from_sheet_or_input('observation_result', field, workbook)
-
-	# 				if field['mapped_to']== 'observation_time':
-	# 					if field['value_type']== 'input':
-	# 						observation_time = field['value']
-	# 					if field['value_type']== 'sheet':
-	# 						observation_time = get_data_from_excel_cell(workbook, \
-	# 								field['sheet'], \
-	# 								field['value'])
-	# 						observation_time = observation_time.isoformat()
-
-	# 		data_streams.append({
-	# 				"@iot.id":data_stream_id,
-	# 				"name": datastream_name,
-	# 				"description": datastream_description,
-	# 				"observationType": datastream_observation_type,
-	# 					"unitOfMeasurement": {
-	# 					"name": unit_of_measurement_name,
-	# 					"symbol": unit_of_measurement_symbol,
-	# 					"definition": unit_of_measurement_definition
-	# 				},
-	# 				"Sensor": {
-	# 					"name": sensor_name,
-	# 					"description": sensor_description,
-	# 					"encodingType": sensor_encoding_type,
-	# 					"metadata": sensor_metadata
-	# 				},
-	# 				"ObservedProperty": {
-	# 					"name": observerd_property_name,
-	# 					"definition": observerd_property_definition,
-	# 					"description": observerd_property_description
-	# 				},
-	# 				"Observations": [
-	# 					{
-	# 						"phenomenonTime": observation_time,
-	# 						"result":observation_result
-	# 					}
-	# 				]
-	# 			},)
-
-						
-	# """ MULTI DATA STREAMS """
-
-	# for _data_stream in config['MultiDatastreams']:
-	# 	for field in _data_stream['fields']:
-
-	# 		if field['type']== 'single':
-	# 			pass
-
-	# 		if field['type']== 'many':
-
-	# 			""" MULTI DATA STREAMS -- UNIT OF MEASUREMENTS """
-	# 			if field['mapped_to']== 'unitOfMeasurements':
-	# 				unit_of_measurements =[]
-
-	# 				for val in field['value']:
-	# 					_results_units = {}
-	# 					for key, value in val.items():
-	# 						_results_units[key]=value
-	# 					unit_of_measurements.append(_results_units)
-
-	# 			""" MULTI DATA STREAMS -- SENSOR """
-	# 			if field['mapped_to']== 'Sensor':
-	# 				sensor = {}
-	# 				for val in field['value']:
-	# 					for key, value in val.items():
-	# 						sensor[key] = value
-
-	# 			""" MULTI DATA STREAMS -- OBSERVED PROPERTY """
-	# 			if field['mapped_to']== 'ObservedProperties':
-	# 				observations = []
-	# 				for val in field['value']:
-	# 					observations.append({
-	# 						'name':get_data_from_excel_cell(workbook, field['sheet'], val['name']),
-	# 						'definition':val['definition'],
-	# 						'description':val['description'],
-	# 					})
-
-	# 			""" MULTI DATA STREAMS -- OBSERVED PROPERTY """
-	# 			if field['mapped_to']== 'Observations':
-	# 				observations = get_observations(workbook, field['sheet'], field['value'])
-
-	# 			#TODO Make this dynamic
-	# 			""" OBSERVED PROPERTIES """
-	# 			observed_properties = [
-	# 				{
-	# 					"name": "Depth to Water",
-	# 					"definition": "",
-	# 					"description": "feet below ground surface"
-	# 				},
-	# 				{
-	# 					"name": "Groundwater Elevation",
-	# 					"definition": "",
-	# 					"description": "feet mean sea level"
-	# 				}
-	# 			]
 
 	result = {
 		"status":"okay",
-		"output":output
-		# "name": result_name,
-		# "description": result_description,
-		# "properties": restult_properties,
-		# "Locations": locations,
-		# "@iot.id": thing_id,
-		# "Datastreams": data_streams
+		"output":output,
+		"datatstreams":datasstreams,
+		"error_log":error_log
 	}
+
+	create_data_file_to_import(config,result)
 
 	return result
 
@@ -753,7 +504,7 @@ def convert_data(source, config):
 
 
 	basepath = current_app.config['MEDIA_BASE_PATH'] + 'files/'
-	directory = current_app.config['MEDIA_DIRECTORY'] + 'files/'
+	directory = os.getcwd() + '/app/static/usercontent/' + 'files/'
 
 
 	_source_type = None
@@ -774,25 +525,27 @@ def convert_data(source, config):
 	if config:
 		if 'settings' in config and 'type' in config['settings']:
 			_source_type = config['settings']['type']
-		
 
-		if _source_type == 'Excel':
-
+		if os.path.splitext(source)[1] == '.csv':
+			_source_type = 'csv'
+		elif os.path.splitext(source)[1] == '.xlsx':
+			_source_type = 'excel' 
+		else:
+			abort(make_response(jsonify(message="File type must be .csv or .xlsx"), 400))
+			
+		if _source_type == 'excel':
 			result = convert_data_from_excel(source, config)
 		elif _source_type == 'csv':
-
-			result = {"features":convert_data_from_csv(source,config)}
+			result = convert_data_from_csv(source,config)
 
 
 	return result
 
-
 def create_config(config):
-
 
 	# Save JSON File
 	basepath = current_app.config['MEDIA_BASE_PATH'] + 'files/'
-	directory = current_app.config['MEDIA_DIRECTORY'] + 'files/'
+	directory = os.getcwd() + '/app/static/usercontent/' + 'files/'
 
 	"""
 	Prepare the file for processing
@@ -812,62 +565,127 @@ def create_config(config):
 
 	return config
 
+def create_data_file_to_import(config,data):
 
+	# Save JSON File
 
-def get_column_headers(source):
+	basepath = current_app.config['MEDIA_BASE_PATH'] + 'files/'
+	directory = os.getcwd() + '/app/static/usercontent/' + 'files/'
 
-	sheets = []
-	sheet_number = 0
+	"""
+	Prepare the file for processing
+	"""
 
-	workbook = import_excel(source)
-	if workbook:
-		sheet = workbook.active
+	extension = "json"
+	if config and 'settings' in config and 'file' in config['settings']:
+		filename = config["settings"]["file"]
+		filename = os.path.splitext(filename)[0]+'_data_to_import.' + extension
 	else:
-		abort(make_response(jsonify(message='Could not import excel file'), 400))
+		filename = "data_to_import." + extension
 
-	
-	for item in workbook.sheetnames:
-		sheet = workbook[item]
+	filepath = os.path.join(directory, filename)
+	fileurl = os.path.join(basepath, filename)
 
+	with open(filepath, 'w') as outfile:
+		json.dump(data, outfile)
+
+	return data
+
+def get_column_headers(source, file_type):
+
+	result = {}
+	sheets = []
+
+	if file_type == "excel":
+
+		print(file_type)
+		sheet_number = 0
+
+		workbook = import_excel(source)
+		if workbook:
+			sheet = workbook.active
+		else:
+			abort(make_response(jsonify(message='Could not import excel file'), 400))
+		
+		for item in workbook.sheetnames:
+			sheet = workbook[item]
+
+			list_with_values=[]
+			for cell in sheet[1]:
+
+				list_with_values.append(
+					{
+						'column': cell.column_letter,
+						'row':cell.row,
+						'value':cell.value
+					}
+				)
+
+			sheets.append({
+				'sheet':item,
+				'sheet_number':sheet_number,
+				'headers':list_with_values
+			})
+			sheet_number = sheet_number + 1
+
+
+	elif file_type == "csv":
+
+		print(file_type)
+
+		_csv = import_csv(source)
 		list_with_values=[]
-		for cell in sheet[1]:
 
+		count = 1
+		for item in _csv[0]:
+			
 			list_with_values.append(
-				{
-					'column': cell.column_letter,
-					'row':cell.row,
-					'value':cell.value
-				}
-			)
-
+					{
+						'column': item,
+						'row':count,
+						'value':item
+					}
+				)
+			count = count + 1
+		
 		sheets.append({
-			'sheet':item,
-			'sheet_number':sheet_number,
-			'headers':list_with_values
-		})
-		sheet_number = sheet_number + 1
+				'sheet':'csv',
+				'sheet_number':0,
+				'headers':list_with_values
+			})
+
 
 	result ={
-		"status":"File Loaded",
-		"type": "FeatureCollection",
-		"features": sheets
+			"status":"File Loaded",
+			"type": "FeatureCollection",
+			"features": sheets,
+			"source":source
 	}
-
 	return result
 
+def process_data(data): 
 
-def process_data(data):
+	response = None
+	data_output = None
 
-	input()
+	# print("This is the data yall", data)
+
+	data_data_stream = None
+	print("Starting Thing", "output" in data)
+
 
 	if "output" in data:
+		print("Starting Things")
 		for item in data["output"]:
-			print("Starting")
+			print("Starting Thing")
 
-			path = "http://localhost:8080/FROST-Server/v1.1"
+			path = "http://frost:8080/FROST-Server/v1.1"
 			thing = "Things('%s')" % item["@iot.id"]
 			url_collection = "%s/Things" % (path)
 			url_thing = "%s/%s" % (path, thing)
+			# return url_thing
+
+
 
 			## CHECK FOR EXISTANCE
 			try:
@@ -875,21 +693,23 @@ def process_data(data):
 					headers={
 						"Content-Type": "application/json; charset=utf-8",
 					})
-				data = response.json()
+				data_output = response.json()
 			#         print('Response HTTP Response Body: {content}'.format(
 			#             content=response.content))
 			except requests.exceptions.RequestException:
-				print('HTTP Request failed')
+				print('HTTP Request failed - Frost Server is not on')
+				abort(make_response(jsonify(message="HTTP Request failed - Frost Server is not on"), 400))
 			## END CHECK FOR EXISTANCE
 
-			input()
+			if response is None:
+				 abort(make_response(jsonify(message="FROST SERVER IS NOT ONLINE"), 400))
+
 			if response.status_code == 200:
 				print("We Got it")
 				continue
 			elif response.status_code == 404:
 				# CREATE THE THING
 				print("Let's Make the THING")
-				input()
 
 				datastreams = []
 
@@ -935,7 +755,6 @@ def process_data(data):
 				}
 				data_to_post = json.dumps(data_to_post)
 				print("BOUT TO POST SOME DATA")
-				input()
 				try:
 					response = requests.post(url=url_collection,
 						headers={
@@ -948,16 +767,232 @@ def process_data(data):
 					# print('Response HTTP Response Body: {content}'.format(
 					# 	content=response.content))
 				except requests.exceptions.RequestException:
+					print('HTTP Request failed')	
+
+
+	print("#############################")
+	print("#############################")
+	print("#############################")
+	print("######## FINISHED THAT PART ")
+	print("#############################")
+	print("#############################")
+
+	time.sleep(1)
+
+	print("datatstreams" in data)
+	print(len(data['datatstreams']))
+
+	if "datatstreams" in data:
+		for item in data['datatstreams']:
+			print("Starting Data Stream")
+
+			path = "http://frost:8080/FROST-Server/v1.1"
+			observation = "Datastreams('%s')/Observations" % item["@iot.id"]
+			url_data_stream = "%s/%s" % (path, observation)
+
+
+			print("Datastream",url_data_stream)
+
+			## CHECK FOR EXISTANCE
+			try:
+				response_check = requests.get(url=url_data_stream,
+					headers={
+						"Content-Type": "application/json; charset=utf-8",
+					})
+				data_data_stream = response_check.json()
+			#         print('Response HTTP Response Body: {content}'.format(
+			#             content=response.content))
+			except requests.exceptions.RequestException:
+				print('HTTP Request failed - Frost Server is not on')
+			## END CHECK FOR EXISTANCE
+
+			data_to_post =   {
+					"phenomenonTime": item["phenomenonTime"],
+					"result": item["result"]
+				}
+
+			print(data_to_post)
+
+
+			data_to_post = json.dumps(data_to_post)
+			if response_check.status_code == 200:
+				print("It Exists - lets go for it")
+
+				try:
+					response_to_post = requests.post(url=url_data_stream,
+						headers={
+							"Content-Type": "application/json; charset=utf-8",
+						},
+						data=data_to_post
+            			)
+					# data = response.json()
+
+					# print('Response HTTP Response Body: {content}'.format(
+					# 	content=response.content))
+				except requests.exceptions.RequestException:
 					print('HTTP Request failed')
-				input()
-
-
-			input()
+				
+			elif response_check.status_code == 404:
+				continue
 
 
 	result = {
 		"staus":"okay",
-		"data":data
+		"output":data_output,
+		"datastream":data_data_stream,
+		}
+
+	return result
+
+def run_cron(data):
+	result = {}
+
+	# 1. upload config file - write a log to json file
+
+	# print("source", data["source"])
+	# print("config", data["config"])
+
+	source_file = urlparse(data["source"])
+	print(os.path.basename(source_file.path))  # Output: 09-09-201315-47-571378756077.jpg
+
+
+	# 2. get data source via url - write a log to json file
+	converted_data = convert_data(os.path.basename(source_file.path), data["config_file"])
+
+	# 3. run prep for data upload - write a log to json file
+
+	try:
+		print("Lets do it", "output" in converted_data)
+		result = process_data(converted_data)
+		# return jsonify(**result), 200
+	except ValueError as e:
+			abort(make_response(jsonify(message="This is not working out"), 400))
+
+
+    # abort(make_response(jsonify(message="Must be in JSON format"), 400))
+    # return {
+    #     "content-type":request.content_type,
+    #     "result":result
+    #     # "data":data
+    #     }
+
+	# 4. process data - write a log to json file
+
+	result = {
+		"staus":200,
+		"message":"cron Job Ran",
+		"config_file":data["config_file"],
+		"source":data["source"]
+		}
+	return result
+
+def schedule_cron(data):
+
+	result = {}
+
+	current_date = datetime.now()
+
+	if data and "cron_job_name" in data:
+		cron_job_name = data["cron_job_name"]+current_date.isoformat()
+	else:
+		abort(make_response(jsonify(message="Cron Job Name is required"), 400))
+
+	if data and "interval" in data:
+		interval = data["interval"]
+	else:
+		abort(make_response(jsonify(message="Interval is required"), 400))
+
+	# DETERMIN HOW OFTEN
+
+	cron = CronTab(user='root')
+	command = "curl 'http://localhost:5000/v1/run_job' \
+	-H 'Connection: keep-alive' \
+	-H 'Content-Type: application/json' \
+	--data-raw '{\"config_file\":\""+data["config_file"]+"\",\"source\":\""+data["source"]+"\"}' \
+	--compressed"
+	job = cron.new(command=command, comment=cron_job_name)
+
+	if interval:
+		if interval == "15mins":
+			job.minute.every(15)
+		elif interval == "hourly":
+			job.minute.every(60)
+		elif interval == "nightly":
+			job.hour.every(23)
+			job.minute.also.on(59)
+		elif interval == "weekly":
+			job.dow.on('SUN')
+			job.minute.also.on(59)
+			job.hour.also.on(23)
+		elif interval == "monthly":
+			job.day.on(1)
+			job.minute.also.on(59)
+			job.hour.also.on(23)
+			
+
+	cron.write()
+	os.system("service cron restart")
+	# job.every_reboot()
+
+	result = {
+		"staus":200,
+		"message":"Cron Job Scheduled",
+		"config_file":data["config_file"],
+		"source":data["source"]
+		}
+
+	return result
+
+def delete_job():
+	cron = CronTab(user='root')
+
+	_name = request.args.get('name','')
+
+	iter = cron.find_comment(_name)
+	cron.remove( iter )
+	cron.write()
+
+	result = {
+		"staus":201,
+		"message":"A Single cron job has been removed for %s."% _name
+		}
+
+	return result
+
+def delete_all_jobs():
+	cron = CronTab(user='root')
+	cron.remove_all()
+	cron.write()
+	result = {
+		"staus":201,
+		"message":"All cron jobs have been removed."
+		}
+
+	return result
+
+def get_cron():
+
+	jobs=[]
+
+	cron = CronTab(user='root')
+	for job in cron:
+		jobs.append({
+			"name":job.comment
+		})
+	result = {
+		"staus":200,
+		"jobs":jobs
+		}
+
+	return result
+
+def get_cron_log():
+	jobs = []
+	result = {
+		"staus":200,
+		"jobs":[{
+			"message":"job ran successfully"
+		}]
 		}
 
 	return result

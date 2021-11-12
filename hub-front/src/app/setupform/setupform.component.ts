@@ -7,6 +7,8 @@ import { TRANSFORM_CONFIG_SETTINGS } from '../mock/mock-transform_config';
 import {HttpClient, HttpEvent, HttpErrorResponse, HttpEventType} from '@angular/common/http';
 import { IParameter } from '../interfaces/parameter';
 import { IObservation } from '../interfaces/observation';
+import * as fileSaver from 'file-saver';
+
 
 
 @Component({
@@ -15,6 +17,8 @@ import { IObservation } from '../interfaces/observation';
   styleUrls: ['./setupform.component.scss']
 })
 export class SetupformComponent implements OnInit {
+
+  title = 'Internet of Water Data Wizard';
 
   // field: Field = {
   //   id: 1,
@@ -33,7 +37,7 @@ export class SetupformComponent implements OnInit {
   }
 
   add_new_parameter_is_active = false;
-  successful_load = "";
+  
   setting_fields = SETTINGS_FIELDS;
   form_parameters:IParameter;
   form_reading:IObservation;
@@ -43,6 +47,7 @@ export class SetupformComponent implements OnInit {
   fields = FIELDS;
   test = "";
   sheet_selected = "";
+  upload_type = "file"; // or web
   file_contents_local:any= {
     status:'',
     features : [{
@@ -51,7 +56,7 @@ export class SetupformComponent implements OnInit {
         row:'',
         value:'test'
       }],
-      sheet:'default',
+      sheet:'',
       sheet_number:0
     }]
   };
@@ -84,6 +89,9 @@ export class SetupformComponent implements OnInit {
   ]
 
   fileName = '';
+  successful_load = "";
+  configFileName = ''
+  successful_config_load = "";
 
 
   constructor(private apiService: ApiService, private http: HttpClient) { 
@@ -105,6 +113,7 @@ export class SetupformComponent implements OnInit {
       description:""
     } 
     this.form_reading = {
+      id:"",
       name:"",
       phenomenonTime:"",
       result:""
@@ -139,7 +148,7 @@ export class SetupformComponent implements OnInit {
   reset_form_reading():IObservation{
 
     let result = {
-
+      id:"",
       name:"",
       phenomenonTime:"",
       result:""
@@ -205,7 +214,7 @@ export class SetupformComponent implements OnInit {
 
         const formData = new FormData();
 
-        formData.append("excel", file);
+        formData.append('file', file);
 
         const upload$ = this.http.post("http://localhost:5000/v1/upload-file", formData);
 
@@ -216,6 +225,60 @@ export class SetupformComponent implements OnInit {
         this.transform_config.settings.source = this.fileName;
 
     }
+}
+
+upload_via_url(event: any) {
+
+  console.log( this.transform_config.settings.file_url);
+  const payload = {"file_path":this.transform_config.settings.file_url}
+
+  this.apiService.get_data_from_url(payload)
+    .subscribe(payload => this.file_contents_local = payload);
+
+  // const file:File = event.target.files[0];
+
+  // if (file) {
+
+  //     this.fileName = file.name;
+
+  //     const formData = new FormData();
+
+  //     formData.append('file', file);
+
+  //     const upload$ = this.http.post("http://localhost:5000/v1/upload-file", formData);
+
+  //     upload$.subscribe(file_contents => this.file_contents_local = file_contents);
+
+  //     this.successful_load = "File has loaded";
+
+  //     this.transform_config.settings.source = this.fileName;
+
+  // }
+}
+
+onLoadConfig(event:any){
+  const file:File = event.target.files[0];
+
+    if (file) {
+
+        this.configFileName = file.name;
+
+        // this.transform_config = {}
+
+        const formData = new FormData();
+
+        formData.append("json", file);
+
+        const upload$ = this.http.post("http://localhost:5000//v1/upload-config", formData);
+
+        upload$.subscribe(transform_config => this.transform_config = transform_config);
+
+        this.successful_config_load = "File has loaded";
+
+        // this.transform_config.settings.source = this.fileName;
+
+    }
+  
 }
 
   ngOnInit(): void {
@@ -241,10 +304,15 @@ export class SetupformComponent implements OnInit {
 
     // console.log(this.file_contents_local.features)
 
-
-    console.log("I was pressed yo yo");
     this.apiService.create_config(this.transform_config)
     .subscribe(transform_config => this.transform_config = transform_config);
+
+    let response = JSON.stringify(this.transform_config)
+
+    let blob:any = new Blob([response], { type: 'text/json; charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+
+			fileSaver.saveAs(blob, 'config.json');
   }
 
 
@@ -309,30 +377,37 @@ export class SetupformComponent implements OnInit {
 
       if (i===this.transform_config.parameters.length-1){
         this.transform_config.parameters.push(this.form_parameters);
+        break;
       }
     }
 
     this.form_parameters = this.reset_form_parameters();  
     
     // SAVE READING
-
     // ANY VALUES IN PARAMS? NO? THEN ADD ONE
     if (this.transform_config.datastreams.length===0){
+      this.form_reading.id = 0;
       this.transform_config.datastreams.push(this.form_reading);
+    }else{
+      // LOOP THROUGH AND CHECK IF NO MATCHES ADD PARAMS OTHERWISE OVERWRITE
+      for (let i=0; i<this.transform_config.datastreams.length;i++){
+        var item = this.transform_config.datastreams[i];
+        if (item.id === this.form_reading.id){
+          item = this.form_reading;
+          break;
+        }
+
+        if (i===this.transform_config.datastreams.length-1){
+          this.form_reading.id = this.transform_config.datastreams[this.transform_config.datastreams.length-1].id + 1;
+          this.transform_config.datastreams.push(this.form_reading);
+        break;
+        }
+      }
+
     }
 
-    // // LOOP THROUGH AND CHECK IF NO MATCHES ADD PARAMS OTHERWISE OVERWRITE
-    // for (let i=0; i<this.transform_config.datastreams.length;i++){
-    //   var item = this.transform_config.datastreams[i];
-    //   if (item.property_name === this.form_reading.name){
-    //     item = this.form_reading;
-    //     break;
-    //   }
 
-    //   if (i===this.transform_config.datastreams.length-1){
-    //     this.transform_config.datastreams.push(this.form_reading);
-    //   }
-    // }
+
 
 
     this.form_reading = this.reset_form_reading();
@@ -345,6 +420,13 @@ export class SetupformComponent implements OnInit {
       var item = this.transform_config.parameters[i];
       if (item.property_name === property_name){
         this.form_parameters=item
+      }
+    }
+
+    for (let i=0; i<this.transform_config.datastreams.length;i++){
+      var item = this.transform_config.datastreams[i];
+      if (item.name === property_name){
+        this.form_reading=item
       }
     }
 
