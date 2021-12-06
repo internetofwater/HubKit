@@ -87,7 +87,7 @@ export class ScheduleComponent implements OnInit {
       cron_job_name:cron_job_name
     }
     
-    console.log("Schedule Cron",config,source,interval )
+    // console.log("Schedule Cron",config,source,interval )
     this.apiService.schedule_cron(this.schedule_cron_job)
       .subscribe(schedule_cron_job => this.schedule_response = schedule_cron_job)
 
@@ -126,8 +126,7 @@ export class ScheduleComponent implements OnInit {
     
   }
   upload_via_url(event: any) {
-
-    console.log( this.transform_config.settings.file_url);
+    this.transform_config.settings.source = this.transform_config.settings.file_url.substring(this.transform_config.settings.file_url.lastIndexOf('/')+1)
     const payload = {"file_path":this.transform_config.settings.file_url}
   
     this.apiService.get_data_from_url(payload)
