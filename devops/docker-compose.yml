@@ -20,8 +20,8 @@ services:
         build:
             context: ../hub-back
             dockerfile: ../hub-back/Dockerfile
-        volumes:
-            - '../hub-back:/app'
+        # volumes:
+        #     - '../hub-back:/app'
         ports:
             - '5000:5000'
 

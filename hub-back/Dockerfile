@@ -31,7 +31,7 @@ RUN pip3 install -r requirements/development.txt
 RUN apt-get install systemctl
 RUN apt-get install cron
 
-RUN mkdir -p /app/static/usercontent/files
+RUN mkdir -p /app/app/static/usercontent/files
 
 
 # CMD ["tail", "-f", "/dev/null"]
