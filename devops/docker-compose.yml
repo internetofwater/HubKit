@@ -27,7 +27,8 @@ services:
 
     web:
         container_name: frost
-        image: fraunhoferiosb/frost-server:latest
+        image: fraunhoferiosb/frost-server:latest.  
+        # image: ksonda/frost:arm change to this line for local macOS M1 chip development
         environment:
             - serviceRootUrl=http://localhost:8080/FROST-Server #change to desired URL
             - http_cors_enable=true
@@ -47,13 +48,14 @@ services:
     
     database:
         container_name: frostdb
-        image: postgis/postgis:11-2.5-alpine
+        image: kartoza/postgis:14-3.2
         environment:
             - POSTGRES_DB=sensorthings
             - POSTGRES_USER=sensorthings
-            - POSTGRES_PASSWORD=ChangeMe
+            - POSTGRES_PASS=ChangeMe
+            - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting,uuid-ossp
         volumes:
-            - postgis_volume:/var/lib/postgresql/data
+            - postgis_volume:/var/lib/postgresql
 volumes:
     postgis_volume:
 
