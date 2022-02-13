@@ -229,31 +229,15 @@ export class SetupformComponent implements OnInit {
 
 upload_via_url(event: any) {
 
-  console.log( this.transform_config.settings.file_url);
+  this.transform_config.settings.source = this.transform_config.settings.file_url.substring(this.transform_config.settings.file_url.lastIndexOf('/')+1)
   const payload = {"file_path":this.transform_config.settings.file_url}
 
   this.apiService.get_data_from_url(payload)
     .subscribe(payload => this.file_contents_local = payload);
 
-  // const file:File = event.target.files[0];
+    
+  
 
-  // if (file) {
-
-  //     this.fileName = file.name;
-
-  //     const formData = new FormData();
-
-  //     formData.append('file', file);
-
-  //     const upload$ = this.http.post("http://localhost:5000/v1/upload-file", formData);
-
-  //     upload$.subscribe(file_contents => this.file_contents_local = file_contents);
-
-  //     this.successful_load = "File has loaded";
-
-  //     this.transform_config.settings.source = this.fileName;
-
-  // }
 }
 
 onLoadConfig(event:any){
@@ -318,36 +302,21 @@ onLoadConfig(event:any){
 
   run_convert():void{
 
-    // this.transform_config.settings.type = 'DUDE' 
-
     // PREPARE DATA TO BE SENT
-
-    //
-    console.log("I was pressed");
     this.apiService.run_convert(this.transform_config)
     .subscribe(config_response => this.config_response = config_response);
   }
 
   process_data():void{
 
-    // this.transform_config.settings.type = 'DUDE' 
-
     // PREPARE DATA TO BE SENT
-
-    //
-    console.log("I was pressed");
     this.apiService.run_process(this.config_response)
     .subscribe(process_response => this.process_response = process_response);
   }
 
   post_to_frost_server():void{
 
-    // this.transform_config.settings.type = 'DUDE' 
-
     // PREPARE DATA TO BE SENT
-
-    //
-    console.log("I was pressed");
     this.apiService.post_to_frost_server(this.config_response)
     .subscribe();
   }

@@ -112,7 +112,7 @@ def convert_data_from_csv(source,config):
 	thing_lat_value = config['settings']['thing_lat_column']
 
 	
-	print("thing name", thing_name_value)
+	# print("thing name", thing_name_value)
 	for i in range(0, len(_csv)):
 		thing_name =  "%s" % (get_data_from_csv_row(_csv,thing_name_value,i))
 		thing_description =  "%s" % (get_data_from_csv_row(_csv,thing_description_value,i))
@@ -180,10 +180,8 @@ def convert_data_from_csv(source,config):
 					})
 
 				else: 
-
 					if data_stream_phenomenonTime.find('/') > 0 and len(data_stream_phenomenonTime) >= 8:
 						if data_stream_phenomenonTime.index('/') == 2 or data_stream_phenomenonTime.index('/') == 1:
-							print("one")
 							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%d/%m/%Y')
 							datasstreams.append({
 								"@iot.id":data_stream_iotid,
@@ -192,7 +190,6 @@ def convert_data_from_csv(source,config):
 							})
 							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%d/%m/%Y')
 						elif data_stream_phenomenonTime.index('/') == 4 or data_stream_phenomenonTime.index('/') == 3:
-							print("2")
 							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%Y/%m/%d')
 							datasstreams.append({
 								"@iot.id":data_stream_iotid,
@@ -200,7 +197,6 @@ def convert_data_from_csv(source,config):
 								"result":data_stream_result
 							})
 						else:
-							print("3", data_stream_phenomenonTime.index('/'))
 							error_log.append({
 								"name":thing_name,
 								"error": "PhenomenonTime is not in a date format",
@@ -212,7 +208,6 @@ def convert_data_from_csv(source,config):
 
 					elif data_stream_phenomenonTime.find('-') > 0 and len(data_stream_phenomenonTime) >= 8:
 						if data_stream_phenomenonTime.index('-') == 2:
-							print("4")
 							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%d-%m-%Y')
 							datasstreams.append({
 								"@iot.id":data_stream_iotid,
@@ -220,7 +215,6 @@ def convert_data_from_csv(source,config):
 								"result":data_stream_result
 							})
 						elif data_stream_phenomenonTime.index('-') == 4:
-							print("5")
 							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%Y-%m-%d')
 							datasstreams.append({
 								"@iot.id":data_stream_iotid,
@@ -228,7 +222,6 @@ def convert_data_from_csv(source,config):
 								"result":data_stream_result
 							})
 						else:
-							print("6")
 							error_log.append({
 								"name":thing_name,
 								"error": "PhenomenonTime is not in a date format",
@@ -238,8 +231,6 @@ def convert_data_from_csv(source,config):
 								"result":data_stream_result
 							})
 					else:
-						print("7")
-						input()
 						error_log.append({
 							
 							"name":thing_name,
@@ -468,6 +459,7 @@ def convert_data_from_excel(source, config):
 						"result":data_stream_result
 					})
 				else:
+					# print("#### NOT A DATE FORMAT")
 					error_log.append({
 						"name":thing_name,
 						"error": "PhenomenonTime is not in a date format",
@@ -598,7 +590,6 @@ def get_column_headers(source, file_type):
 
 	if file_type == "excel":
 
-		print(file_type)
 		sheet_number = 0
 
 		workbook = import_excel(source)
@@ -630,8 +621,6 @@ def get_column_headers(source, file_type):
 
 
 	elif file_type == "csv":
-
-		print(file_type)
 
 		_csv = import_csv(source)
 		list_with_values=[]
@@ -671,13 +660,13 @@ def process_data(data):
 	# print("This is the data yall", data)
 
 	data_data_stream = None
-	print("Starting Thing", "output" in data)
+	# print("Starting Thing", "output" in data)
 
 
 	if "output" in data:
-		print("Starting Things")
+		# print("Starting Things")
 		for item in data["output"]:
-			print("Starting Thing")
+			# print("Starting Thing")
 
 			path = "http://frost:8080/FROST-Server/v1.1"
 			thing = "Things('%s')" % item["@iot.id"]
@@ -702,14 +691,14 @@ def process_data(data):
 			## END CHECK FOR EXISTANCE
 
 			if response is None:
-				 abort(make_response(jsonify(message="FROST SERVER IS NOT ONLINE"), 400))
-
+				abort(make_response(jsonify(message="FROST SERVER IS NOT ONLINE"), 400))
+				
 			if response.status_code == 200:
-				print("We Got it")
+				# print("We Got it")
 				continue
 			elif response.status_code == 404:
 				# CREATE THE THING
-				print("Let's Make the THING")
+				# print("Let's Make the THING")
 
 				datastreams = []
 
@@ -754,7 +743,70 @@ def process_data(data):
 					"Datastreams": datastreams
 				}
 				data_to_post = json.dumps(data_to_post)
-				print("BOUT TO POST SOME DATA")
+
+
+
+				
+
+				## POST OR PATCH
+
+				# {
+				# 	"@iot.id": "",
+				# 	"name": "",
+				# 	"description": "none",
+				# 	"Locations": [
+				# 		{
+				# 		"name": "",
+				# 		"description": "none",
+				# 		"encodingType": "application/vnd.geo+json",
+				# 		"location": {
+				# 			"type": "Point",
+				# 			"coordinates": [
+				# 			"35.834194",
+				# 			"-79.81307"
+				# 			]
+				# 		}
+				# 		}
+				# 	],
+				# 	"Datastreams": [
+				# 		{
+				# 		"@iot.id": "_stream_miles",
+				# 		"name": "",
+				# 		"description": "none",
+				# 		"observationType": "",
+				# 		"unitOfMeasurement": {
+				# 			"name": "",
+				# 			"symbol": "",
+				# 			"definition": ""
+				# 		},
+				# 		"Sensor": {
+				# 			"name": "",
+				# 			"description": "",
+				# 			"encodingType": "",
+				# 			"metadata": ""
+				# 		},
+				# 		"ObservedProperty": {
+				# 			"name": "stream miles",
+				# 			"definition": "",
+				# 			"description": ""
+				# 		}
+				# 		}
+				# 	]
+				# }
+
+				# http://localhost:8080/FROST-Server/v1.1/Observations('3c7d464e-5ea6-11ec-a01d-1b3667e0b603')
+				# {
+				# "@iot.id": "3c7d464e-5ea6-11ec-a01d-1b3667e0b603",
+				# "phenomenonTime": "2000-01-01T00:00:00.000Z",
+				# "result": "191.105",
+				# "resultTime": null,
+				# "@iot.selfLink": "http://localhost:8080/FROST-Server/v1.1/Observations('3c7d464e-5ea6-11ec-a01d-1b3667e0b603')",
+				# "Datastream@iot.navigationLink": "http://localhost:8080/FROST-Server/v1.1/Observations('3c7d464e-5ea6-11ec-a01d-1b3667e0b603')/Datastream",
+				# "MultiDatastream@iot.navigationLink": "http://localhost:8080/FROST-Server/v1.1/Observations('3c7d464e-5ea6-11ec-a01d-1b3667e0b603')/MultiDatastream",
+				# "FeatureOfInterest@iot.navigationLink": "http://localhost:8080/FROST-Server/v1.1/Observations('3c7d464e-5ea6-11ec-a01d-1b3667e0b603')/FeatureOfInterest"
+				# }
+
+
 				try:
 					response = requests.post(url=url_collection,
 						headers={
@@ -770,17 +822,17 @@ def process_data(data):
 					print('HTTP Request failed')	
 
 
-	print("#############################")
-	print("#############################")
-	print("#############################")
-	print("######## FINISHED THAT PART ")
-	print("#############################")
-	print("#############################")
+	# print("#############################")
+	# print("#############################")
+	# print("#############################")
+	# print("######## FINISHED THAT PART ")
+	# print("#############################")
+	# print("#############################")
 
 	time.sleep(1)
 
-	print("datatstreams" in data)
-	print(len(data['datatstreams']))
+	# print("datatstreams" in data)
+	# print(len(data['datatstreams']))
 
 	if "datatstreams" in data:
 		for item in data['datatstreams']:
@@ -811,26 +863,59 @@ def process_data(data):
 					"result": item["result"]
 				}
 
-			print(data_to_post)
-
-
 			data_to_post = json.dumps(data_to_post)
 			if response_check.status_code == 200:
 				print("It Exists - lets go for it")
 
-				try:
-					response_to_post = requests.post(url=url_data_stream,
-						headers={
-							"Content-Type": "application/json; charset=utf-8",
-						},
-						data=data_to_post
-            			)
-					# data = response.json()
+				# POST / PATCH CHECK
 
-					# print('Response HTTP Response Body: {content}'.format(
-					# 	content=response.content))
+
+				try:
+					response_post_patch_check = requests.get(
+						url=url_data_stream,
+						params={
+							"$filter": "phenomenonTime eq %s%s" % (item["phenomenonTime"],".000Z"),
+						},
+					)
+
+					# IF AN OBSERVATION OF THE SAME TYPE HAS THE SAME DATE... REPLACE THE VALUE
+					if response_post_patch_check.status_code == 200 and len(response_post_patch_check.json()["value"])> 0:
+						
+						tmp_id = response_post_patch_check.json()["value"][0]["@iot.id"]
+						try:
+							response_to_post = requests.put(url=url_data_stream+"('"+tmp_id+"')",
+								headers={
+									"Content-Type": "application/json; charset=utf-8",
+								},
+								data=data_to_post
+								)
+							# data = response.json()
+
+							# print('Response HTTP Response Body: {content}'.format(
+							# 	content=response.content))
+						except requests.exceptions.RequestException:
+							print('HTTP Request failed')
+					else:
+						try:
+							response_to_post = requests.post(url=url_data_stream,
+								headers={
+									"Content-Type": "application/json; charset=utf-8",
+								},
+								data=data_to_post
+								)
+							# data = response.json()
+
+							# print('Response HTTP Response Body: {content}'.format(
+							# 	content=response.content))
+						except requests.exceptions.RequestException:
+							print('HTTP Request failed')
 				except requests.exceptions.RequestException:
 					print('HTTP Request failed')
+
+			
+
+
+	
 				
 			elif response_check.status_code == 404:
 				continue
@@ -853,7 +938,7 @@ def run_cron(data):
 	# print("config", data["config"])
 
 	source_file = urlparse(data["source"])
-	print(os.path.basename(source_file.path))  # Output: 09-09-201315-47-571378756077.jpg
+	# print(os.path.basename(source_file.path))  # Output: 09-09-201315-47-571378756077.jpg
 
 
 	# 2. get data source via url - write a log to json file
@@ -862,7 +947,7 @@ def run_cron(data):
 	# 3. run prep for data upload - write a log to json file
 
 	try:
-		print("Lets do it", "output" in converted_data)
+		# print("Lets do it", "output" in converted_data)
 		result = process_data(converted_data)
 		# return jsonify(**result), 200
 	except ValueError as e:

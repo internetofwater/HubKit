@@ -20,8 +20,8 @@ services:
         build:
             context: ../hub-back
             dockerfile: ../hub-back/Dockerfile
-        volumes:
-            - '../hub-back:/app'
+        # volumes:
+        #     - '../hub-back:/app'
         ports:
             - '5000:5000'
 
@@ -29,7 +29,7 @@ services:
         container_name: frost
         image: fraunhoferiosb/frost-server:latest
         environment:
-            - serviceRootUrl=http://locahost:8080/FROST-Server #change to desired URL
+            - serviceRootUrl=http://localhost:8080/FROST-Server #change to desired URL
             - http_cors_enable=true
             - http_cors_allowed.origins=*
             - persistence_db_driver=org.postgresql.Driver
