@@ -169,7 +169,7 @@ def convert_data_from_csv(source,config):
 			data_stream_phenomenonTime = "%s" % (get_data_from_csv_row(_csv,data_stream_phenomenonTime,i)).strip()
 			data_stream_result = "%s" % (get_data_from_csv_row(_csv,data_stream_result,i))
 
-			if data_stream_result is not None:
+			if data_stream_result is not None and len(data_stream_result.strip()) > 0:
 
 				if isinstance(data_stream_phenomenonTime, datetime):
 			
@@ -178,7 +178,6 @@ def convert_data_from_csv(source,config):
 						"phenomenonTime":data_stream_phenomenonTime.isoformat(),
 						"result":data_stream_result
 					})
-
 				else: 
 					if data_stream_phenomenonTime.find('/') > 0 and len(data_stream_phenomenonTime) >= 8:
 						if data_stream_phenomenonTime.index('/') == 2 or data_stream_phenomenonTime.index('/') == 1:
@@ -207,6 +206,7 @@ def convert_data_from_csv(source,config):
 							})
 
 					elif data_stream_phenomenonTime.find('-') > 0 and len(data_stream_phenomenonTime) >= 8:
+
 						if data_stream_phenomenonTime.index('-') == 2:
 							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%d-%m-%Y')
 							datasstreams.append({
@@ -215,7 +215,8 @@ def convert_data_from_csv(source,config):
 								"result":data_stream_result
 							})
 						elif data_stream_phenomenonTime.index('-') == 4:
-							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%Y-%m-%d')
+
+							date_time_obj = datetime.strptime(data_stream_phenomenonTime[:10], '%Y-%m-%d')
 							datasstreams.append({
 								"@iot.id":data_stream_iotid,
 								"phenomenonTime":date_time_obj.isoformat(),
@@ -241,11 +242,6 @@ def convert_data_from_csv(source,config):
 							"result":data_stream_result
 						})
 
-
-
-					
-					
-		
 
 		output.append({
 			"@iot.id":thing_id,
