@@ -206,7 +206,6 @@ def convert_data_from_csv(source,config):
 							})
 
 					elif data_stream_phenomenonTime.find('-') > 0 and len(data_stream_phenomenonTime) >= 8:
-
 						if data_stream_phenomenonTime.index('-') == 2:
 							date_time_obj = datetime.strptime(data_stream_phenomenonTime, '%d-%m-%Y')
 							datasstreams.append({
@@ -216,12 +215,20 @@ def convert_data_from_csv(source,config):
 							})
 						elif data_stream_phenomenonTime.index('-') == 4:
 
-							date_time_obj = datetime.strptime(data_stream_phenomenonTime[:10], '%Y-%m-%d')
-							datasstreams.append({
-								"@iot.id":data_stream_iotid,
-								"phenomenonTime":date_time_obj.isoformat(),
-								"result":data_stream_result
-							})
+							if len(data_stream_phenomenonTime) == 24:
+								datasstreams.append({
+									"@iot.id":data_stream_iotid,
+									"phenomenonTime":data_stream_phenomenonTime[:19],
+									"result":data_stream_result
+								})
+							else:
+								date_time_obj = datetime.strptime(data_stream_phenomenonTime[:10], '%Y-%m-%d')
+								datasstreams.append({
+									"@iot.id":data_stream_iotid,
+									"phenomenonTime":date_time_obj.isoformat(),
+									"result":data_stream_result
+								})
+	
 						else:
 							error_log.append({
 								"name":thing_name,
@@ -679,8 +686,6 @@ def process_data(data):
 						"Content-Type": "application/json; charset=utf-8",
 					})
 				data_output = response.json()
-			#         print('Response HTTP Response Body: {content}'.format(
-			#             content=response.content))
 			except requests.exceptions.RequestException:
 				print('HTTP Request failed - Frost Server is not on')
 				abort(make_response(jsonify(message="HTTP Request failed - Frost Server is not on"), 400))
@@ -690,11 +695,8 @@ def process_data(data):
 				abort(make_response(jsonify(message="FROST SERVER IS NOT ONLINE"), 400))
 				
 			if response.status_code == 200:
-				# print("We Got it")
 				continue
 			elif response.status_code == 404:
-				# CREATE THE THING
-				# print("Let's Make the THING")
 
 				datastreams = []
 
@@ -861,8 +863,6 @@ def process_data(data):
 
 			data_to_post = json.dumps(data_to_post)
 			if response_check.status_code == 200:
-				print("It Exists - lets go for it")
-
 				# POST / PATCH CHECK
 
 
