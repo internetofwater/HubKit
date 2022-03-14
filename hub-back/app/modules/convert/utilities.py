@@ -32,6 +32,8 @@ import csv
 import pytz
 import datetime
 
+import wget
+
 import requests
 import time
 
@@ -262,7 +264,7 @@ def convert_data_from_csv(source,config):
 		})
 
 	result = {
-		"status":"okay yo yo",
+		"status":"okay",
 		"output":output,
 		"datatstreams":datasstreams,
 		"error_log":error_log
@@ -533,7 +535,6 @@ def convert_data(source, config):
 		elif _source_type == 'csv':
 			result = convert_data_from_csv(source,config)
 
-
 	return result
 
 def create_config(config):
@@ -743,68 +744,6 @@ def process_data(data):
 				data_to_post = json.dumps(data_to_post)
 
 
-
-				
-
-				## POST OR PATCH
-
-				# {
-				# 	"@iot.id": "",
-				# 	"name": "",
-				# 	"description": "none",
-				# 	"Locations": [
-				# 		{
-				# 		"name": "",
-				# 		"description": "none",
-				# 		"encodingType": "application/vnd.geo+json",
-				# 		"location": {
-				# 			"type": "Point",
-				# 			"coordinates": [
-				# 			"35.834194",
-				# 			"-79.81307"
-				# 			]
-				# 		}
-				# 		}
-				# 	],
-				# 	"Datastreams": [
-				# 		{
-				# 		"@iot.id": "_stream_miles",
-				# 		"name": "",
-				# 		"description": "none",
-				# 		"observationType": "",
-				# 		"unitOfMeasurement": {
-				# 			"name": "",
-				# 			"symbol": "",
-				# 			"definition": ""
-				# 		},
-				# 		"Sensor": {
-				# 			"name": "",
-				# 			"description": "",
-				# 			"encodingType": "",
-				# 			"metadata": ""
-				# 		},
-				# 		"ObservedProperty": {
-				# 			"name": "stream miles",
-				# 			"definition": "",
-				# 			"description": ""
-				# 		}
-				# 		}
-				# 	]
-				# }
-
-				# http://localhost:8080/FROST-Server/v1.1/Observations('3c7d464e-5ea6-11ec-a01d-1b3667e0b603')
-				# {
-				# "@iot.id": "3c7d464e-5ea6-11ec-a01d-1b3667e0b603",
-				# "phenomenonTime": "2000-01-01T00:00:00.000Z",
-				# "result": "191.105",
-				# "resultTime": null,
-				# "@iot.selfLink": "http://localhost:8080/FROST-Server/v1.1/Observations('3c7d464e-5ea6-11ec-a01d-1b3667e0b603')",
-				# "Datastream@iot.navigationLink": "http://localhost:8080/FROST-Server/v1.1/Observations('3c7d464e-5ea6-11ec-a01d-1b3667e0b603')/Datastream",
-				# "MultiDatastream@iot.navigationLink": "http://localhost:8080/FROST-Server/v1.1/Observations('3c7d464e-5ea6-11ec-a01d-1b3667e0b603')/MultiDatastream",
-				# "FeatureOfInterest@iot.navigationLink": "http://localhost:8080/FROST-Server/v1.1/Observations('3c7d464e-5ea6-11ec-a01d-1b3667e0b603')/FeatureOfInterest"
-				# }
-
-
 				try:
 					response = requests.post(url=url_collection,
 						headers={
@@ -834,14 +773,11 @@ def process_data(data):
 
 	if "datatstreams" in data:
 		for item in data['datatstreams']:
-			print("Starting Data Stream")
+			# print("Starting Data Stream")
 
 			path = "http://frost:8080/FROST-Server/v1.1"
 			observation = "Datastreams('%s')/Observations" % item["@iot.id"]
 			url_data_stream = "%s/%s" % (path, observation)
-
-
-			print("Datastream",url_data_stream)
 
 			## CHECK FOR EXISTANCE
 			try:
@@ -862,9 +798,9 @@ def process_data(data):
 				}
 
 			data_to_post = json.dumps(data_to_post)
+
 			if response_check.status_code == 200:
 				# POST / PATCH CHECK
-
 
 				try:
 					response_post_patch_check = requests.get(
@@ -876,7 +812,8 @@ def process_data(data):
 
 					# IF AN OBSERVATION OF THE SAME TYPE HAS THE SAME DATE... REPLACE THE VALUE
 					if response_post_patch_check.status_code == 200 and len(response_post_patch_check.json()["value"])> 0:
-						
+						print("HEY I REPLACED YOU")
+
 						tmp_id = response_post_patch_check.json()["value"][0]["@iot.id"]
 						try:
 							response_to_post = requests.put(url=url_data_stream+"('"+tmp_id+"')",
@@ -908,11 +845,6 @@ def process_data(data):
 				except requests.exceptions.RequestException:
 					print('HTTP Request failed')
 
-			
-
-
-	
-				
 			elif response_check.status_code == 404:
 				continue
 
@@ -933,12 +865,26 @@ def run_cron(data):
 	# print("source", data["source"])
 	# print("config", data["config"])
 
+	if data["source"]:
+		url = data["source"]
+		directory = os.getcwd() + '/app/static/usercontent/' + 'files/'
+		filename = wget.download(url, out=directory)
+
+	if len(os.path.splitext(filename))>1:
+		if os.path.splitext(filename)[1] == '.csv':
+			_type = 'csv'
+		elif os.path.splitext(filename)[1] == '.xlsx':
+			_type = 'excel' 
+		else:
+			abort(make_response(jsonify(message="File type must be .csv or .xlsx"), 400))
+	else:
+		abort(make_response(jsonify(message="File type was not found"), 400))
+
 	source_file = urlparse(data["source"])
 	# print(os.path.basename(source_file.path))  # Output: 09-09-201315-47-571378756077.jpg
 
-
 	# 2. get data source via url - write a log to json file
-	converted_data = convert_data(os.path.basename(source_file.path), data["config_file"])
+	converted_data = convert_data(os.path.basename(filename), data["config_file"])
 
 	# 3. run prep for data upload - write a log to json file
 
