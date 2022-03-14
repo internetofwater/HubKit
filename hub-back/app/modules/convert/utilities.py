@@ -217,7 +217,7 @@ def convert_data_from_csv(source,config):
 							})
 						elif data_stream_phenomenonTime.index('-') == 4:
 
-							if len(data_stream_phenomenonTime) == 24:
+							if len(data_stream_phenomenonTime) >= 20:
 								datasstreams.append({
 									"@iot.id":data_stream_iotid,
 									"phenomenonTime":data_stream_phenomenonTime[:19],
@@ -812,7 +812,6 @@ def process_data(data):
 
 					# IF AN OBSERVATION OF THE SAME TYPE HAS THE SAME DATE... REPLACE THE VALUE
 					if response_post_patch_check.status_code == 200 and len(response_post_patch_check.json()["value"])> 0:
-						print("HEY I REPLACED YOU")
 
 						tmp_id = response_post_patch_check.json()["value"][0]["@iot.id"]
 						try:
