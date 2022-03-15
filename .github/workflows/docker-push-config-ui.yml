@@ -24,12 +24,12 @@ jobs:
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: internetofwater/hubkit-config-api
+          images: internetofwater/hubkit-config-ui
       
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: ./hub-back
+          context: ./hub-front
           push: true
           tags: latest
           labels: latest
