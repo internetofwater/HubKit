@@ -31,5 +31,5 @@ jobs:
         with:
           context: ./hub-front
           push: true
-          tags: latest
+          tags: internetofwater/hubkit-config-ui:latest
           labels: latest
