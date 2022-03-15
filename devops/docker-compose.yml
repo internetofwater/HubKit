@@ -4,7 +4,7 @@ services:
 
     webapp:
         container_name: webapp
-        image: webapp:dev
+        image: internetofwater/hubkit-config-ui:latest
         build:
             context: ../hub-front
             dockerfile: ../hub-front/Dockerfile
