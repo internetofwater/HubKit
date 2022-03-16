@@ -1,0 +1,13 @@
+demo.hubkit.internetofwater.dev { 
+     
+    handle /FROST-Server* {
+        reverse_proxy frost:8080 
+        uri replace /api/ /FROST-Server/
+    }
+
+    handle_path /configure* {
+	    reverse_proxy webapp:4200
+    }
+
+}
+
