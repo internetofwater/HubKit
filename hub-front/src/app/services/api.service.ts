@@ -16,7 +16,7 @@ import { ScheduleCronJob } from '../interfaces/schedule_cron_job';
 })
 export class ApiService {
 
-  private apiUrl = 'http://localhost:5000/v1';  // URL to web api
+  private apiUrl = 'https://demo2.hubkit.internetofwater.dev/v1';  // URL to web api
   private frost_apiUrl = 'http://localhost:8080/FROST-Server/v1.1/Things';  // URL to web api
 
   httpOptions = {
