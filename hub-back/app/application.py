@@ -126,7 +126,7 @@ class Application(object):
 
         Using the user defined enviornment, setup access control headers
         """
-        response.headers['Access-Control-Allow-Origin'] = _origin
+        response.headers['Access-Control-Allow-Origin'] = '*'
         response.headers['Access-Control-Allow-Methods'] = _methods
         response.headers['Access-Control-Allow-Headers'] = _headers
         response.headers['Access-Control-Allow-Credentials'] = _credentials
