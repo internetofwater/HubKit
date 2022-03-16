@@ -4,8 +4,8 @@ import { SetupformComponent} from './setupform/setupform.component';
 import { ScheduleComponent } from './schedule/schedule.component';
 
 const routes: Routes = [
-  { path: '', component: SetupformComponent },
-  { path: 'schedule', component: ScheduleComponent }
+  { path: 'configure', component: SetupformComponent },
+  { path: 'comfigure/schedule', component: ScheduleComponent }
 ];
 
 @NgModule({
