@@ -26,7 +26,7 @@ RUN npm link @angular/cli
 
 
 # start app
-CMD ng serve --host 0.0.0.0 --disableHostCheck true --serve-path=/configure/ --base-href=/configure/
+CMD ng serve --host 0.0.0.0 --disableHostCheck true
 
 # WORKDIR /app/dist/webapp/
 
