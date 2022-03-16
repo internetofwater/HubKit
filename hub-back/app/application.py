@@ -104,7 +104,7 @@ class Application(object):
 
         """Access-Control-Allow-Origin
         """
-        _origin = None
+        _origin = '*'
 
         if flask.request.headers.get('Origin', '') in \
                 self.app.config['ACCESS_CONTROL_ALLOW_ORIGIN']:
