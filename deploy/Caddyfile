@@ -1,4 +1,4 @@
-hostname {
+{$DOMAIN} {
     reverse_proxy /FROST-Server/* frost:8080
     uri replace /api/ /FROST-Server/
     reverse_proxy webapp:4200
