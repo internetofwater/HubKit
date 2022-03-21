@@ -216,7 +216,7 @@ export class SetupformComponent implements OnInit {
 
         formData.append('file', file);
 
-        const upload$ = this.http.post(window.location.protocol + '//' + window.location.hostname + '/v1/upload-file', formData);
+        const upload$ = this.http.post('https://'+window.location.hostname+'/v1/upload-file', formData);
 
         upload$.subscribe(file_contents => this.file_contents_local = file_contents);
 
