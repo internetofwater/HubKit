@@ -1,11 +1,11 @@
 version: '3.7'
 
 services:
-    caddy:
+    caddy: #comment out the entire service for local development
         image: caddy:2.4.6-alpine
         container_name: webserver
         environment:
-          - DOMAIN=yourdomain.com
+          - DOMAIN=yourdomain.com #change to your domain
         ports:
           - 80:80
           - 443:443
@@ -40,7 +40,7 @@ services:
         container_name: frost
         image: fraunhoferiosb/frost-server:latest
         environment:
-            - serviceRootUrl=http://localhost:8080/FROST-Server #change to desired URL
+            - serviceRootUrl=http://localhost:8080/FROST-Server #change to desired URL for production
             - http_cors_enable=true
             - http_cors_allowed_origins=*
             - http_cors_allowed_methods=GET,POST,PATCH,DELETE,OPTIONS,HEAD
