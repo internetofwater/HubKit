@@ -5,7 +5,7 @@ services:
         image: caddy:2.4.6-alpine
         container_name: webserver
         environment:
-          - DOMAIN=demo2.hubkit.internetofwater.dev
+          - DOMAIN=yourdomain.com
         ports:
           - 80:80
           - 443:443
@@ -40,9 +40,9 @@ services:
 
     web:
         container_name: frost
-        image: ksonda/frost:arm
+        image: fraunhoferiosb/frost-server:latest
         environment:
-            - serviceRootUrl=http://frost:8080/FROST-Server #change to desired URL
+            - serviceRootUrl=http://localhost:8080/FROST-Server #change to desired URL
             - http_cors_enable=true
             - http_cors_allowed_origins=*
             - http_cors_allowed_methods=GET,POST,PATCH,DELETE,OPTIONS,HEAD
