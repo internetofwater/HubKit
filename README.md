@@ -1,31 +1,17 @@
 # HubKit
-Making a HubKit based on SensorThings API and PyGeoAPI
+HubKit is modular collection of services that would allow providers of time-series sensor data to (completed aspects marked, planned aspects unmarked)
+
+1. [x] 1. Use a graphical user interface (GUI) to map their data in .csv files to a SensorThings API data model
+1. [x] 2. Use the GUI to upload local sensor data .csv files to a SensorThings API endpoint
+1. [x] 3. Use the GUI to schedule the uploading of sensor data from remote/ online .csv files at a regular interval to a SensorThings API endpoint
+1. [x] 4. Serve data to the public (or authorized users) using the SensorThings API endpoint
+1. [ ] 5. Publish sensor-specific landing pages with embedded [JSON-LD](https://json-ld.org), to comport with guidance for participating in the Internet of Water [geoconnex.us](https://geoconnex.us) system
+1. [ ] 6. Serve data to the public and allow data downloads through a map-based GUI
+
+# Installation
 
 
-# Run Docker via 
-Start the docker container do this. 
-cd hub-front && docker build -t webapp:dev . && cd ../
-cd hub-back && docker build -t python:dev . && cd ../
-cd devops && docker-compose up && cd../
-
-# When you're all done.
-docker rm webapp api
-
-
-# Run Docker Via Command Line
-cd hub-front && docker build -t webapp:dev . 
-docker run -v ${PWD}:/app -v /app/node_modules -p 4200:4200 --name webapp --rm webapp:dev
-
-cd ../hub-back && docker build -t python:dev . 
-docker run -v ${PWD}:/app -p 5000:5000 --name api --rm python:dev 
-
-
-# Run tests
-docker exec -it foo ng test --watch=false
-docker exec -it foo ng e2e --port 4202
-
-# WHEN IT'S A NEW DB DO THIS
-create extension "uuid-ossp"
+# Using
 
 
 
