@@ -1,6 +1,22 @@
 {$DOMAIN} {
+    @api {
+       method POST PUT PATCH DELETE
+       path /FROST-Server/* /api/* /v1/*
+       not header Referer {$DOMAIN}/*
+    }
+    @ui {
+       method GET
+       path /FROST-Server /FROST-Server/ /api /api/ /v1/* /
+    }
+    basicauth @api {
+         hubkit JDJhJDE0JFA5bXRCQ1VCTVM1bUF6bzJRVTdKaC5BalE4V2pUL1RxZEJtTlREOXRROFlCNE9uNEI2YTVx
+    }
+    basicauth @ui {
+         hubkit JDJhJDE0JFA5bXRCQ1VCTVM1bUF6bzJRVTdKaC5BalE4V2pUL1RxZEJtTlREOXRROFlCNE9uNEI2YTVx
+    }
     reverse_proxy /FROST-Server/* frost:8080
     uri replace /api/ /FROST-Server/
     reverse_proxy webapp:4200
     reverse_proxy /v1/* api:5000
 }
+
