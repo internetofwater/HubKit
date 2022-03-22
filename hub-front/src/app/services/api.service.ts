@@ -16,8 +16,10 @@ import { ScheduleCronJob } from '../interfaces/schedule_cron_job';
 })
 export class ApiService {
 
-  private apiUrl = window.location.protocol + '//' + window.location.hostname + '/v1';  // URL to web api
-  private frost_apiUrl = window.location.protocol + '//' + window.location.hostname + '/FROST-Server/v1.1/Things';  // URL to web api
+ private apiUrl = 'http://api:5000/v1';  // URL to web api
+ private frost_apiUrl = 'http://frost:8080/FROST-Server/v1.1/Things';  // URL to web api
+ // private apiUrl = window.location.protocol + '//' + window.location.hostname + '/v1';  // URL to web api
+ // private frost_apiUrl = window.location.protocol + '//' + window.location.hostname + '/FROST-Server/v1.1/Things';  // URL to web api
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
