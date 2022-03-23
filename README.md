@@ -18,11 +18,13 @@ The easiest way to install HubKit is to use our Docker images and `docker-compos
 
 Below are instructions to complete installation depending on 
 
-## Local
+## Local Development
 
 
 
-## Domain
+## Production (on the web with a domain name)
+
+
 
 # Using
 
