@@ -10,6 +10,19 @@ HubKit is modular collection of services that would allow providers of time-seri
 
 # Installation
 
+The easiest way to install HubKit is to use our Docker images and `docker-compose`. In this way, the only prerequisite is a server with Docker and docker-compose installed. 
+
+* [Instructions to install Docker and docker-compose on Mac or Windows Desktop environments](https://docs.docker.com/get-docker/)
+* Instructions to install Docker on a Linux server: [(see "Installation per Distro" for instructions depending on which Linux version)](https://docs.docker.com/engine/install/)
+* [Instructions to install docker-compose](https://docs.docker.com/compose/install/)
+
+Below are instructions to complete installation depending on 
+
+## Local
+
+
+
+## Domain
 
 # Using
 
