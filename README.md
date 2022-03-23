@@ -24,9 +24,17 @@ The easiest way to install HubKit is to use our Docker images and `docker-compos
 * Instructions to install Docker on a Linux server: [(see "Installation per Distro" for instructions depending on which Linux version)](https://docs.docker.com/engine/install/)
 * [Instructions to install docker-compose](https://docs.docker.com/compose/install/)
 
-Below are instructions to complete installation depending on 
+You can copy all of the source code for the repository for local development in a local directory. Clone this repository, i.e.
 
-## Local Development
+`git clone https://github.com/internetofwater/HubKit.git`
+
+You may have to [install git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git), if it is not installed on your machine
+
+## Local Testing
+
+1. Make a local directory (folder) on your computer, e.g. `mkdir HubKit`
+2. In a Terminal on a Mac or Linux machine, or a Powershell on a Windows machine, navigate to that directory, e.g. ```cd ~/HubKit```
+3. In this folder, clone this repository
 
 
 
