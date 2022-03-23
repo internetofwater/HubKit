@@ -1,4 +1,12 @@
-# HubKit
+- [HubKit Introduction](#hubkit-introduction)
+- [Installation](#installation)
+  * [Local Development](#local-development)
+  * [Production (on the web with a domain name)](#production--on-the-web-with-a-domain-name-)
+- [Using](#using)
+
+
+# HubKit Introduction
+
 HubKit is modular collection of services that would allow providers of time-series sensor data to (completed aspects marked, planned aspects unmarked)
 
 1. [x] 1. Use a graphical user interface (GUI) to map their data in .csv files to a SensorThings API data model
