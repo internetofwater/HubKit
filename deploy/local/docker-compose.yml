@@ -3,13 +3,26 @@ version: '3.7'
 services:
     webapp:
         container_name: webapp
+#        platform: linux/amd64
         image: internetofwater/hubkit-config-ui:latest
+#        build:
+#            context: ../hub-front
+#            dockerfile: ../hub-front/Dockerfile
+#        volumes: only need these for local angular development
+#            - '../hub-front:/app'
+#            - '../hub-front/app/node_modules'
         ports:
             - '4200:4200'
 
     api:
         container_name: api
+#        platform: linux/amd64
         image: internetofwater/hubkit-config-api:latest
+#        build:
+#            context: ../hub-back
+#            dockerfile: ../hub-back/Dockerfile
+        # volumes:
+        #     - '../hub-back:/app'
         ports:
             - '5000:5000'
 
@@ -46,4 +59,6 @@ services:
             - postgis_volume:/var/lib/postgresql/data
 volumes:
     postgis_volume:
+
+
 

@@ -5,7 +5,7 @@ services:
         image: caddy:2.4.6-alpine
         container_name: webserver
         environment:
-          - DOMAIN=localhost #change to your domain
+          - DOMAIN=yourdomain.com #change to your domain
         ports:
           - 80:80
           - 443:443
@@ -13,26 +13,13 @@ services:
           - ./Caddyfile:/etc/caddy/Caddyfile
     webapp:
         container_name: webapp
-#        platform: linux/amd64
         image: internetofwater/hubkit-config-ui:latest
-#        build:
-#            context: ../hub-front
-#            dockerfile: ../hub-front/Dockerfile
-#        volumes: only need these for local angular development
-#            - '../hub-front:/app'
-#            - '../hub-front/app/node_modules'
         ports:
             - '4200:4200'
 
     api:
         container_name: api
-#        platform: linux/amd64
         image: internetofwater/hubkit-config-api:latest
-#        build:
-#            context: ../hub-back
-#            dockerfile: ../hub-back/Dockerfile
-        # volumes:
-        #     - '../hub-back:/app'
         ports:
             - '5000:5000'
 
@@ -40,7 +27,7 @@ services:
         container_name: frost
         image: fraunhoferiosb/frost-server:latest
         environment:
-            - serviceRootUrl=http://localhost:8080/FROST-Server #change to desired URL for production
+            - serviceRootUrl=https://yourdomain.com/FROST-Server #change to desired URL for production
             - http_cors_enable=true
             - http_cors_allowed_origins=*
             - http_cors_allowed_methods=GET,POST,PATCH,DELETE,OPTIONS,HEAD
