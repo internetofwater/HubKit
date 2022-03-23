@@ -1,0 +1,49 @@
+version: '3.7'
+
+services:
+    webapp:
+        container_name: webapp
+        image: internetofwater/hubkit-config-ui:latest
+        ports:
+            - '4200:4200'
+
+    api:
+        container_name: api
+        image: internetofwater/hubkit-config-api:latest
+        ports:
+            - '5000:5000'
+
+    web:
+        container_name: frost
+        image: fraunhoferiosb/frost-server:latest
+        environment:
+            - serviceRootUrl=http://localhost:8080/FROST-Server #change to desired URL for production
+            - http_cors_enable=true
+            - http_cors_allowed_origins=*
+            - http_cors_allowed_methods=GET,POST,PATCH,DELETE,OPTIONS,HEAD
+            - persistence_db_driver=org.postgresql.Driver
+            - persistence_db_url=jdbc:postgresql://database:5432/sensorthings
+            - persistence_db_username=sensorthings
+            - persistence_db_password=ChangeMe
+            - persistence_autoUpdateDatabase=true
+            - persistence_persistenceManagerImplementationClass=de.fraunhofer.iosb.ilt.sta.persistence.pgjooq.imp.PostgresPersistenceManagerString
+            - persistence_idGenerationMode=ServerAndClientGenerated
+        ports:
+            - 8080:8080
+            - 1883:1883
+        depends_on:
+            - database
+    
+    database:
+        container_name: frostdb
+        image: kartoza/postgis:14-3.2
+        environment:
+            - POSTGRES_DB=sensorthings
+            - POSTGRES_USER=sensorthings
+            - POSTGRES_PASS=ChangeMe
+            - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting,uuid-ossp
+        volumes:
+            - postgis_volume:/var/lib/postgresql/data
+volumes:
+    postgis_volume:
+
