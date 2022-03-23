@@ -4,7 +4,7 @@ name: Publish Docker image for configurator UI
 
 on:
   push:
-    branches: ['main']
+    branches: ['local']
     paths:
       - hub-front/**
   workflow_dispatch:
@@ -34,5 +34,5 @@ jobs:
         with:
           context: ./hub-front
           push: true
-          tags: internetofwater/hubkit-config-ui:latest
+          tags: internetofwater/hubkit-config-ui:local
           labels: latest
