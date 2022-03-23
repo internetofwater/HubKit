@@ -114,7 +114,7 @@ export class ScheduleComponent implements OnInit {
   
           formData.append("json", file);
   
-          const upload$ = this.http.post(window.location.origin + '//v1/upload-config', formData);
+          const upload$ = this.http.post('http://localhost:5000//v1/upload-config', formData);
   
           upload$.subscribe(transform_config => this.transform_config = transform_config);
   
