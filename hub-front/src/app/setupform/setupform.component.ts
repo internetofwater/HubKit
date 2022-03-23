@@ -26,7 +26,7 @@ export class SetupformComponent implements OnInit {
   //   value: '',
   //   placeholder: ''
   // };
-
+  // 
 
   answer = {
     data_source:""
