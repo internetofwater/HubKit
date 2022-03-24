@@ -45,10 +45,10 @@ You may have to [install git](https://git-scm.com/book/en/v2/Getting-Started-Ins
 1. Open a terminal (Linux/Mac) / powershell (Windows) window
 2. Type and enter `cd <your directory of choice>` This step determines which folder on your computer the software will be downloaded to
 3. `git clone httpe://github.com/internetofwater/HubKit.git` This step downloads the source code as well as special code to run the software to the folder in step 2.
-4. `cd HubKit/delpoy/local` This navigates to the folder where the code is
-5. `docker-compose up -d` This command runs the code in the file `docker-compose.yml`, which you can see [here](https://github.com/internetofwater/HubKit/blob/main/deploy/local/docker-compose.yml)
+4. `cd HubKit/delpoy/local` This navigates to the folder where the code to run the software is. This code is the file `docker-compose.yml`, which you can see [here](https://github.com/internetofwater/HubKit/blob/main/deploy/local/docker-compose.yml)
+5. `docker-compose up -d` This command runs `docker-compose.yml`, which will deploy the software.
     - If you see an error about permissions, you may need to run `sudo docker-compose up -d`
-6. 
+6. After a few minutes, the program will be running. You can check that software is running with the command `docker logs webapp`. When the system is ready to use, the response should end in a log in the terminal window like this: `✔ Compiled successfully.`
 
 
 
