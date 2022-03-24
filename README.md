@@ -70,32 +70,15 @@ HubKit includes a webserver that provides SSL certificates automatically, so tha
 ### Configure software
 
 1. Fork this repository in GitHub.
-2. Modify the `docker-compose.yml` file, changing "yourdomain.com" to the desired subdomain you registered. Depending his can be done with command line tools like [vi]() or [nano]().
+2. Modify the `docker-compose.yml` file, changing "yourdomain.com" to the desired subdomain you registered in the code block below. Depending his can be done with command line tools like [vi]() or [nano]().
 ```
-    caddy: #comment out the entire service for local development
+    caddy: 
         image: caddy:2.4.6-alpine
         container_name: webserver
         environment:
           - DOMAIN=yourdomain.com #change to your domain
 ```
-3. Modify the `docker-compose.yml` file, changing "http://localhost:8080/FROST-Server" to "https://{your subdomain}/api". Note the change from `http` to `https` and the change from `FROST-Server` to `api`.
-
-
-On your web server, download and configure the software:
-
-1. Esnure VM allows connections over http and https (ports 80 and 443)
-2. Install Docker and git 
-3. `git clone https://github.com/{your github name}/HubKit
-4. `cd HubKit/deploy/web`
-5. Modify the `docker-compose.yml` file, changing "yourdomain.com" to the desired subdomain you registered. Depending his can be done with command line tools like [vi]() or [nano]().
-```
-    caddy: #comment out the entire service for local development
-        image: caddy:2.4.6-alpine
-        container_name: webserver
-        environment:
-          - DOMAIN=yourdomain.com #change to your domain
-```
-6. Modify the `docker-compose.yml` file, changing "http://localhost:8080/FROST-Server" to "https://{your subdomain}/api". Note the change from `http` to `https` and the change from `FROST-Server` to `api`.
+3. Modify the `docker-compose.yml` file, changing "http://localhost:8080/FROST-Server" to "https://{your subdomain}/api" in the code block below. Note the change from `http` to `https` and the change from `FROST-Server` to `api`.
 ```
  web:
         container_name: frost
@@ -106,14 +89,13 @@ On your web server, download and configure the software:
 ```
 
 
-7. Modify configuration files to suit your needs:
-   - In the directory /deploy/web, there is a file called `Caddyfile`. This is a text file that configures a web server that directs web traffic to the appropriate software components, and also password protects the webapp (CSV configurator GUI) and the ability to edit data in the FROST SensorThings API database. 
-   - In this file, there are two blockes of code that look like this:
-  ``` 
-  basicauth @ui {
-         hubkit JDJhJDE0JFA5bXRCQ1VCTVM1bUF6bzJRVTdKaC5BalE4V2pUL1RxZEJtTlREOXRROFlCNE9uNEI2YTVx #change as appropriate
-    }
-  ```
+On your web server, download and configure the software:
+
+1. Esnure VM allows connections over http and https (ports 80 and 443)
+2. Install Docker and git 
+3. `git clone https://github.com/{your github name}/HubKit
+4. `cd HubKit/deploy/web`
+
   Change `hubkit` to what you would like the username to be. Change `JDJhJDE0JFA5bXRCQ1VCTVM1bUF6bzJRVTdKaC5BalE4V2pUL1RxZEJtTlREOXRROFlCNE9uNEI2YTVx` to the hash of your desired password. To create a password hash, 
 
 # Using
