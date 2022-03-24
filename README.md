@@ -63,14 +63,14 @@ To deploy HubKit so that is available on the internet, you should have a server 
 
 It is reccomended to have a machine with at least 4GB of RAM.
 
-### Register domain name
+### Configure domain name
 
-HubKit includes a webserver that provides SSL certificates automatically, so that users have a secure connection. Thus, it is required to provide a domain name. If you don't have a domain name, you can purchase one from domain registrars such as: [Google Domains], [Route53], [Domain.com], [Namecheap], among others.
+HubKit includes a webserver that provides SSL certificates automatically, so that users have a secure connection. Thus, it is required to provide a domain name (e.g. yourdomain.com) . If you don't have a domain name, you can purchase one from domain registrars such as: [Google Domains], [Route53], [Domain.com], [Namecheap], among others. Once you have a domain name, you can configure many subdomains (e.g. hubkit.yourdomain.com).
 
-### Configure software
-
-1. Fork this repository in GitHub.
-2. Modify the `docker-compose.yml` file, changing "yourdomain.com" to the desired subdomain you registered in the code block below. Depending his can be done with command line tools like [vi]() or [nano]().
+1. Find your web server's IP Address.
+2. Create an "A" DNS record that points your desired subdomain (e.g., hubkit.youdomain.com) to the IP address 
+3. Fork this repository in GitHub.
+4. Modify the `docker-compose.yml` file, changing "yourdomain.com" to the desired subdomain you registered in the code block below. Depending his can be done with command line tools like [vi]() or [nano]().
 ```
     caddy: 
         image: caddy:2.4.6-alpine
@@ -78,7 +78,7 @@ HubKit includes a webserver that provides SSL certificates automatically, so tha
         environment:
           - DOMAIN=yourdomain.com #change to your domain
 ```
-3. Modify the `docker-compose.yml` file, changing "http://localhost:8080/FROST-Server" to "https://{your subdomain}/api" in the code block below. Note the change from `http` to `https` and the change from `FROST-Server` to `api`.
+5. Modify the `docker-compose.yml` file, changing "http://localhost:8080/FROST-Server" to "https://{your subdomain}/api" in the code block below. Note the change from `http` to `https` and the change from `FROST-Server` to `api`.
 ```
  web:
         container_name: frost
@@ -87,14 +87,21 @@ HubKit includes a webserver that provides SSL certificates automatically, so tha
             - serviceRootUrl=http://localhost:8080/FROST-Server #change to desired URL for production
             - http_cors_enable=true
 ```
+6. Modify the `docker-compose.yml` file, changing the FROST username and password settings to values of your choice:
+
+<img width="1045" alt="image" src="https://user-images.githubusercontent.com/44071350/160005612-91dd2de6-b45f-43ad-adf6-3e41e72c6f21.png">
 
 
-On your web server, download and configure the software:
+7. Ensure that your VM allows connections over http and https (ports 80 and 443)
+8. log in to your VM
+9. Install Docker and git on your VM
+10. `git clone https://github.com/{your github name}/HubKit
+11. `cd HubKit/deploy/web`
+12. `docker-compose up -d` or if necessary, `sudo docker-compose up -d`
 
-1. Esnure VM allows connections over http and https (ports 80 and 443)
-2. Install Docker and git 
-3. `git clone https://github.com/{your github name}/HubKit
-4. `cd HubKit/deploy/web`
+After a few minutes, the CSV configurator GUI will be available at https://yoursubdomain.yourdomain.com and the SensorThings API endpoint will be available at https://yoursubdomain.yourdomain.com/api/v1.1
+
+The default username is `hubkit` and the default passworkd is `ChangeMe`
 
   Change `hubkit` to what you would like the username to be. Change `JDJhJDE0JFA5bXRCQ1VCTVM1bUF6bzJRVTdKaC5BalE4V2pUL1RxZEJtTlREOXRROFlCNE9uNEI2YTVx` to the hash of your desired password. To create a password hash, 
 
