@@ -48,7 +48,7 @@ You may have to [install git](https://git-scm.com/book/en/v2/Getting-Started-Ins
 4. `cd HubKit/delpoy/local` This navigates to the folder where the code to run the software is. This code is the file `docker-compose.yml`, which you can see [here](https://github.com/internetofwater/HubKit/blob/main/deploy/local/docker-compose.yml)
 5. `docker-compose up -d` This command runs `docker-compose.yml`, which will deploy the software.
     - If you see an error about permissions, you may need to run `sudo docker-compose up -d`
-6. After a few minutes, the program will be running. You can check that software is running with the command `docker logs webapp`. When the system is ready to use, the response should end in a log in the terminal window like this: `✔ Compiled successfully.`
+6. After a few minutes, the program will be running. You can check that software is running with the command `docker logs webapp`. When the system is ready to use, the response should end in a log in the terminal window like this: `✔ Compiled successfully.` The webapp (GUI) will be available to use to map and upload csv files by opening any web browser and navigating to http://localhost:4200. The SensorThings API endpoint will be available at http://localhost:8080/FROST-Server/v1.1
 
 
 
