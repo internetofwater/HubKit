@@ -52,7 +52,7 @@ You may have to [install git](https://git-scm.com/book/en/v2/Getting-Started-Ins
 
 
 
-## Production (on the web with a domain name)
+## Production (on the web with a domain name and password protection)
 
 
 
