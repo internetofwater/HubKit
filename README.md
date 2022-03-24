@@ -16,13 +16,23 @@ HubKit is modular collection of services that would allow providers of time-seri
 1. [ ] 5. Publish sensor-specific landing pages with embedded [JSON-LD](https://json-ld.org), to comport with guidance for participating in the Internet of Water [geoconnex.us](https://geoconnex.us) system
 1. [ ] 6. Serve data to the public and allow data downloads through a map-based GUI
 
+
+The diagram below shows the different software elements of HubKit:
+
+
+
+
 # Installation
+
+## Prerequisites
 
 The easiest way to install HubKit is to use our Docker images and `docker-compose`. In this way, the only prerequisite is a server with Docker and docker-compose installed. 
 
 * [Instructions to install Docker and docker-compose on Mac or Windows Desktop environments](https://docs.docker.com/get-docker/)
 * Instructions to install Docker on a Linux server: [(see "Installation per Distro" for instructions depending on which Linux version)](https://docs.docker.com/engine/install/)
 * [Instructions to install docker-compose](https://docs.docker.com/compose/install/)
+
+If working on Linux, you may want to follow the [post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/) as well to make sure you can run docker commands with your user pemissions on your machine.
 
 You can copy all of the source code for the repository for local development in a local directory. Clone this repository, i.e.
 
@@ -32,9 +42,13 @@ You may have to [install git](https://git-scm.com/book/en/v2/Getting-Started-Ins
 
 ## Local Testing
 
-1. Make a local directory (folder) on your computer, e.g. `mkdir HubKit`
-2. In a Terminal on a Mac or Linux machine, or a Powershell on a Windows machine, navigate to that directory, e.g. ```cd ~/HubKit```
-3. In this folder, clone this repository
+1. Open a terminal (Linux/Mac) / powershell (Windows) window
+2. Type and enter `cd <your directory of choice>` This step determines which folder on your computer the software will be downloaded to
+3. `git clone httpe://github.com/internetofwater/HubKit.git` This step downloads the source code as well as special code to run the software to the folder in step 2.
+4. `cd HubKit/delpoy/local` This navigates to the folder where the code is
+5. `docker-compose up -d` This command runs the code in the file `docker-compose.yml`, which you can see [here](https://github.com/internetofwater/HubKit/blob/main/deploy/local/docker-compose.yml)
+    - If you see an error about permissions, you may need to run `sudo docker-compose up -d`
+6. 
 
 
 
