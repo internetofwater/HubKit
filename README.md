@@ -54,6 +54,14 @@ You may have to [install git](https://git-scm.com/book/en/v2/Getting-Started-Ins
 
 ## Production (on the web with a domain name and password protection)
 
+To deploy HubKit so that is available on the internet, you should have a server that is open to https traffic. This might be server on your own premises or a virtual machine provided by your IT office or a virtual machine you manage yourself from a public cloud provider such as Amazon Web Services, Google Cloud Platform, Microsoft Azure, or Digital Ocean. For steps on setting up virtual machines with one of these providers, see
+
+- [Amazon Web Services EC2](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html)
+- [Google Cloud Platform Compute Engine](https://codelabs.developers.google.com/codelabs/cloud-compute-engine#0)
+- [Microsoft Azure](https://docs.microsoft.com/en-us/learn/modules/create-linux-virtual-machine-in-azure/)
+- [Digital Ocean Droplet](https://docs.digitalocean.com/products/droplets/how-to/create/)
+
+It is reccomended to have a machine with at least 4GB of RAM.
 
 
 # Using
