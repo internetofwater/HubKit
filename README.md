@@ -121,7 +121,11 @@ To change the password from the defaults, you can change the Caddyfile within th
 
 The `@api` block sets the password required to edit data using the SensorThings API. By default, reading (HTTP GET verbs) are open for the SensorThings API. The `@ui` block sets the password required to interact with the CSV configurator user interface. To change the password, edit these blocks, replacing `hubkit` with your desired username for each block, and replacing the long string beginning `JDJ` with a bcrypt password hash. 
 
-  Change `hubkit` to what you would like the username to be. Change `JDJhJDE0JFA5bXRCQ1VCTVM1bUF6bzJRVTdKaC5BalE4V2pUL1RxZEJtTlREOXRROFlCNE9uNEI2YTVx` to the hash of your desired password. To create a password hash, 
+  Change `hubkit` to what you would like the username to be. Change `JDJhJDE0JFA5bXRCQ1VCTVM1bUF6bzJRVTdKaC5BalE4V2pUL1RxZEJtTlREOXRROFlCNE9uNEI2YTVx` to the hash of your desired password. To create a password hash, a simple command to run from within your server is
+  
+  `docker run caddy caddy hash-password --plaintext {your password}`. For example, `docker run caddy caddy hash-password --plaintext ChangeMe` results in `JDJhJDE0JG5ZYzg3cUZQNm5kMDZYbjRFb3A5eGVnL0ZjbmwyclhTMVNERlhTcFBxVVRKZ0xaM25HM1Jp`.
+  
+ 
 
 # Using
 
