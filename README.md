@@ -107,6 +107,20 @@ The default username is `hubkit` and the default password is `ChangeMe`
 
 Of course, additional levels of security may be desirable. This may move onto our roadmap in the future. For now, additional security must be configured in a custom manner. HubKit supports [basicauth as configurable in Caddy](https://caddyserver.com/docs/caddyfile/directives/basicauth).
 
+To change the password from the defaults, you can change the Caddyfile within the `webserver` docker container. The default Caddyfile has two code blocks involving authentication:
+
+```
+   basicauth @api {
+         hubkit JDJhJDE0JFA5bXRCQ1VCTVM1bUF6bzJRVTdKaC5BalE4V2pUL1RxZEJtTlREOXRROFlCNE9uNEI2YTVx #change as appropriate
+    }
+    basicauth @ui {
+         hubkit JDJhJDE0JFA5bXRCQ1VCTVM1bUF6bzJRVTdKaC5BalE4V2pUL1RxZEJtTlREOXRROFlCNE9uNEI2YTVx #change as appropriate
+    }
+
+```
+
+The `@api` block sets the password required to edit data using the SensorThings API. By default, reading (HTTP GET verbs) are open for the SensorThings API. The `@ui` block sets the password required to interact with the CSV configurator user interface. To change the password, edit these blocks, replacing `hubkit` with your desired username for each block, and replacing the long string beginning `JDJ` with a bcrypt password hash. 
+
   Change `hubkit` to what you would like the username to be. Change `JDJhJDE0JFA5bXRCQ1VCTVM1bUF6bzJRVTdKaC5BalE4V2pUL1RxZEJtTlREOXRROFlCNE9uNEI2YTVx` to the hash of your desired password. To create a password hash, 
 
 # Using
