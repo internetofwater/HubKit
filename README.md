@@ -123,7 +123,9 @@ The `@api` block sets the password required to edit data using the SensorThings 
 
   Change `hubkit` to what you would like the username to be. Change `JDJhJDE0JFA5bXRCQ1VCTVM1bUF6bzJRVTdKaC5BalE4V2pUL1RxZEJtTlREOXRROFlCNE9uNEI2YTVx` to the hash of your desired password. To create a password hash, a simple command to run from within your server is
   
-  `docker run caddy caddy hash-password --plaintext {your password}`. For example, `docker run caddy caddy hash-password --plaintext ChangeMe` results in `JDJhJDE0JG5ZYzg3cUZQNm5kMDZYbjRFb3A5eGVnL0ZjbmwyclhTMVNERlhTcFBxVVRKZ0xaM25HM1Jp`.
+  `docker run caddy caddy hash-password --plaintext {your password}`. 
+  
+  For example, `docker run caddy caddy hash-password --plaintext ChangeMe` results in `JDJhJDE0JG5ZYzg3cUZQNm5kMDZYbjRFb3A5eGVnL0ZjbmwyclhTMVNERlhTcFBxVVRKZ0xaM25HM1Jp`.
   
  
 
