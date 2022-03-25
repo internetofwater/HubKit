@@ -95,7 +95,7 @@ HubKit includes a webserver that provides SSL certificates automatically, so tha
 7. Ensure that your VM allows connections over http and https (ports 80 and 443)
 8. log in to your VM
 9. Install Docker and git on your VM
-10. `git clone https://github.com/{your github name}/HubKit
+10. `git clone https://github.com/{your github name}/HubKit`
 11. `cd HubKit/deploy/web`
 12. `docker-compose up -d` or if necessary, `sudo docker-compose up -d`
 
