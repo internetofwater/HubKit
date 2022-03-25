@@ -70,7 +70,7 @@ HubKit includes a webserver that provides SSL certificates automatically, so tha
 1. Find your web server's IP Address.
 2. Create an "A" DNS record that points your desired subdomain (e.g., hubkit.youdomain.com) to the IP address 
 3. Fork this repository in GitHub.
-4. Modify the `docker-compose.yml` file, changing "yourdomain.com" to the desired subdomain you registered in the code block below. Depending his can be done with command line tools like [vi]() or [nano]().
+4. Modify the `docker-compose.yml` file, changing "yourdomain.com" to the desired subdomain you registered in the code block below. Depending his can be done with command line tools like [vi](https://en.wikipedia.org/wiki/Vi) or [nano](https://www.nano-editor.org/dist/latest/nano.html).
 ```
     caddy: 
         image: caddy:2.4.6-alpine
