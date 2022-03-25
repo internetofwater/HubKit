@@ -1,9 +1,14 @@
+<!-- TOC start -->
 - [HubKit Introduction](#hubkit-introduction)
 - [Installation](#installation)
-  * [Local Development](#local-development)
-  * [Production (on the web with a domain name)](#production--on-the-web-with-a-domain-name-)
+  * [Prerequisites](#prerequisites)
+  * [Local Testing](#local-testing)
+  * [Production (on the web with a domain name and password protection)](#production-on-the-web-with-a-domain-name-and-password-protection)
+    + [Configure domain name](#configure-domain-name)
+    + [Change the password](#change-the-password)
 - [Using](#using)
-
+  * [Configuring CSVs](#configuring-csvs)
+<!-- TOC end -->
 
 # HubKit Introduction
 
