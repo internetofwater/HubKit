@@ -101,7 +101,11 @@ HubKit includes a webserver that provides SSL certificates automatically, so tha
 
 After a few minutes, the CSV configurator GUI will be available at https://yoursubdomain.yourdomain.com and the SensorThings API endpoint will be available at https://yoursubdomain.yourdomain.com/api/v1.1
 
-The default username is `hubkit` and the default passworkd is `ChangeMe`
+The default username is `hubkit` and the default password is `ChangeMe`
+
+### Change the password
+
+Of course, additional levels of security may be desirable. This may move onto our roadmap in the future. For now, additional security must be configured in a custom manner. HubKit supports [basicauth as configurable in Caddy](https://caddyserver.com/docs/caddyfile/directives/basicauth).
 
   Change `hubkit` to what you would like the username to be. Change `JDJhJDE0JFA5bXRCQ1VCTVM1bUF6bzJRVTdKaC5BalE4V2pUL1RxZEJtTlREOXRROFlCNE9uNEI2YTVx` to the hash of your desired password. To create a password hash, 
 
