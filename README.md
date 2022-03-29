@@ -137,6 +137,15 @@ The `@api` block sets the password required to edit data using the SensorThings 
 # Using
 ## Configuring CSVs
 
-##
+The GUI is located at your domain or at http://localhost:4200  if you are testing locally. The basic screen looks like this:
+
+![image](https://user-images.githubusercontent.com/44071350/160647694-85f85f9b-7c0c-44c4-bc1a-990ed5d04d37.png)
+
+The GUI is designed to work with CSV files with a ["tidy" data structure](https://vita.had.co.nz/papers/tidy-data.pdf), meaning every column is a variable, and every row is an observation. A sample minimum table is shown below:
+
+| what| ever| you|
+|-|-|-|
+|ok|yes|fin|
+## Scheduling automatic updates
 
 
