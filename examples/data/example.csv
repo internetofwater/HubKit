@@ -1,0 +1,5 @@
+﻿station_identifier,timestamp,variable1,variable2
+station-1,2022-03-28T01:00:00.000Z,10,15
+station-1,2022-03-28T01:15:00.000Z,11,14
+station-2,2022-03-28T01:00:00.000Z,2,7
+station-2,2022-03-28T01:15:00.000Z,3,5
