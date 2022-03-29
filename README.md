@@ -137,21 +137,33 @@ The `@api` block sets the password required to edit data using the SensorThings 
 # Using
 ## Configuring CSVs
 
+### Requirements for CSV format
+The GUI is designed to work with CSV files with a ["tidy" data structure](https://vita.had.co.nz/papers/tidy-data.pdf), meaning every column is a variable, and every row is an observation. A sample minimum table is shown below:
+
+| station_identifier| timestamp | latitude| longitude | variable1 | variable2 |
+|-|-|-|-|
+|station-1| |-79.0314 |2022-03-28T01:00:00.000Z|10|15|
+|station-1| |-79.0314 |2022-03-28T01:15:00.000Z|11|14|
+|station-2|35.9603| -78.9826|2022-03-28T01:00:00.000Z|2|7|
+|station-2|35.9603| -78.9826|2022-03-28T01:15:00.000Z|3|5|
+
+This data is also available as a csv file [here](https://raw.githubusercontent.com/internetofwater/HubKit/main/examples/data/example.csv).
+
+The minimum required fields include:
+
+1. A column that identifies a station/sensor/monitoring location
+2. A column that identifies the latitude (WGS84) of the location (do note that every row must repeat this information. We will work on addressing this redundancy in the future)
+3. A column that identifies the longitude (WGS84) of the location do note that every row must repeat this information. We will work on addressing this redundancy in the future)
+4. A column indicating the date-time stamp in ISO 8061 format (YYYY-MM-DDTHH:MM:SS.sssZ) in the UTC timezone. We will be working to enable more customized data-time parsing in the the future.
+5. A column for each variable that data is being collected on
+
+The columns can have any name and be in any order. Multiple such CSV files can be configured. 
+
+### Using the GUI
+
 The GUI is located at your domain or at http://localhost:4200  if you are testing locally. The basic screen looks like this:
 
 ![image](https://user-images.githubusercontent.com/44071350/160647694-85f85f9b-7c0c-44c4-bc1a-990ed5d04d37.png)
-
-The GUI is designed to work with CSV files with a ["tidy" data structure](https://vita.had.co.nz/papers/tidy-data.pdf), meaning every column is a variable, and every row is an observation. A sample minimum table is shown below:
-
-| station_identifier| timestamp | variable1 | variable2 |
-|-|-|-|-|
-|station-1|2022-03-28T01:00:00.000Z|10|15|
-|station-1|2022-03-28T01:15:00.000Z|11|14|
-|station-2|2022-03-28T01:00:00.000Z|2|7|
-|station-2|2022-03-28T01:15:00.000Z|3|5|
-
-
-
 
 ## Scheduling automatic updates
 
