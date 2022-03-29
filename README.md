@@ -140,7 +140,7 @@ The `@api` block sets the password required to edit data using the SensorThings 
 ### Requirements for CSV format
 The GUI is designed to work with CSV files with a ["tidy" data structure](https://vita.had.co.nz/papers/tidy-data.pdf), meaning every column is a variable, and every row is an observation. A sample minimum table is shown below:
 
-| station_identifier| timestamp | latitude| longitude | variable1 | variable2 |
+| station_identifier| latitude | longitude| timestamp | variable1 | variable2 |
 |-|-|-|-|-|-|
 |station-1| 35.894 |-79.0314 |2022-03-28T01:00:00.000Z|10|15|
 |station-1| 35.894 |-79.0314 |2022-03-28T01:15:00.000Z|11|14|
