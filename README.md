@@ -143,9 +143,16 @@ The GUI is located at your domain or at http://localhost:4200  if you are testin
 
 The GUI is designed to work with CSV files with a ["tidy" data structure](https://vita.had.co.nz/papers/tidy-data.pdf), meaning every column is a variable, and every row is an observation. A sample minimum table is shown below:
 
-| what| ever| you|
-|-|-|-|
-|ok|yes|fin|
+| station_identifier| timestamp | variable1 | variable2 |
+|-|-|-|-|
+|station-1|2022-03-28T01:00:00.000Z|10|15|
+|station-1|2022-03-28T01:15:00.000Z|11|14|
+|station-2|2022-03-28T01:00:00.000Z|2|7|
+|station-2|2022-03-28T01:15:00.000Z|3|5|
+
+
+
+
 ## Scheduling automatic updates
 
 
