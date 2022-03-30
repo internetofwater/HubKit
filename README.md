@@ -177,10 +177,13 @@ Once this this is done, scroll down to "Add Your Parameters" to configure the ad
 * *Property Description*: A longer description to clarify what the property is (e.g. for "streamflow", "The volume of water flowing past a fixed point over a fixed period of time") 
 * *Observation Type*: A URI denoting what kind of observation values are to be expected (e.g. category, numeric, integer, free text). In general, should be one of the following:
 
-|observationType| description |
+|observationType| expected value types |
 |-|-|
-|http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation | stuff |
-
+|http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation | text/string or URI (e.g. "red" or "https://colors.com/red" |
+|http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CountObservation| integer |
+|http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement | numeric |
+|http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Observation| any |
+|http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation | boolean (true/false)|
 
 
 ## Scheduling automatic updates
