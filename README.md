@@ -165,7 +165,16 @@ The GUI is located at your domain or at http://localhost:4200  if you are testin
 
 ![image](https://user-images.githubusercontent.com/44071350/160647694-85f85f9b-7c0c-44c4-bc1a-990ed5d04d37.png)
 
-The block "Load Configuration File" is for cases where you have already configured a CCSV file, and would like to use a similar configuration for a new CSV file. To start from scratch, begin with the "Settings" block. You may choose either "Choose from File" to upload a CSV file from your computer, or "Choose from Web" to provide a URL. To try it out, yo 
+The block "Load Configuration File" is for cases where you have already configured a CCSV file, and would like to use a similar configuration for a new CSV file. To start from scratch, begin with the "Settings" block. You may choose either "Choose from File" to upload a CSV file from your computer, or "Choose from Web" to provide a URL. To try it out, you can use the sample data URL: https://raw.githubusercontent.com/internetofwater/HubKit/main/examples/data/example.csv
+
+Click "Upload", then scroll down to "Select your data sheet source", and use the dropdown menus to select the csv, and then the columns to each of the required fields for name (which is the identifier for the station/location), description (which can be the same column, but can be a different column with a more detailed description), and latitude and longitude. 
+<img width="998" alt="image" src="https://user-images.githubusercontent.com/44071350/160880988-fb2d6eec-1410-4751-aa99-9bc2c0a412ef.png">
+
+Once this this is done, scroll down to "Add Your Parameters" to configure the adding of the actual observation data. Click "Add Parameter". From here you can configure the Observed Propery (parameter, variable, etc.), the units, and the Sensor (or Method) metadata associated with the column. Below is some guidance for each field:
+
+* *Property Name*: A short name for the property (e.g. "groundwater depth", "gage height", "streamflow", "Total Dissovled Solids") Common names from from this vocabulary list are a good source. http://vocabulary.odm2.org/variablename/ 
+
+
 
 ## Scheduling automatic updates
 
