@@ -1,5 +1,0 @@
-station_identifier,latitude,longitude,timestamp,variable1,variable2
-station-1a,35.894,-79.0314,2022-03-28T01:00:00.000Z,10,15
-station-1a,35.894,-79.0314,2022-03-28T01:15:00.000Z,11,14
-station-2a,35.9603,-78.9603,2022-03-28T01:00:00.000Z,2,7
-station-2a,35.9603,-78.9603,2022-03-28T01:15:00.000Z,3,5
