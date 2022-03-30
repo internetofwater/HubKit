@@ -198,9 +198,9 @@ Once this this is done, scroll down to "Add Your Parameters" to configure the ad
 
 See below for a completed example:
 
-<img width="960" alt="image" src="https://user-images.githubusercontent.com/44071350/160913259-c19a121f-a89d-4411-ae7d-a6b11d24ff8c.png">
+<img width="966" alt="image" src="https://user-images.githubusercontent.com/44071350/160915163-d6603c01-dee3-47de-8e89-65ca473ca03d.png">
 
-You can do this process again for other parameters/columns by clocking "Add Parameter" again.
+You can do this process again for other parameters/columns by clocking "Add Parameter" again. You can also edit the parameter by clicking the button that appears above "Add Parameter" corresponding to each parameter you have already added.
 
 When you are finished adding parameters, click "Save". Then, in the top menu, click "Save Config". This will both save this configuration internally, and initiate a download of a document called "config.json" that looks like this:
 
@@ -247,7 +247,8 @@ When you are finished adding parameters, click "Save". Then, in the top menu, cl
 }
 ```
 
-This tells HubKit exactly how to convert your CSV data into the SensorThings data model. 
+This tells HubKit exactly how to convert your CSV data into the SensorThings data model. You may want to rename and save config.json somewhere logical for safekeeping and reuse. Once config.json is saved, you can click "prep data for upload". If you scroll to the top, the red box will indicate if there are any errors in the CSV that need to be corrected. <img width="955" alt="image" src="https://user-images.githubusercontent.com/44071350/160916568-aa05e166-3af5-4673-8eba-bb627d9f6e21.png">
+
 
 
 ## Scheduling automatic updates
