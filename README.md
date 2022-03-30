@@ -200,6 +200,54 @@ See below for a completed example:
 
 <img width="960" alt="image" src="https://user-images.githubusercontent.com/44071350/160913259-c19a121f-a89d-4411-ae7d-a6b11d24ff8c.png">
 
+You can do this process again for other parameters/columns by clocking "Add Parameter" again.
+
+When you are finished adding parameters, click "Save". Then, in the top menu, click "Save Config". This will both save this configuration internally, and initiate a download of a document called "config.json" that looks like this:
+
+```
+{
+    "datastreams": [
+        {
+            "id": 0,
+            "name": "Streamflow",
+            "phenomenonTime": "timestamp",
+            "result": "variable1"
+        }
+    ],
+    "parameters": [
+        {
+            "description": "",
+            "id": "",
+            "name": "",
+            "observation_type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+            "property_definition": "http://vocabulary.odm2.org/variablename/streamflow/",
+            "property_description": "The volume of water flowing past a fixed point. Equivalent to discharge",
+            "property_name": "Streamflow",
+            "sensor_description": "A bubbler-based streamgage",
+            "sensor_encoding_type": "pdf",
+            "sensor_metadata": "https://pubs.usgs.gov/tm/tm3-a7/tm3a7.pdf",
+            "sensor_name": "Streamgage",
+            "unit_definition": "Volumetric flow rate",
+            "unit_name": "Cubic feet per second",
+            "unit_symbol": "http://qudt.org/vocab/unit#CubicFootPerSecond"
+        }
+    ],
+    "settings": {
+        "data_structure": "One Sensor per row",
+        "file": "transform_config.json",
+        "file_url": "https://raw.githubusercontent.com/internetofwater/HubKit/main/examples/data/example.csv",
+        "sheet": "csv",
+        "source": "example.csv",
+        "thing_description_column": "﻿station_identifier",
+        "thing_lat_column": "latitude",
+        "thing_lng_column": "longitude",
+        "thing_name_column": "﻿station_identifier",
+        "type": "Excel"
+    }
+}
+```
+
+This tells HubKit exactly how to convert your CSV data into the SensorThings data model. 
 
 
 ## Scheduling automatic updates
