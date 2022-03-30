@@ -198,6 +198,7 @@ Once this this is done, scroll down to "Add Your Parameters" to configure the ad
 
 See below for a completed example:
 
+<img width="960" alt="image" src="https://user-images.githubusercontent.com/44071350/160913259-c19a121f-a89d-4411-ae7d-a6b11d24ff8c.png">
 
 
 
