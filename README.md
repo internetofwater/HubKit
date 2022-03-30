@@ -165,6 +165,8 @@ The GUI is located at your domain or at http://localhost:4200  if you are testin
 
 ![image](https://user-images.githubusercontent.com/44071350/160647694-85f85f9b-7c0c-44c4-bc1a-990ed5d04d37.png)
 
+The block "Load Configuration File" is for cases where you have already configured a CCSV file, and would like to use a similar configuration for a new CSV file. To start from scratch, begin with the "Settings" block. You may choose either "Choose from File" to upload a CSV file from your computer, or "Choose from Web" to provide a URL. To try it out, yo 
+
 ## Scheduling automatic updates
 
 
