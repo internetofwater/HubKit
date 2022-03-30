@@ -175,7 +175,11 @@ Once this this is done, scroll down to "Add Your Parameters" to configure the ad
 * *Property Name*: A short name for the property (e.g. "groundwater depth", "gage height", "streamflow", "Total Dissovled Solids") Common names from from this vocabulary list are a good source. http://vocabulary.odm2.org/variablename/ 
 * *Property Definition*: This could be a sentence. Ideally, it is a URL for a web page that defines the concept. For example, http://vocabulary.odm2.org/variablename/streamflow/
 * *Property Description*: A longer description to clarify what the property is (e.g. for "streamflow", "The volume of water flowing past a fixed point over a fixed period of time") 
-* **
+* *Observation Type*: A URI denoting what kind of observation values are to be expected (e.g. category, numeric, integer, free text). In general, should be one of the following:
+
+|observationType| description |
+|-|-|
+|http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation | stuff |
 
 
 
