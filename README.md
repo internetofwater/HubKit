@@ -173,6 +173,9 @@ Click "Upload", then scroll down to "Select your data sheet source", and use the
 Once this this is done, scroll down to "Add Your Parameters" to configure the adding of the actual observation data. Click "Add Parameter". From here you can configure the Observed Propery (parameter, variable, etc.), the units, and the Sensor (or Method) metadata associated with the column. Below is some guidance for each field:
 
 * *Property Name*: A short name for the property (e.g. "groundwater depth", "gage height", "streamflow", "Total Dissovled Solids") Common names from from this vocabulary list are a good source. http://vocabulary.odm2.org/variablename/ 
+* *Property Definition*: This could be a sentence. Ideally, it is a URL for a web page that defines the concept. For example, http://vocabulary.odm2.org/variablename/streamflow/
+* *Property Description*: A longer description to clarify what the property is (e.g. for "streamflow", "The volume of water flowing past a fixed point over a fixed period of time") 
+* **
 
 
 
