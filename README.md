@@ -165,7 +165,7 @@ The GUI is located at your domain or at http://localhost:4200  if you are testin
 
 ![image](https://user-images.githubusercontent.com/44071350/160647694-85f85f9b-7c0c-44c4-bc1a-990ed5d04d37.png)
 
-The block "Load Configuration File" is for cases where you have already configured a CCSV file, and would like to use a similar configuration for a new CSV file. To start from scratch, begin with the "Settings" block. You may choose either "Choose from File" to upload a CSV file from your computer, or "Choose from Web" to provide a URL. To try it out, you can use the sample data URL: https://raw.githubusercontent.com/internetofwater/HubKit/main/examples/data/example.csv
+The block "Load Configuration File" is for cases where you have already configured a CSV file, and would like to use a similar configuration for a new CSV file. To start from scratch, begin with the "Settings" block. You may choose either "Choose from File" to upload a CSV file from your computer, or "Choose from Web" to provide a URL. To try it out, you can use the sample data URL: https://raw.githubusercontent.com/internetofwater/HubKit/main/examples/data/example.csv
 
 Click "Upload", then scroll down to "Select your data sheet source", and use the dropdown menus to select the csv, and then the columns to each of the required fields for name (which is the identifier for the station/location), description (which can be the same column, but can be a different column with a more detailed description), and latitude and longitude. 
 <img width="998" alt="image" src="https://user-images.githubusercontent.com/44071350/160880988-fb2d6eec-1410-4751-aa99-9bc2c0a412ef.png">
@@ -184,6 +184,11 @@ Once this this is done, scroll down to "Add Your Parameters" to configure the ad
 |http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement | numeric |
 |http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Observation| any |
 |http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation | boolean (true/false)|
+
+* *Unit of Measurement*: The name of the relevant units (e.g. "cubic feet per second")
+* *Unit symbol*: The relevant symbol (e.g. "cfs")
+* *Unit definition*: Either a sentence definition or a URI for one. For example, http://qudt.org/vocab/unit#CubicFootPerSecond
+* *Sensor Name*: This should be an identifying name for either a particular sensor (e.g. "Stream Gage 1234") or a generalized type of sensor or method (e.g. "Stream gage" or "Chemical sample assay EPA method XYZ"). 
 
 
 ## Scheduling automatic updates
