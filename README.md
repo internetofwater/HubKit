@@ -189,6 +189,16 @@ Once this this is done, scroll down to "Add Your Parameters" to configure the ad
 * *Unit symbol*: The relevant symbol (e.g. "cfs")
 * *Unit definition*: Either a sentence definition or a URI for one. For example, http://qudt.org/vocab/unit#CubicFootPerSecond
 * *Sensor Name*: This should be an identifying name for either a particular sensor (e.g. "Stream Gage 1234") or a generalized type of sensor or method (e.g. "Stream gage" or "Chemical sample assay EPA method XYZ"). 
+* *Sensor Description*: A more detailed description of the Sensor (e.g. "Stream gage at Station 1234" or "Chemical sample essay EPA method XYZ for copper, nickel, and lead")
+* *Sensor Encoding type*: mimeTypes or other values to indicate what format any sensor metadata(see below) is in. "application/pdf" for a link to a PDF file, "text/html" for a website, "http://www.opengis.net/doc/IS/SensorML/2.0" for a SensorML XML document. (can be left blank if there is none)
+* *Sensor Metadata*: A url pointing to a detailed description of the sensor (can be left blank if there is none).
+
+*Result* is a dropdown for you to choos which column of the csv the relevant observation values are in.
+*Data and Time* is a dropdown for you to choose which column of the csv the YYYY-MM-DDTHH:MM:SS.sssZ - formatted datetime values are in.
+
+See below for a completed example:
+
+
 
 
 ## Scheduling automatic updates
