@@ -1,14 +1,15 @@
-<!-- TOC start -->
 - [HubKit Introduction](#hubkit-introduction)
 - [Installation](#installation)
   * [Prerequisites](#prerequisites)
   * [Local Testing](#local-testing)
-  * [Production (on the web with a domain name and password protection)](#production-on-the-web-with-a-domain-name-and-password-protection)
+  * [Production (on the web with a domain name and password protection)](#production--on-the-web-with-a-domain-name-and-password-protection-)
     + [Configure domain name](#configure-domain-name)
     + [Change the password](#change-the-password)
 - [Using](#using)
   * [Configuring CSVs](#configuring-csvs)
-<!-- TOC end -->
+    + [Requirements for CSV format](#requirements-for-csv-format)
+    + [Using the GUI](#using-the-gui)
+  * [Scheduling automatic updates](#scheduling-automatic-updates)
 
 # HubKit Introduction
 
@@ -255,7 +256,11 @@ If there are no errors, click "Start Processing Data", which will upload the dat
 
 ## Scheduling automatic updates
 
-HubKit allows for the use case of updating a CSV, and importing any new data in that CSV at a regular interval. As long as the CSV is available from a persistent HTTP(S) URL, this is possible. To configure this option, you msut first go through all the steps above. Once oyu have, you may click the "Schedule" button.
+HubKit allows for the use case of updating a CSV, and importing any new data in that CSV at a regular interval. As long as the CSV is available from a persistent HTTP(S) URL, this is possible. To configure this option, you msut first go through all the steps above. Once you have, you may click the "Schedule" button. Click "choose file" to load the config.json that you saved to your computer in the initial configuration step. Name the cron job, and specify the URL where your CSV is located, and select the time interval you want HubKit to look for new data in the CSV. Click "Schedule" when you are ready. An example scheduleer form is filled out below:
+
+<img width="977" alt="image" src="https://user-images.githubusercontent.com/44071350/161107984-f35457b1-85bb-4974-9348-8c35edc267e9.png">
+
+
 
 
 
