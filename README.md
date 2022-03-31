@@ -249,8 +249,13 @@ When you are finished adding parameters, click "Save". Then, in the top menu, cl
 
 This tells HubKit exactly how to convert your CSV data into the SensorThings data model. You may want to rename and save config.json somewhere logical for safekeeping and reuse. Once config.json is saved, you can click "prep data for upload". If you scroll to the top, the red box will indicate if there are any errors in the CSV that need to be corrected. <img width="955" alt="image" src="https://user-images.githubusercontent.com/44071350/160916568-aa05e166-3af5-4673-8eba-bb627d9f6e21.png">
 
+If there are no errors, click "Start Processing Data", which will upload the data. The data will then be available as a SensorThings API endpoint from {yourdomain.com}/api/v1.1 . An introduction for how to work with this endpoint can be found [here](https://fraunhoferiosb.github.io/FROST-Server/sensorthingsapi/3_GettingData.html). Some examples of working with the data in python can be found [here](https://github.com/BritishGeologicalSurvey/sensor-things-api-demo/blob/main/sensor-things-api-demo.ipynb)
+
 
 
 ## Scheduling automatic updates
+
+HubKit allows for the use case of updating a CSV, and importing any new data in that CSV at a regular interval. As long as the CSV is available from a persistent HTTP(S) URL, this is possible. To configure this option, you msut first go through all the steps above. Once oyu have, you may click the "Schedule" button.
+
 
 
