@@ -1,0 +1,118 @@
+resources:
+    Things:
+        type: collection
+        title: HubKit Stations
+        description: HubKit Stations
+        keywords:
+            - Things
+            - SensorThings
+            - IoW
+        context:
+            - sosa: "http://www.w3.org/ns/sosa/"
+              ssn: "http://www.w3.org/ns/ssn/"
+              Datastreams: sosa:ObservationCollection
+              name: schema:name
+        links:
+            - type: application/html
+              rel: canonical
+              title: data source
+              href: https://www.geoconnex.us
+              hreflang: en-US
+        extents:
+            spatial:
+                bbox: [-180,-90,180,90]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: null
+                end: null
+        providers:
+          - type: feature
+            name: SensorThings 
+            data: http://frost:8080/api/v1.1//api/v1.1/
+            # uri_field: uri
+            entity: Things 
+            intralink: true
+            properties:
+                - name
+                - Datastreams
+                - '@iot.selfLink'
+    Datastreams:
+        type: collection
+        title: IoW STA Datastreams
+        description: demo IoW SensorThings API Datastreams
+        keywords:
+            - Datastreams
+            - SensorThings
+            - IoW
+        context:
+            - sosa: http://www.w3.org/ns/sosa/
+              ssn: http://www.w3.org/ns/ssn/
+              Observations: sosa:hasMember
+              Thing: sosa:hasFeatureOfInterest
+              name: schema:name
+        links:
+            - type: application/html
+              rel: canonical
+              title: data source
+              href: https://www.geoconnex.us/
+              hreflang: en-US
+        extents:
+            spatial:
+                bbox: [-180,-90,180,90]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 1944-10-14T12:00:00.00Z
+                end: 2021-02-09T15:55:01.00Z
+        providers:          
+          - type: feature
+            name: SensorThings 
+            data: http://frost:8080/api/v1.1/
+            # uri_field: uri
+            entity: Datastreams 
+            intralink: true
+            time_field: resultTime
+            properties:
+                - name
+                - Thing
+                - Observations
+                - Sensor
+                - ObservedProperty
+                - '@iot.selfLink'
+    Observations:
+        type: collection
+        title: IoW STA Observations
+        description: demo IoW SensorThings API Observations
+        keywords:
+            - Observations
+            - SensorThings
+            - IoW
+        context:
+            - sosa: http://www.w3.org/ns/sosa/
+              ssn: http://www.w3.org/ns/ssn/
+              Datastream: sosa:isMemberOf
+              name: schema:name
+        links:
+            - type: application/html
+              rel: canonical
+              title: data source
+              href: https://www.brgm.fr/en
+              hreflang: en-US
+        extents:
+            spatial:
+                bbox: [-180,-90,180,90]
+                crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+            temporal:
+                begin: 1944-10-14T12:00:00Z
+                end: 2021-02-09T15:55:01Z
+        providers:
+          - type: feature
+            name: SensorThings 
+            data: http://frost:8080/api/v1.1/
+            entity: Observations 
+            intralink: true
+            time_field: phenomenonTime
+            properties:
+                - result
+                - Datastream
+                - FeatureOfInterest
+                - '@iot.selfLink'
