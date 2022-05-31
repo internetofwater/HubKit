@@ -13,7 +13,7 @@ services:
 #            - '../hub-front/app/node_modules'
         ports:
             - '4200:4200'
-
+    
     api:
         container_name: api
 #        platform: linux/amd64
@@ -25,7 +25,14 @@ services:
         #     - '../hub-back:/app'
         ports:
             - '5000:5000'
-
+    pygeoapi:
+        container_name: pygeoapi
+        image: internetofwater/pygeoapi:latest
+        ports: '5050:80'
+        restart: always
+        volumes:
+             - ./hubkit.pygeoapi.config.yml:/pygeoapi/local.config.yml
+        
     web:
         container_name: frost
         image: fraunhoferiosb/frost-server:latest
