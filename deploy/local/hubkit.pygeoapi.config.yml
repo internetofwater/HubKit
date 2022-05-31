@@ -1,3 +1,63 @@
+server:
+    bind:
+        host: 0.0.0.0 #change to your hostname if running your own instance
+        port: 5050
+    url: http://localhost:5050 #change to host URL  if running your own instance
+    mimetype: application/json; charset=UTF-8
+    encoding: utf-8
+    gzip: false
+    languages:
+        # First language is the default language
+        - en-US
+    # cors: true
+    pretty_print: true
+    limit: 10
+    map:
+        url: https://tile.openstreetmap.org/{z}/{x}/{y}.png
+        attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
+    # templates:
+      # path: /path/to/Jinja2/templates
+      # static: /path/to/static/folder # css/js/img
+    # ogc_schemas_location: /opt/schemas.opengis.net
+
+logging:
+    level: DEBUG
+    logfile: /tmp/pygeoapi.log
+
+metadata:
+    identification:
+        title: 
+            en: SensorThings API example endpoint.
+        description: Provides STA reference features.
+        keywords:
+            en:
+                - geospatial
+                - SensorThingsapi
+                - api
+        keywords_type: theme
+        terms_of_service: https://creativecommons.org/licenses/by/4.0/
+        url: https://github.com/internetofwater/geoconnex.us
+    license:
+        name: CC-BY 4.0 license
+        url: https://creativecommons.org/licenses/by/4.0/
+    provider:
+        name: Organization Name
+        url: https://pygeoapi.io
+    contact:
+        name: Lastname, Firstname
+        position: Position Title
+        address: Mailing Address
+        city: City
+        stateorprovince: Administrative Area
+        postalcode: Zip or Postal Code
+        country: Country
+        phone: +xx-xxx-xxx-xxxx
+        fax: +xx-xxx-xxx-xxxx
+        email: you@example.org
+        url: Contact URL
+        hours: Mo-Fr 08:00-17:00
+        instructions: During hours of service. Off on weekends.
+        role: pointOfContact
 resources:
     Things:
         type: collection
@@ -28,7 +88,7 @@ resources:
         providers:
           - type: feature
             name: SensorThings 
-            data: http://frost:8080/api/v1.1//api/v1.1/
+            data: http://frost:8080/FROST-Server/v1.1/
             # uri_field: uri
             entity: Things 
             intralink: true
@@ -66,7 +126,7 @@ resources:
         providers:          
           - type: feature
             name: SensorThings 
-            data: http://frost:8080/api/v1.1/
+            data: http://frost:8080/FROST-Server/v1.1/
             # uri_field: uri
             entity: Datastreams 
             intralink: true
@@ -107,7 +167,7 @@ resources:
         providers:
           - type: feature
             name: SensorThings 
-            data: http://frost:8080/api/v1.1/
+            data: http://frost:8080/FROST-Server/v1.1/
             entity: Observations 
             intralink: true
             time_field: phenomenonTime

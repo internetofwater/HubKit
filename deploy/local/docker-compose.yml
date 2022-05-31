@@ -38,7 +38,7 @@ services:
         container_name: frost
         image: fraunhoferiosb/frost-server:latest
         environment:
-            - serviceRootUrl=http://localhost:8080/FROST-Server #change to desired URL for production
+            - serviceRootUrl=http://frost:8080/FROST-Server #change to desired URL for production
             - http_cors_enable=true
             - http_cors_allowed_origins=*
             - http_cors_allowed_methods=GET,POST,PATCH,DELETE,OPTIONS,HEAD
@@ -47,7 +47,6 @@ services:
             - persistence_db_username=sensorthings
             - persistence_db_password=ChangeMe
             - persistence_autoUpdateDatabase=true
-            - persistence_persistenceManagerImplementationClass=de.fraunhofer.iosb.ilt.sta.persistence.pgjooq.imp.PostgresPersistenceManagerString
             - persistence_idGenerationMode=ServerAndClientGenerated
         ports:
             - 8080:8080
