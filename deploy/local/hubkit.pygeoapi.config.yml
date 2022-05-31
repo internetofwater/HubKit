@@ -9,7 +9,7 @@ server:
     languages:
         # First language is the default language
         - en-US
-    # cors: true
+    cors: true
     pretty_print: true
     limit: 10
     map:
