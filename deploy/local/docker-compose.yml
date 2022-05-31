@@ -28,7 +28,8 @@ services:
     pygeoapi:
         container_name: pygeoapi
         image: internetofwater/pygeoapi:latest
-        ports: '5050:80'
+        ports: 
+            - '5050:80'
         restart: always
         volumes:
              - ./hubkit.pygeoapi.config.yml:/pygeoapi/local.config.yml
